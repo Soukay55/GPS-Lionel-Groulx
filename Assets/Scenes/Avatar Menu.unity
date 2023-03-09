@@ -2469,7 +2469,7 @@ MonoBehaviour:
   button4: {fileID: 769733442}
   image: {fileID: 1080876514}
   username: {fileID: 118625925}
-  avatar: {fileID: 1424031443}
+  avatar: {fileID: 1424031451}
 --- !u!1 &2013645245
 GameObject:
   m_ObjectHideFlags: 0

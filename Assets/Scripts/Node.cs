@@ -15,7 +15,7 @@ public class Node
      private StreamReader fluxLecture;
      private const string PATH = "Assets/RessourcesGPS/DataNodes";
      private const int NB_NODES_PAR_ÉTAGE = 9;
-     private const int NB_DONNÉES_PAR_NODE = 5;
+     private const int NB_DONNÉES_PAR_NODE = 6;
      private string[] délimiteurs = {"\t"};
      private List<string>dataTab;
      public GPSCoordinate CoordonéesGPS { get; set; }
@@ -24,7 +24,7 @@ public class Node
      
      public string Nom { get; set; } /// gnr la cafet s'appele "cafeteria"
      
-     public bool EstEndroitPublic { get; set; }//anyhing that isnt a classsroom
+     public bool EstEndroitPublic { get; set; }//anything that isnt a classsroom
      
      public int Étage { get; set; } //try to get nb noeuds par etage to be constant so tpx calculer sa aek maths
 
@@ -36,14 +36,16 @@ public class Node
      {
         // List<nodes>
      }
-     public Node(int nombre, string nom, bool estEndroitPublic, int étage, List<int>connectedNodes)
+     public Node( int nombre, string nom, bool estEndroitPublic, int étage, 
+         List<int>connectedNodes,GPSCoordinate coordonéesGps)
      {
+         
          Nombre = nombre;
          Nom = nom;
          EstEndroitPublic = estEndroitPublic;
          Étage = étage;
          List<int> ConnectedNodes = connectedNodes;
-
+         CoordonéesGPS = coordonéesGps;
 
      }
 
@@ -70,14 +72,16 @@ public class Node
          }
          
          dataTab = données.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
-         for (int i = 0; i < dataTab.Count-1; i+=5)
+         for (int i = 0; i < dataTab.Count-1; i+=NB_DONNÉES_PAR_NODE)
          {
              int nombre = int.Parse(dataTab[i], CultureInfo.InvariantCulture);
              string nom = dataTab[i + 1];
              bool endroitPublic = ToBool(dataTab[i + 2]);
              int étage=int.Parse(dataTab[i+3], CultureInfo.InvariantCulture);
              List<int> connectedNodes = ToList(dataTab[i + 4]);
-             nodes.Add(new Node(nombre,nom,endroitPublic,étage,connectedNodes));
+             GPSCoordinate coordonéesGps = ToGpsCoordinate(dataTab[i + 5]);
+             
+             nodes.Add(new Node(nombre,nom,endroitPublic,étage,connectedNodes,coordonéesGps));
          }
          
          return nodes;
@@ -90,6 +94,14 @@ public class Node
              return true;
 
          return false;
+     }
+
+     public GPSCoordinate ToGpsCoordinate(string coordonéeGPS)
+     {
+         var coord=coordonéeGPS.Split(",", StringSplitOptions.RemoveEmptyEntries);
+         
+         return new GPSCoordinate(double.Parse(coord[0]), double.Parse(coord[1]));
+         
      }
         
      //the nodes input string are in the form 1,2,3

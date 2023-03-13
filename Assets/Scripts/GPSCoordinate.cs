@@ -15,7 +15,7 @@ public class GPSCoordinate
         Longitude = longitude;
     }
 
-    static float CalculerDistanceEntreDeuxCoordonnées(GPSCoordinate A, GPSCoordinate B)
+    public static float CalculerDistanceEntreDeuxCoordonnées(GPSCoordinate A, GPSCoordinate B)
     {
         //la formule haversine va lowkey fuckup l'accuracy pcq c ptit test aek pyth
 
@@ -39,12 +39,12 @@ public class GPSCoordinate
     }
 
         //bearing ou ps?
-    static float CalculerDistanceXEntreDeuxCoordonnées(GPSCoordinate A, GPSCoordinate B)
+    public static float CalculerDistanceXEntreDeuxCoordonnées(GPSCoordinate A, GPSCoordinate B)
     {
         float deltaLat = (float) (B.Latitude * PROP_DEGRÉ_RAD - A.Latitude * PROP_DEGRÉ_RAD);
         return Mathf.Abs(CalculerDistanceEntreDeuxCoordonnées(A,B)*Mathf.Sin(deltaLat));
     }
-    static float CalculerDistanceYEntreDeuxCoordonnées(GPSCoordinate A, GPSCoordinate B)//le y c le z dans vector3
+    public static float CalculerDistanceYEntreDeuxCoordonnées(GPSCoordinate A, GPSCoordinate B)//le y c le z dans vector3
     {
         float deltaLong = (float) (B.Longitude * PROP_DEGRÉ_RAD - A.Longitude * PROP_DEGRÉ_RAD);
         return Mathf.Abs(CalculerDistanceEntreDeuxCoordonnées(A,B)*Mathf.Sin(deltaLong));

@@ -29,6 +29,12 @@ public class Node
 
      }
 
+     public double CalculateEdgeLength(Node node1, Node node2)
+     {
+
+         return GPSCoordinate.CalculerDistanceEntreDeuxCoordonnées(node1.CoordonéesGPS, node2.CoordonéesGPS);
+     }
+
      // public void TrouverPosition()
      // {
      //     

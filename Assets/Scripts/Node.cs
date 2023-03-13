@@ -1,15 +1,21 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
 using Graphs;
 using System.IO;
+using System.Linq;
 using Unity.VisualScripting;
 
 public class Node
 {
 
      private StreamReader fluxLecture;
-     private const string PATH = "Assets/DataNodes";
+     private const string PATH = "Assets/RessourcesGPS/DataNodes";
+     private const int NB_NODES_PAR_ÉTAGE = 9;
+     private string[] délimiteurs = {"\t"};
+     private List<string>dataTab;
      public GPSCoordinate CoordonéesGPS { get; set; }
      
      public int Nombre { get; set; }
@@ -46,10 +52,33 @@ public class Node
              CalculerDistanceEntreDeuxCoordonnées(node1.CoordonéesGPS, node2.CoordonéesGPS);
      }
 
-     public List<Node>GetNodeData(string fichierNodes, List<Node>nodes)
+     public List<Node>GetNodeData(string fichierNodesName, List<Node>nodes)
      {
+         var fichierÀlire = $"{PATH}/{fichierNodesName}";
+         fluxLecture = new StreamReader(fichierÀlire);
+         
          nodes = new List<Node>();
          
+         var données = string.Empty;
+         using (fluxLecture)
+         {
+             string ligne;
+             while ((ligne = fluxLecture.ReadLine()) != null)
+                 données += ligne + "\t";
+         }
+         
+         dataTab = données.Split(délimiteurs, StringSplitOptions.RemoveEmptyEntries).ToList();
+         
+         return nodes;
+         
+     }
+
+     public bool ToBool(string valeurBool)
+     {
+         if (valeurBool == "true")
+             return true;
+
+         return false;
      }
 
      // public void TrouverPosition()

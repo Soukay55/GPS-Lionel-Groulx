@@ -1,9 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Graphs;
+using System.IO;
+using Unity.VisualScripting;
 
 public class Node
 {
+
+     private StreamReader fluxLecture;
+     private const string PATH = "Assets/DataNodes";
      public GPSCoordinate CoordonéesGPS { get; set; }
      
      public int Nombre { get; set; }
@@ -18,6 +24,10 @@ public class Node
                                            //and calculate this pos en faisant (0,0)+(distanceX,distanceY) de GPSCoord
      public List<int>ConnectedNodes { get; set; }//num d nodes qui peuvent y connect
 
+     public void Start()
+     {
+        // List<nodes>
+     }
      public Node(int nombre, string nom, bool estEndroitPublic, int étage, List<int>connectedNodes)
      {
          Nombre = nombre;
@@ -32,7 +42,14 @@ public class Node
      public double CalculateEdgeLength(Node node1, Node node2)
      {
 
-         return GPSCoordinate.CalculerDistanceEntreDeuxCoordonnées(node1.CoordonéesGPS, node2.CoordonéesGPS);
+         return GPSCoordinate.
+             CalculerDistanceEntreDeuxCoordonnées(node1.CoordonéesGPS, node2.CoordonéesGPS);
+     }
+
+     public List<Node>GetNodeData(string fichierNodes, List<Node>nodes)
+     {
+         nodes = new List<Node>();
+         
      }
 
      // public void TrouverPosition()

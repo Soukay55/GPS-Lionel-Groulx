@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using UnityEngine;
 using Graphs;
 using System.IO;
@@ -14,6 +15,7 @@ public class Node
      private StreamReader fluxLecture;
      private const string PATH = "Assets/RessourcesGPS/DataNodes";
      private const int NB_NODES_PAR_ÉTAGE = 9;
+     private const int NB_DONNÉES_PAR_NODE = 5;
      private string[] délimiteurs = {"\t"};
      private List<string>dataTab;
      public GPSCoordinate CoordonéesGPS { get; set; }
@@ -67,7 +69,7 @@ public class Node
                  données += ligne + "\t";
          }
          
-         dataTab = données.Split(délimiteurs, StringSplitOptions.RemoveEmptyEntries).ToList();
+         dataTab = données.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
          
          return nodes;
          
@@ -79,6 +81,19 @@ public class Node
              return true;
 
          return false;
+     }
+        
+     //the nodes input string are in the form 1,2,3
+     public List<int> ToList(string nodes )
+     {
+         List<int> nodeList = new List<int>();
+         List<string> nodeListString = new List<string>();
+         nodeListString=nodes.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
+         foreach (var node in nodeListString)
+         {
+             nodeList.Add(int.Parse(node, CultureInfo.InvariantCulture));
+         }
+         return nodeList;
      }
 
      // public void TrouverPosition()

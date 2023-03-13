@@ -70,6 +70,15 @@ public class Node
          }
          
          dataTab = données.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
+         for (int i = 0; i < dataTab.Count-1; i+=5)
+         {
+             int nombre = int.Parse(dataTab[i], CultureInfo.InvariantCulture);
+             string nom = dataTab[i + 1];
+             bool endroitPublic = ToBool(dataTab[i + 2]);
+             int étage=int.Parse(dataTab[i+3], CultureInfo.InvariantCulture);
+             List<int> connectedNodes = ToList(dataTab[i + 4]);
+             nodes.Add(new Node(nombre,nom,endroitPublic,étage,connectedNodes));
+         }
          
          return nodes;
          

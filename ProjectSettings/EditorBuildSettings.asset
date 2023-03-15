@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Choix local.unity
     guid: 14872d6586cd6bf408ee9e683bbc4767
+  - enabled: 1
+    path: Assets/Scenes/Avatar Menu.unity
+    guid: 33150049d72bc6a49be7e74ec14122fb
   m_configObjects: {}

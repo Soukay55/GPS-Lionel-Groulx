@@ -229,6 +229,7 @@ public class LocalValidation : MonoBehaviour
         items.Add("Aile M");
         items.Add("Aile E");
         
+        
         foreach (var item in items)
         {
             dropdownStage.options.Add(new TMP_Dropdown.OptionData() { text = item });

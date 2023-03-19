@@ -39,7 +39,7 @@ namespace GameAI
                 //la node jst avant quon arrive au nodepathfindr
                 public NodePathfinder Parent { get; set; }
                 
-                public Node Location{}
+              //  public Node Location{}
                 
             }
 

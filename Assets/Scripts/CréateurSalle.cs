@@ -13,7 +13,7 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
         //-
         //-
         
-    [Range(0.0f,10.0f)] public float longueurSalle,
+    [Range(0.0f,30.0f)] public float longueurSalle,
         largeurSalle;
 
     [SerializeField] public GameObject coinSalle; //Le prefab coinSalle part en bas
@@ -27,8 +27,9 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
     // Start is called before the first frame update
     void Start()
     {
-        CréerSalle();
-       // GénérerTablesEtChaises(false,Vector3.zero, 10,9,8);
+        //CréerSalle(); 
+        GénérerTablesEtChaises(false,Vector3.zero, 8,9,8);
+       // GénérerTablesEtChaises(false,Vector3.zero, 6,9,8);
     }
      void CréerSalle()//peutetre le partir du milieu a la place du top or calculer coin en bas a gauche(coingInfGauche)
                       //à partir de node gnr si node c (3,0,1), coinbasgauche c (3-longueur salle/2,0,1-largeursalle/2)
@@ -53,19 +54,20 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
 
          
          GameObject cotéHaut=Instantiate(cotéSalle, cotéHorzInf, Quaternion.Euler(0f, -90f, 0f));
-         cotéHaut.transform.localScale = new Vector3(largeurSalle - 2f * coinSalle.transform.localScale.x,1,1);
+         cotéHaut.transform.localScale = new Vector3(1,1,longueurSalle );
              
          GameObject cotéBas=Instantiate(cotéSalle, cotéHorzSup, Quaternion.Euler(0f, 90f, 0f));
-         cotéBas.transform.localScale = new Vector3(largeurSalle - 2f,1,1);
+         cotéBas.transform.localScale = new Vector3(1,1,longueurSalle );
          
          GameObject cotéLeft=Instantiate(cotéSalle, cotéGauche, Quaternion.Euler(0f, 0f, 0f));
-         cotéLeft.transform.localScale = new Vector3(1,1,longueurSalle - 2f * coinSalle.transform.localScale.z);
+         cotéLeft.transform.localScale = new Vector3(1,1,largeurSalle );
          
          GameObject cotéRight=Instantiate(cotéSalle, cotéDroite, Quaternion.Euler(0f, 180f, 0f));
-         cotéRight.transform.localScale = new Vector3(1,1,longueurSalle - 2f * coinSalle.transform.localScale.z);
+         cotéRight.transform.localScale = new Vector3(1,1,largeurSalle );
          
-         Vector3 floorPos = transform.position + new Vector3(longueurSalle / 2f, -0.5f, largeurSalle / 2f);
-         Instantiate(solSalle, floorPos, Quaternion.Euler(0, 0f, 0f));
+         Vector3 floorPos = transform.position + new Vector3(longueurSalle / 2f, 0f, largeurSalle / 2f);
+         GameObject sol=Instantiate(solSalle, floorPos, Quaternion.Euler(0, 0f, 0f));
+         sol.transform.localScale = new Vector3(longueurSalle - 1, 1, largeurSalle - 1);
      }
      
      //pour le carrefour étudiant, faut les chaises se forment autour d'un point
@@ -86,7 +88,7 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
 
              GameObject tableCentre = Instantiate(tablesEtChaises, transform.position, Quaternion.identity);
 
-             for (float j = 2; j < rayonMax + 1; j += 2)
+             for (float j = 1; j < rayonMax + 1; j += 1)
              {
 
                  for (float i = 1; i < nbTables + 1; i++)
@@ -95,8 +97,6 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
                      rotation = Quaternion.Euler(0, angle, 0);
                      position = transform.position + new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * j;
                      GameObject r = Instantiate(tablesEtChaises, position, rotation);
-
-
                  }
 
                  nbTables = nbTables * 1.66f;
@@ -107,6 +107,7 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
 
              return;
          }
+         
          //comme dans la cafet, on veut des chaises et des tables en longueur
          //selon rangées et colonnes et faire des "blocs" de tables et chaises organisées
          rotation=Quaternion.identity;

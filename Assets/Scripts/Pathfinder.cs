@@ -25,6 +25,7 @@ namespace GameAI
             {
                 get;
                 set;
+                
             } = StatutPathfinder.PAS_INITIALISÉ;
 
             public delegate float CalculerCoût(Node a, Node b);
@@ -38,8 +39,7 @@ namespace GameAI
             {
                 //la node jst avant quon arrive au nodepathfindr
                 public NodePathfinder Parent { get; set; }
-                
-              //  public Node Location{}
+                public Node Location { get; set; }
                 
             }
 

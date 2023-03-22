@@ -1,3 +1,13 @@
-Nodes
-
-1	CentreCouloirD
+(Delete this after:IrregularNodes:)
+1	CentreD,DébutL,EscaliersD,Ascensceur,Co-op	false	A	2,7,19,1B
+2	D040,Kafé	false	A	1,3
+3	Entrée,Sortie,Toilettes,D023ÀD026	false	A	2,4,6
+4	D012,D013ÀD023	false	A	3,5
+5	EscaliersN,FinD,DébutN,Ascensceur	false	A	4,5B
+6	EscaliersD,D026	false	A	3,6B
+7	Toilettes	false	A	1,8
+8	Entrée,Sortie	false	A	7,9
+9	Escaliers	false A	8,10,20,22	
+10	Carrefour	true	A	9,11,19
+11	EntréeS,EntréeCarrefour,S011ÀS013,E10	false	A	10,12
+12	S006

@@ -34,7 +34,7 @@ namespace GameAI
             public CalculerCoût CoûtTransnodal { get; set; }
             
             
-            //pt mettre node class abstraite pr que ca herite de
+            //pt mettre node class abstraite pr que ca herite de Node
             public class NodePathfinder
             {
                 //la node jst avant quon arrive au nodepathfindr
@@ -42,8 +42,6 @@ namespace GameAI
                 public Node Location { get; set; }
                 
             }
-
-
 
         }
         

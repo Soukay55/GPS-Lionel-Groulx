@@ -11,13 +11,12 @@ public class PathfindingNode : Node
 
     public List<int> ConnectedNodes { get; set; }
 
-    public PathfindingNode ParentNode { get; set; }
 
     public bool EstDansClosedList { get; set; } = false;
 
     public bool EstDansOpenList { get; set; } = false;
 
-    public PathfindingNode Départ { get; set; }
+    
 
     public float FCost { get; set; }
     public float HCost { get; set; }

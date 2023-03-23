@@ -7,7 +7,8 @@ namespace GameAI
 {
     namespace Pathfinding
     {
-        public enum StatutPathfinder
+         
+        /*public enum StatutPathfinder
         {
             PAS_INITIALISÉ,
             SUCCES,
@@ -39,11 +40,12 @@ namespace GameAI
             {
                 //la node jst avant quon arrive au nodepathfindr
                 public NodePathfinder Parent { get; set; }
-                public Node Location { get; set; }
+                public Vector3 Location { get; set; }
                 
             }
 
         }
+        */
         
     }
 

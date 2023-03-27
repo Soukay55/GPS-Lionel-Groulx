@@ -6,11 +6,11 @@ public class GeoLocalisation : MonoBehaviour
 {
     private void Start()
     {
-          //throw new NotImplementedException();
-          StartCoroutine(GPSLoc());
+        //throw new NotImplementedException();
+        StartCoroutine(GPSLoc());
     }
 
-    IEnumerator GPSLoc()
+    private IEnumerator GPSLoc()
     {
         // Check if the user has location service enabled.
         if (!Input.location.isEnabledByUser)
@@ -20,7 +20,7 @@ public class GeoLocalisation : MonoBehaviour
         Input.location.Start();
 
         // Waits until the location service initializes
-        int maxWait = 20;
+        var maxWait = 20;
         while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
         {
             yield return new WaitForSeconds(1);
@@ -43,9 +43,9 @@ public class GeoLocalisation : MonoBehaviour
         else
         {
             // If the connection succeeded, this retrieves the device's current location and displays it in the Console window.
-            print("Location: " + 
+            print("Location: " +
                   Input.location.lastData.latitude + " "
-                  + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " 
+                  + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " "
                   + Input.location.lastData.horizontalAccuracy
                   + " " + Input.location.lastData.timestamp);
         }

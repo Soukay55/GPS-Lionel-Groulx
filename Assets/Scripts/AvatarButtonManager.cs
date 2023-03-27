@@ -6,19 +6,19 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+
 public class AvatarButtonManager : MonoBehaviour
 {
     [SerializeField]
     //[Header("Boutons")]
-    public Button button1, 
-        button2, 
-        button3, 
+    public Button button1,
+        button2,
+        button3,
         button4;
 
     public Image image;
 
-    [SerializeField] [Header("Avatar")]
-    public GameObject username;
+    [SerializeField] [Header("Avatar")] public GameObject username;
 
     //public Avatar avatar;
     public Avatar avatar;
@@ -30,8 +30,8 @@ public class AvatarButtonManager : MonoBehaviour
 
     private Quaternion rotDépart;
     // Start is called before the first frame update
-    
-    void Start()
+
+    private void Start()
     {
         isClicked = false;
         isRotating = false;
@@ -41,48 +41,47 @@ public class AvatarButtonManager : MonoBehaviour
         image.gameObject.SetActive(false);
         username.SetActive(false);
         rotDépart = avatar.transform.rotation;
-    
+
         // for (int i = 0; i < buttons.Length; i++)
         // {
         //    //buttons[i] = gameObject.transform.GetChild(i).gameObject;
         //
         // }
-        
+
         button1.onClick.AddListener(ComportementCouleur);
         button2.onClick.AddListener(ComportementChangementCouleur);
         button3.onClick.AddListener(ComportementChangerNom);
         button4.onClick.AddListener(ComportementQuitter);
     }
 
-    void ComportementCouleur()
+    private void ComportementCouleur()
     {
         SetObjects(true, true, false, true);
         image.gameObject.SetActive(true);
         isRotating = true;
         isClicked = true;
     }
-    
-    void ComportementChangementCouleur()
+
+    private void ComportementChangementCouleur()
     {
-       avatar.Couleur=Random.ColorHSV();
+        avatar.Couleur = Random.ColorHSV();
 
-       avatar.GetComponentInChildren<SkinnedMeshRenderer>().materials[0].color = avatar.Couleur;
-
+        avatar.GetComponentInChildren<SkinnedMeshRenderer>().materials[0].color = avatar.Couleur;
     }
-    
-    void ComportementChangerNom()
+
+    private void ComportementChangerNom()
     {
-         isClicked = true;
-         SetObjects(false,false,true,true); 
-         username.SetActive(true);
+        isClicked = true;
+        SetObjects(false, false, true, true);
+        username.SetActive(true);
         // avatar.Username = 
     }
-    
-    void ComportementQuitter()
+
+    private void ComportementQuitter()
     {
-        if (isClicked=true)
+        if (isClicked = true)
         {
-            SetObjects(true,false,true,true);
+            SetObjects(true, false, true, true);
             image.gameObject.SetActive(false);
             isRotating = false;
             isClicked = false;
@@ -92,30 +91,21 @@ public class AvatarButtonManager : MonoBehaviour
         {
             SceneManager.LoadScene("Menu d'entrée");
         }
-        
     }
 
-    void SetObjects(bool etat1, bool etat2, bool etat3, bool etat4)
+    private void SetObjects(bool etat1, bool etat2, bool etat3, bool etat4)
     {
         button1.gameObject.SetActive(etat1);
         button2.gameObject.SetActive(etat2);
         button3.gameObject.SetActive(etat3);
         button4.gameObject.SetActive(etat4);
-        
-        
     }
+
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (image.IsActive())
-        {
-            image.color = avatar.GetComponentInChildren<SkinnedMeshRenderer>().materials[0].color;
-        }
-        
-        if (isRotating == true)
-        {
-            avatar.transform.Rotate(Vector3.up *speed * Time.deltaTime);
-        }
-        
+        if (image.IsActive()) image.color = avatar.GetComponentInChildren<SkinnedMeshRenderer>().materials[0].color;
+
+        if (isRotating == true) avatar.transform.Rotate(Vector3.up * speed * Time.deltaTime);
     }
 }

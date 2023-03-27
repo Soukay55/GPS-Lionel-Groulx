@@ -9,7 +9,7 @@ public class ShowVerticesComponent : MonoBehaviour
     private int[,] vert2unique;
     private Color[] colours;
     private bool started = false;
-    int nUniqueVertices = 1;
+    private int nUniqueVertices = 1;
     public bool up = false;
 
     private void Update()
@@ -17,11 +17,12 @@ public class ShowVerticesComponent : MonoBehaviour
         if (up)
             vertices = GetComponent<MeshFilter>().sharedMesh.vertices;
     }
+
     private void Start()
     {
         vertices = GetComponent<MeshFilter>().sharedMesh.vertices;
-        
-        int nVertices = vertices.Length;
+
+        var nVertices = vertices.Length;
         Debug.Log(vertices.Length);
         vert2unique = new int[nVertices, 2];
         positions = new int[nVertices, 2];
@@ -29,14 +30,13 @@ public class ShowVerticesComponent : MonoBehaviour
         positions[0, 1] = 1;
         vert2unique[0, 0] = 0;
         vert2unique[0, 1] = 1;
-        for (int i = 1; i < nVertices; ++i)
+        for (var i = 1; i < nVertices; ++i)
         {
             vert2unique[i, 0] = i;
             vert2unique[i, 1] = 1;
-            bool isUnique = true;
-            Vector3 currentVertex = vertices[i];
-            for (int j = 0; j < nUniqueVertices && isUnique; ++j)
-            {
+            var isUnique = true;
+            var currentVertex = vertices[i];
+            for (var j = 0; j < nUniqueVertices && isUnique; ++j)
                 if (Vector3.Distance(vertices[positions[j, 0]], currentVertex) < 0.01f)
                 {
                     vert2unique[i, 0] = j;
@@ -44,7 +44,7 @@ public class ShowVerticesComponent : MonoBehaviour
                     vert2unique[i, 1] = positions[j, 1];
                     isUnique = false;
                 }
-            }
+
             if (isUnique)
             {
                 positions[nUniqueVertices, 0] = i;
@@ -52,6 +52,7 @@ public class ShowVerticesComponent : MonoBehaviour
                 nUniqueVertices++;
             }
         }
+
         GenerateColours(nUniqueVertices);
         started = true;
     }
@@ -59,9 +60,9 @@ public class ShowVerticesComponent : MonoBehaviour
     private void GenerateColours(int nUniqueVertices)
     {
         colours = new Color[nUniqueVertices];
-        float delta = 1.0f / (nUniqueVertices - 1);
+        var delta = 1.0f / (nUniqueVertices - 1);
         float h = 0;
-        for (int i = 0; i < nUniqueVertices; ++i)
+        for (var i = 0; i < nUniqueVertices; ++i)
         {
             colours[i] = Color.HSVToRGB(h, 1, 1);
             h += delta;
@@ -72,9 +73,9 @@ public class ShowVerticesComponent : MonoBehaviour
     {
         if (!Application.isPlaying || !started)
             return;
-        
-        Vector3[] worldPositions = new Vector3[nUniqueVertices];
-        for (int i = 0; i < nUniqueVertices; ++i)
+
+        var worldPositions = new Vector3[nUniqueVertices];
+        for (var i = 0; i < nUniqueVertices; ++i)
         {
             Gizmos.color = colours[i];
             var worldPos = transform.localToWorldMatrix.MultiplyPoint3x4(vertices[positions[i, 0]]);
@@ -82,14 +83,13 @@ public class ShowVerticesComponent : MonoBehaviour
             Gizmos.DrawSphere(worldPos, .1f);
         }
 
-        for (int i = 0; i < vertices.Length; ++i)
+        for (var i = 0; i < vertices.Length; ++i)
         {
             var q = vert2unique[i, 1] - 1;
-            var worldPos = 
-                transform.localToWorldMatrix.MultiplyPoint3x4(vertices[i]) + Vector3.down/7f * q + Vector3.down/9f;
+            var worldPos =
+                transform.localToWorldMatrix.MultiplyPoint3x4(vertices[i]) + Vector3.down / 7f * q + Vector3.down / 9f;
 
             Handles.Label(worldPos, i.ToString());
         }
     }
 }
-

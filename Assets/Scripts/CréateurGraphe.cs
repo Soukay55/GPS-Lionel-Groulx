@@ -6,11 +6,12 @@ using UnityEngine;
 public class CréateurGraphe : MonoBehaviour
 {
     private List<Node> Nodes;
-    private List<Vertex> Sommets;// pour get les sommets c node.point so faut
-                                 // add le calcul soit ds graphe ou node idk yet
-    void Start()
+
+    private List<Vertex> Sommets; // pour get les sommets c node.point so faut
+
+    // add le calcul soit ds graphe ou node idk yet
+    private void Start()
     {
-        
     }
 
     // public void CréerGraphe()

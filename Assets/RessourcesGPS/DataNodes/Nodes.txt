@@ -1,4 +1,4 @@
-(Delete this after:IrregularNodes:)
+(Delete this after)-->IrregularNodes:10,11,21,22,25,26,29++
 1	CentreD,DébutL,EscaliersD,Ascensceur,Co-op	false	A	2,7,19,1B
 2	D040,Kafé	false	A	1,3
 3	Entrée,Sortie,Toilettes,D023ÀD026	false	A	2,4,6
@@ -11,4 +11,19 @@
 10	Carrefour	true	A	9,11,19
 11	EntréeS,EntréeCarrefour,S011ÀS013,E10	false	A	10,12
 12	S004ÀS016,MilieuCouloirS,S009ÀS013	false	A	11,13,27	
-13	QuartCouloirS,Ascenseur,EscalierS, S004ÀS006,S001ÀS009	false	A 12,14,13B		
+13	QuartCouloirS,Ascenseur,EscalierS,S004ÀS006,S001ÀS009	false	A 12,14,13B		
+14	DébutCouloirL,EntréeCafétéria,L015ÀL019,L014ÀL016	false	A	13,15,19
+15	3QuartCouloirL,L008ÀL012,L007ÀL015	false A 14,16
+16	FinCouloirL,Toilettes, DébutCouloirF,Entre2,L006	true	A	
+17	EscaliersF,L002ÀL004,F007ÀF05,F0010ÀF016	false	A	16,17B,18
+18	FinCouloirF, Sortie,F001ÀF007,F002ÀF010	false A 17,31
+19	Cafétéria,QuartCouloirD	true	A	1,10,14
+20	EscaliersD,E007ÀE015	false	A	9,20B,21
+21	CafétériaModulaire,Toilettes,EscaliersC,CSO3	false	A	20,22,23
+22	C101ÀC105	false	A	9,21	
+23	EscaliersC,Sortie,C012	false	A	21,23B,24
+24	C014,Toilettes	false	A	23,25	
+25	EscaliersC,C105ÀC121,Toilettes,C016,C022	false	A	24,26
+26	C041ÀC045,Sortie	false A	25
+27	3QuartCouloirS,EscaliersS,S018ÀS022	false	A	12,27B, 28
+28	

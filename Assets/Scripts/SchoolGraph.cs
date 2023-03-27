@@ -4,11 +4,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using UnityEngine;
-using Graphs;
 using System.IO;
 using System.Linq;
 using Unity.VisualScripting;
-using Graphs;
 
 public class SchoolGraph : MonoBehaviour
 {
@@ -82,6 +80,7 @@ public class SchoolGraph : MonoBehaviour
             {
                 var nameList = ToNameList(dataTab[i + 1]);
                 //THE NUMBER ISNT THE SAME FOR ALL OF THEM!
+                //WHEN ADAPT NUMBER, THE CONNECTED NODES FOR EACH NODE NEEDS
                 foreach (var name in nameList.Skip(1))
                     nodesToAdd.Add(new GameNode(nombre, name, endroitPublic,
                         étage, connectedNodes, coordonéesGps));

@@ -10,10 +10,12 @@ namespace GameAI
         public class Pathfinder
         {
             public PathfindingNode ParentNode { get; set; }
-            
+
             public PathfindingNode Départ { get; set; }
 
             public PathfindingNode Arrivée { get; set; }
+            
+                
 
             /*public enum StatutPathfinder
             {
@@ -55,6 +57,4 @@ namespace GameAI
             */
         }
     }
-
-    
 }

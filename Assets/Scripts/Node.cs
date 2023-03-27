@@ -11,7 +11,6 @@ using Unity.VisualScripting;
 
 public class Node //was abstract rly the rite move 4dis?
 {
-  
     public GPSCoordinate CoordonéesGPS { get; set; }
     public int Nombre { get; set; }
     public string Nom { get; set; }
@@ -19,19 +18,13 @@ public class Node //was abstract rly the rite move 4dis?
 
     public Vector3 Position { get; set; } //position aek unity: désigne point(0,0),
     //and calculate this pos en faisant (0,0)+(distanceX,distanceY) de GPSCoord
-    
 
-    public Node( int nombre, string nom,  Étage étage, GPSCoordinate coordonéesGps)
+
+    public Node(int nombre, string nom, Étage étage, GPSCoordinate coordonéesGps)
     {
-         
         Nombre = nombre;
         Nom = nom;
         Niveau = étage;
         CoordonéesGPS = coordonéesGps;
     }
-
-
-    
-    
-    
 }

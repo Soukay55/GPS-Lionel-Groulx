@@ -9,35 +9,41 @@ using System.IO;
 using System.Linq;
 using Unity.VisualScripting;
 using Graphs;
+
 public class SchoolGraph : MonoBehaviour
 {
     private void Start()
     {
-        SchoolGraph GrapheÉcole = new SchoolGraph(GetNodeData("Nodes"));
+        var GrapheÉcole = new SchoolGraph(GetNodeData("Nodes"));
     }
 
     private StreamReader fluxLecture;
+
     private const string PATH = "Assets/RessourcesGPS/DataNodes";
+
     //private const int NB_NODES_PAR_ÉTAGE = 9;
     private const int NB_DONNÉES_PAR_NODE = 6;
-    private string[] délimiteurs = {"\t"};
-    private List<string>dataTab;
-    
-    private List<Node>Nodes;
-    private List<Node>nodesToAdd;// pour get les sommets c node.point so faut
+    private string[] délimiteurs = { "\t" };
+    private List<string> dataTab;
+    private bool plusQueUnNom = false;
+    private List<Node> Nodes;
+
+    private List<Node> nodesToAdd; // pour get les sommets c node.point so faut
     // add le calcul soit ds graphe ou node idk yet
 
-    public SchoolGraph(List<Node>nodes)
+    public SchoolGraph(List<Node> nodes)
     {
-        List<Node> Nodes = nodes;
+        var Nodes = nodes;
     }
-     public List<Node>GetNodeData(string fichierNodesName)
+
+    public List<Node> GetNodeData(string fichierNodesName)
     {
         var fichierÀlire = $"{PATH}/{fichierNodesName}";
         fluxLecture = new StreamReader(fichierÀlire);
-         
-        List<Node>nodes = new List<Node>();
-         
+
+        var nodes = new List<Node>();
+        nodesToAdd = new List<Node>();
+
         var données = string.Empty;
         using (fluxLecture)
         {
@@ -45,23 +51,44 @@ public class SchoolGraph : MonoBehaviour
             while ((ligne = fluxLecture.ReadLine()) != null)
                 données += ligne + "\t";
         }
-         
+
         dataTab = données.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
-        for (int i = 0; i < dataTab.Count-1; i+=NB_DONNÉES_PAR_NODE)
+
+        var étageComparateur = Étage.A;
+
+        for (var i = 0; i < dataTab.Count - 1; i += NB_DONNÉES_PAR_NODE)
         {
+            var nombre = int.Parse(dataTab[i], CultureInfo.InvariantCulture);
+
+            var nom = ToNameList(dataTab[i + 1])[0];
+
+            var endroitPublic = ToBool(dataTab[i + 2]);
             
-            int nombre = int.Parse(dataTab[i], CultureInfo.InvariantCulture);
-            string nom = ToNameList((dataTab[i + 1]))[0];
-            bool endroitPublic = ToBool(dataTab[i + 2]);
-            Étage étage = ToÉtage(dataTab[i + 3]);
-            List<int> connectedNodes = ToList(dataTab[i + 4]);
-            GPSCoordinate coordonéesGps = ToGpsCoordinate(dataTab[i + 5]);
+            var étage = ToÉtage(dataTab[i + 3]);
             
-            nodes.Add(new GameNode(nombre,nom,endroitPublic,étage,connectedNodes,coordonéesGps));
+            var connectedNodes = ToList(dataTab[i + 4]);
+            
+            var coordonéesGps = ToGpsCoordinate(dataTab[i + 5]);
+
+            if (étage > étageComparateur)
+            {
+                nodesToAdd.Concat(nodesToAdd);
+                if (étage != Étage.O)
+                    étageComparateur++;
+            }
+
+            nodes.Add(new GameNode(nombre, nom, endroitPublic, étage, connectedNodes, coordonéesGps));
+            if (plusQueUnNom = true)
+            {
+                var nameList = ToNameList(dataTab[i + 1]);
+                //THE NUMBER ISNT THE SAME FOR ALL OF THEM!
+                foreach (var name in nameList.Skip(1))
+                    nodesToAdd.Add(new GameNode(nombre, name, endroitPublic,
+                        étage, connectedNodes, coordonéesGps));
+            }
         }
-         
+
         return nodes;
-         
     }
 
     public bool ToBool(string valeurBool)
@@ -74,35 +101,32 @@ public class SchoolGraph : MonoBehaviour
 
     public List<string> ToNameList(string listeNoms)
     {
-        return listeNoms.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
+        var noms = listeNoms.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
+        if (noms.Count > 1)
+            plusQueUnNom = true;
+        return noms;
     }
 
     public GPSCoordinate ToGpsCoordinate(string coordonéeGPS)
     {
-        var coord=coordonéeGPS.Split(",", StringSplitOptions.RemoveEmptyEntries);
-         
+        var coord = coordonéeGPS.Split(",", StringSplitOptions.RemoveEmptyEntries);
+
         return new GPSCoordinate(double.Parse(coord[0]), double.Parse(coord[1]));
-         
     }
-        
+
     //the nodes input string are in the form 1,2,3
-    public List<int> ToList(string nodes )
+    public List<int> ToList(string nodes)
     {
-        List<int> nodeList = new List<int>();
-        List<string> nodeListString = new List<string>();
-        nodeListString=nodes.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
-        foreach (var node in nodeListString)
-        {
-            nodeList.Add(int.Parse(node, CultureInfo.InvariantCulture));
-        }
+        var nodeList = new List<int>();
+        var nodeListString = new List<string>();
+        nodeListString = nodes.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
+        foreach (var node in nodeListString) nodeList.Add(int.Parse(node, CultureInfo.InvariantCulture));
         return nodeList;
     }
 
     public Étage ToÉtage(string étage)
     {
-        string étages = "ABGHIO";
-        return (Étage)étages.IndexOf(étage);    
-
-
+        var étages = "ABGHIO";
+        return (Étage)étages.IndexOf(étage);
     }
 }

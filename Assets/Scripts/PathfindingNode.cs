@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class PathfindingNode : Node
 {
-
     public bool EstEndroitPublic { get; set; } //anything that isnt a classsroom
 
     public bool EstTraversable { get; set; }
+
+    public string Instructions { get; set; }
 
     public List<int> ConnectedNodes { get; set; }
 
@@ -16,9 +17,10 @@ public class PathfindingNode : Node
 
     public bool EstDansOpenList { get; set; } = false;
 
-    
 
-    public float FCost { get; set; }
+    public float FCost
+    {
+        get { return HCost + GCost;}  }
     public float HCost { get; set; }
     public float GCost { get; set; }
 
@@ -29,7 +31,5 @@ public class PathfindingNode : Node
     {
         ConnectedNodes = connectedNodes;
         EstEndroitPublic = estEndroitPublic;
-
-
     }
 }

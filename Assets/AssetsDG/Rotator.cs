@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Rotator : MonoBehaviour {
-    [SerializeField]
-    float rotateSpeed;
+public class Rotator : MonoBehaviour
+{
+    [SerializeField] private float rotateSpeed;
 
-    new Transform transform;
+    private new Transform transform;
 
-    void Start() {
+    private void Start()
+    {
         transform = GetComponent<Transform>();
     }
 
-    void Update() {
+    private void Update()
+    {
         transform.Rotate(0, rotateSpeed * Time.deltaTime, 0);
     }
 }

@@ -6,7 +6,7 @@ public class Avatar : MonoBehaviour
 {
     public string Username;
     public Color Couleur;
-    
+
 
     // Update is called once per frame
     public Avatar(string username, Color couleur)

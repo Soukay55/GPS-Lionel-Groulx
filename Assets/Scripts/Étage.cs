@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-    public enum Étage{A,B,G,H,I,O }
-    
-
- 
-
+public enum Étage
+{
+    A,
+    B,
+    G,
+    H,
+    I,
+    O
+}

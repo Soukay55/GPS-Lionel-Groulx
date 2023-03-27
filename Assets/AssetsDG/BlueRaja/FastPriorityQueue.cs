@@ -23,10 +23,7 @@ namespace BlueRaja
         public FastPriorityQueue(int maxNodes)
         {
 #if DEBUG
-            if (maxNodes <= 0)
-            {
-                throw new InvalidOperationException("New queue size cannot be smaller than 1");
-            }
+            if (maxNodes <= 0) throw new InvalidOperationException("New queue size cannot be smaller than 1");
 #endif
 
             _numNodes = 0;
@@ -37,25 +34,13 @@ namespace BlueRaja
         /// Returns the number of nodes in the queue.
         /// O(1)
         /// </summary>
-        public int Count
-        {
-            get
-            {
-                return _numNodes;
-            }
-        }
+        public int Count => _numNodes;
 
         /// <summary>
         /// Returns the maximum number of items that can be enqueued at once in this queue.  Once you hit this number (ie. once Count == MaxSize),
         /// attempting to enqueue another item will cause undefined behavior.  O(1)
         /// </summary>
-        public int MaxSize
-        {
-            get
-            {
-                return _nodes.Length - 1;
-            }
-        }
+        public int MaxSize => _nodes.Length - 1;
 
         /// <summary>
         /// Removes every node from the queue.
@@ -81,21 +66,16 @@ namespace BlueRaja
         public bool Contains(T node)
         {
 #if DEBUG
-            if(node == null)
-            {
-                throw new ArgumentNullException("node");
-            }
+            if (node == null) throw new ArgumentNullException("node");
             if (node.Queue != null && !Equals(node.Queue))
-            {
-                throw new InvalidOperationException("node.Contains was called on a node from another queue.  Please call originalQueue.ResetNode() first");
-            }
-            if(node.QueueIndex < 0 || node.QueueIndex >= _nodes.Length)
-            {
-                throw new InvalidOperationException("node.QueueIndex has been corrupted. Did you change it manually? Or add this node to another queue?");
-            }
+                throw new InvalidOperationException(
+                    "node.Contains was called on a node from another queue.  Please call originalQueue.ResetNode() first");
+            if (node.QueueIndex < 0 || node.QueueIndex >= _nodes.Length)
+                throw new InvalidOperationException(
+                    "node.QueueIndex has been corrupted. Did you change it manually? Or add this node to another queue?");
 #endif
 
-            return (_nodes[node.QueueIndex] == node);
+            return _nodes[node.QueueIndex] == node;
         }
 
         /// <summary>
@@ -111,22 +91,13 @@ namespace BlueRaja
         public void Enqueue(T node, float priority)
         {
 #if DEBUG
-            if(node == null)
-            {
-                throw new ArgumentNullException("node");
-            }
-            if(_numNodes >= _nodes.Length - 1)
-            {
+            if (node == null) throw new ArgumentNullException("node");
+            if (_numNodes >= _nodes.Length - 1)
                 throw new InvalidOperationException("Queue is full - node cannot be added: " + node);
-            }
             if (node.Queue != null && !Equals(node.Queue))
-            {
-                throw new InvalidOperationException("node.Enqueue was called on a node from another queue.  Please call originalQueue.ResetNode() first");
-            }
-            if (Contains(node))
-            {
-                throw new InvalidOperationException("Node is already enqueued: " + node);
-            }
+                throw new InvalidOperationException(
+                    "node.Enqueue was called on a node from another queue.  Please call originalQueue.ResetNode() first");
+            if (Contains(node)) throw new InvalidOperationException("Node is already enqueued: " + node);
             node.Queue = this;
 #endif
 
@@ -144,11 +115,11 @@ namespace BlueRaja
         {
             //aka Heapify-up
             int parent;
-            if(node.QueueIndex > 1)
+            if (node.QueueIndex > 1)
             {
                 parent = node.QueueIndex >> 1;
-                T parentNode = _nodes[parent];
-                if(HasHigherOrEqualPriority(parentNode, node))
+                var parentNode = _nodes[parent];
+                if (HasHigherOrEqualPriority(parentNode, node))
                     return;
 
                 //Node has lower priority value, so move parent down the heap to make room
@@ -161,11 +132,12 @@ namespace BlueRaja
             {
                 return;
             }
-            while(parent > 1)
+
+            while (parent > 1)
             {
                 parent >>= 1;
-                T parentNode = _nodes[parent];
-                if(HasHigherOrEqualPriority(parentNode, node))
+                var parentNode = _nodes[parent];
+                if (HasHigherOrEqualPriority(parentNode, node))
                     break;
 
                 //Node has lower priority value, so move parent down the heap to make room
@@ -174,6 +146,7 @@ namespace BlueRaja
 
                 node.QueueIndex = parent;
             }
+
             _nodes[node.QueueIndex] = node;
         }
 
@@ -183,22 +156,19 @@ namespace BlueRaja
         private void CascadeDown(T node)
         {
             //aka Heapify-down
-            int finalQueueIndex = node.QueueIndex;
-            int childLeftIndex = 2 * finalQueueIndex;
+            var finalQueueIndex = node.QueueIndex;
+            var childLeftIndex = 2 * finalQueueIndex;
 
             // If leaf node, we're done
-            if(childLeftIndex > _numNodes)
-            {
-                return;
-            }
+            if (childLeftIndex > _numNodes) return;
 
             // Check if the left-child is higher-priority than the current node
-            int childRightIndex = childLeftIndex + 1;
-            T childLeft = _nodes[childLeftIndex];
-            if(HasHigherPriority(childLeft, node))
+            var childRightIndex = childLeftIndex + 1;
+            var childLeft = _nodes[childLeftIndex];
+            if (HasHigherPriority(childLeft, node))
             {
                 // Check if there is a right child. If not, swap and finish.
-                if(childRightIndex > _numNodes)
+                if (childRightIndex > _numNodes)
                 {
                     node.QueueIndex = childLeftIndex;
                     childLeft.QueueIndex = finalQueueIndex;
@@ -206,9 +176,10 @@ namespace BlueRaja
                     _nodes[childLeftIndex] = node;
                     return;
                 }
+
                 // Check if the left-child is higher-priority than the right-child
-                T childRight = _nodes[childRightIndex];
-                if(HasHigherPriority(childLeft, childRight))
+                var childRight = _nodes[childRightIndex];
+                if (HasHigherPriority(childLeft, childRight))
                 {
                     // left is highest, move it up and continue
                     childLeft.QueueIndex = finalQueueIndex;
@@ -224,15 +195,15 @@ namespace BlueRaja
                 }
             }
             // Not swapping with left-child, does right-child exist?
-            else if(childRightIndex > _numNodes)
+            else if (childRightIndex > _numNodes)
             {
                 return;
             }
             else
             {
                 // Check if the right-child is higher-priority than the current node
-                T childRight = _nodes[childRightIndex];
-                if(HasHigherPriority(childRight, node))
+                var childRight = _nodes[childRightIndex];
+                if (HasHigherPriority(childRight, node))
                 {
                     childRight.QueueIndex = finalQueueIndex;
                     _nodes[finalQueueIndex] = childRight;
@@ -245,12 +216,12 @@ namespace BlueRaja
                 }
             }
 
-            while(true)
+            while (true)
             {
                 childLeftIndex = 2 * finalQueueIndex;
 
                 // If leaf node, we're done
-                if(childLeftIndex > _numNodes)
+                if (childLeftIndex > _numNodes)
                 {
                     node.QueueIndex = finalQueueIndex;
                     _nodes[finalQueueIndex] = node;
@@ -260,10 +231,10 @@ namespace BlueRaja
                 // Check if the left-child is higher-priority than the current node
                 childRightIndex = childLeftIndex + 1;
                 childLeft = _nodes[childLeftIndex];
-                if(HasHigherPriority(childLeft, node))
+                if (HasHigherPriority(childLeft, node))
                 {
                     // Check if there is a right child. If not, swap and finish.
-                    if(childRightIndex > _numNodes)
+                    if (childRightIndex > _numNodes)
                     {
                         node.QueueIndex = childLeftIndex;
                         childLeft.QueueIndex = finalQueueIndex;
@@ -271,9 +242,10 @@ namespace BlueRaja
                         _nodes[childLeftIndex] = node;
                         break;
                     }
+
                     // Check if the left-child is higher-priority than the right-child
-                    T childRight = _nodes[childRightIndex];
-                    if(HasHigherPriority(childLeft, childRight))
+                    var childRight = _nodes[childRightIndex];
+                    if (HasHigherPriority(childLeft, childRight))
                     {
                         // left is highest, move it up and continue
                         childLeft.QueueIndex = finalQueueIndex;
@@ -289,7 +261,7 @@ namespace BlueRaja
                     }
                 }
                 // Not swapping with left-child, does right-child exist?
-                else if(childRightIndex > _numNodes)
+                else if (childRightIndex > _numNodes)
                 {
                     node.QueueIndex = finalQueueIndex;
                     _nodes[finalQueueIndex] = node;
@@ -298,8 +270,8 @@ namespace BlueRaja
                 else
                 {
                     // Check if the right-child is higher-priority than the current node
-                    T childRight = _nodes[childRightIndex];
-                    if(HasHigherPriority(childRight, node))
+                    var childRight = _nodes[childRightIndex];
+                    if (HasHigherPriority(childRight, node))
                     {
                         childRight.QueueIndex = finalQueueIndex;
                         _nodes[finalQueueIndex] = childRight;
@@ -325,7 +297,7 @@ namespace BlueRaja
 #endif
         private bool HasHigherPriority(T higher, T lower)
         {
-            return (higher.Priority < lower.Priority);
+            return higher.Priority < lower.Priority;
         }
 
         /// <summary>
@@ -337,7 +309,7 @@ namespace BlueRaja
 #endif
         private bool HasHigherOrEqualPriority(T higher, T lower)
         {
-            return (higher.Priority <= lower.Priority);
+            return higher.Priority <= lower.Priority;
         }
 
         /// <summary>
@@ -351,21 +323,17 @@ namespace BlueRaja
         public T Dequeue()
         {
 #if DEBUG
-            if(_numNodes <= 0)
-            {
-                throw new InvalidOperationException("Cannot call Dequeue() on an empty queue");
-            }
+            if (_numNodes <= 0) throw new InvalidOperationException("Cannot call Dequeue() on an empty queue");
 
-            if(!IsValidQueue())
-            {
-                throw new InvalidOperationException("Queue has been corrupted (Did you update a node priority manually instead of calling UpdatePriority()?" +
-                                                    "Or add the same node to two different queues?)");
-            }
+            if (!IsValidQueue())
+                throw new InvalidOperationException(
+                    "Queue has been corrupted (Did you update a node priority manually instead of calling UpdatePriority()?" +
+                    "Or add the same node to two different queues?)");
 #endif
 
-            T returnMe = _nodes[1];
+            var returnMe = _nodes[1];
             //If the node is already the last node, we can remove it immediately
-            if(_numNodes == 1)
+            if (_numNodes == 1)
             {
                 _nodes[1] = null;
                 _numNodes = 0;
@@ -373,7 +341,7 @@ namespace BlueRaja
             }
 
             //Swap the node with the last node
-            T formerLastNode = _nodes[_numNodes];
+            var formerLastNode = _nodes[_numNodes];
             _nodes[1] = formerLastNode;
             formerLastNode.QueueIndex = 1;
             _nodes[_numNodes] = null;
@@ -392,19 +360,15 @@ namespace BlueRaja
         public void Resize(int maxNodes)
         {
 #if DEBUG
-            if (maxNodes <= 0)
-            {
-                throw new InvalidOperationException("Queue size cannot be smaller than 1");
-            }
+            if (maxNodes <= 0) throw new InvalidOperationException("Queue size cannot be smaller than 1");
 
             if (maxNodes < _numNodes)
-            {
-                throw new InvalidOperationException("Called Resize(" + maxNodes + "), but current queue contains " + _numNodes + " nodes");
-            }
+                throw new InvalidOperationException("Called Resize(" + maxNodes + "), but current queue contains " +
+                                                    _numNodes + " nodes");
 #endif
 
-            T[] newArray = new T[maxNodes + 1];
-            int highestIndexToCopy = Math.Min(maxNodes, _numNodes);
+            var newArray = new T[maxNodes + 1];
+            var highestIndexToCopy = Math.Min(maxNodes, _numNodes);
             Array.Copy(_nodes, newArray, highestIndexToCopy + 1);
             _nodes = newArray;
         }
@@ -419,10 +383,7 @@ namespace BlueRaja
             get
             {
 #if DEBUG
-                if(_numNodes <= 0)
-                {
-                    throw new InvalidOperationException("Cannot call .First on an empty queue");
-                }
+                if (_numNodes <= 0) throw new InvalidOperationException("Cannot call .First on an empty queue");
 #endif
 
                 return _nodes[1];
@@ -441,18 +402,12 @@ namespace BlueRaja
         public void UpdatePriority(T node, float priority)
         {
 #if DEBUG
-            if(node == null)
-            {
-                throw new ArgumentNullException("node");
-            }
+            if (node == null) throw new ArgumentNullException("node");
             if (node.Queue != null && !Equals(node.Queue))
-            {
                 throw new InvalidOperationException("node.UpdatePriority was called on a node from another queue");
-            }
             if (!Contains(node))
-            {
-                throw new InvalidOperationException("Cannot call UpdatePriority() on a node which is not enqueued: " + node);
-            }
+                throw new InvalidOperationException("Cannot call UpdatePriority() on a node which is not enqueued: " +
+                                                    node);
 #endif
 
             node.Priority = priority;
@@ -465,17 +420,13 @@ namespace BlueRaja
         private void OnNodeUpdated(T node)
         {
             //Bubble the updated node up or down as appropriate
-            int parentIndex = node.QueueIndex >> 1;
+            var parentIndex = node.QueueIndex >> 1;
 
-            if(parentIndex > 0 && HasHigherPriority(node, _nodes[parentIndex]))
-            {
+            if (parentIndex > 0 && HasHigherPriority(node, _nodes[parentIndex]))
                 CascadeUp(node);
-            }
             else
-            {
                 //Note that CascadeDown will be called if parentNode == node (that is, node is the root)
                 CascadeDown(node);
-            }
         }
 
         /// <summary>
@@ -489,22 +440,15 @@ namespace BlueRaja
         public void Remove(T node)
         {
 #if DEBUG
-            if(node == null)
-            {
-                throw new ArgumentNullException("node");
-            }
+            if (node == null) throw new ArgumentNullException("node");
             if (node.Queue != null && !Equals(node.Queue))
-            {
                 throw new InvalidOperationException("node.Remove was called on a node from another queue");
-            }
             if (!Contains(node))
-            {
                 throw new InvalidOperationException("Cannot call Remove() on a node which is not enqueued: " + node);
-            }
 #endif
 
             //If the node is already the last node, we can remove it immediately
-            if(node.QueueIndex == _numNodes)
+            if (node.QueueIndex == _numNodes)
             {
                 _nodes[_numNodes] = null;
                 _numNodes--;
@@ -512,7 +456,7 @@ namespace BlueRaja
             }
 
             //Swap the node with the last node
-            T formerLastNode = _nodes[_numNodes];
+            var formerLastNode = _nodes[_numNodes];
             _nodes[node.QueueIndex] = formerLastNode;
             formerLastNode.QueueIndex = node.QueueIndex;
             _nodes[_numNodes] = null;
@@ -533,18 +477,11 @@ namespace BlueRaja
         public void ResetNode(T node)
         {
 #if DEBUG
-            if (node == null)
-            {
-                throw new ArgumentNullException("node");
-            }
+            if (node == null) throw new ArgumentNullException("node");
             if (node.Queue != null && !Equals(node.Queue))
-            {
                 throw new InvalidOperationException("node.ResetNode was called on a node from another queue");
-            }
             if (Contains(node))
-            {
                 throw new InvalidOperationException("node.ResetNode was called on a node that is still in the queue");
-            }
 
             node.Queue = null;
 #endif
@@ -558,7 +495,7 @@ namespace BlueRaja
             IEnumerable<T> e = new ArraySegment<T>(_nodes, 1, _numNodes);
             return e.GetEnumerator();
 #else
-            for(int i = 1; i <= _numNodes; i++)
+            for (var i = 1; i <= _numNodes; i++)
                 yield return _nodes[i];
 #endif
         }
@@ -574,19 +511,20 @@ namespace BlueRaja
         /// </summary>
         public bool IsValidQueue()
         {
-            for(int i = 1; i < _nodes.Length; i++)
-            {
-                if(_nodes[i] != null)
+            for (var i = 1; i < _nodes.Length; i++)
+                if (_nodes[i] != null)
                 {
-                    int childLeftIndex = 2 * i;
-                    if(childLeftIndex < _nodes.Length && _nodes[childLeftIndex] != null && HasHigherPriority(_nodes[childLeftIndex], _nodes[i]))
+                    var childLeftIndex = 2 * i;
+                    if (childLeftIndex < _nodes.Length && _nodes[childLeftIndex] != null &&
+                        HasHigherPriority(_nodes[childLeftIndex], _nodes[i]))
                         return false;
 
-                    int childRightIndex = childLeftIndex + 1;
-                    if(childRightIndex < _nodes.Length && _nodes[childRightIndex] != null && HasHigherPriority(_nodes[childRightIndex], _nodes[i]))
+                    var childRightIndex = childLeftIndex + 1;
+                    if (childRightIndex < _nodes.Length && _nodes[childRightIndex] != null &&
+                        HasHigherPriority(_nodes[childRightIndex], _nodes[i]))
                         return false;
                 }
-            }
+
             return true;
         }
     }

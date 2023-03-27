@@ -10,4 +10,5 @@
 9	Escaliers	false A	8,10,20,22	
 10	Carrefour	true	A	9,11,19
 11	EntréeS,EntréeCarrefour,S011ÀS013,E10	false	A	10,12
-12	S006
+12	S004ÀS016,MilieuCouloirS,S009ÀS013	false	A	11,13,27	
+13	QuartCouloirS,Ascenseur,EscalierS, S004ÀS006,S001ÀS009	false	A 12,14,13B		

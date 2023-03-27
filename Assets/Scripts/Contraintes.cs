@@ -450,8 +450,7 @@ public class Contraintes : MonoBehaviour
         SetObjects(false,false,true,true,true,true,true,false);
         SetSpecificObjects(false,false,false,false,false,false,false,false,false,false,false);
     }
-    
-    public void Dropdown1ValueChangedHappened(TMP_Dropdown dropdown)
+    void Dropdown1ValueChangedHappened(TMP_Dropdown dropdown)
     {
         var newSelectedIndex = dropdown.value;
         if (newSelectedIndex == 1)
@@ -460,13 +459,12 @@ public class Contraintes : MonoBehaviour
             SceneManager.LoadScene(5);
     }
 
-    public void Dropdown2ValueChangedHappened(TMP_Dropdown dropdown)
+    void Dropdown2ValueChangedHappened(TMP_Dropdown dropdown)
     {
         var newSelectedIndex = dropdown.value;
         choixDropdown2 = dropdown.options[newSelectedIndex].text;
     }
-    
-     public void Dropdown3ValueChangedHappened(TMP_Dropdown dropdown)
+      void Dropdown3ValueChangedHappened(TMP_Dropdown dropdown)
       {   
           int indexChoisi = dropdown.value;
           choixDropdown3 = dropdown.options[indexChoisi].text;
@@ -482,9 +480,8 @@ public class Contraintes : MonoBehaviour
          {
              SetObjects(false,false,true,true,true,true,true,true);
          }
-
-    public void Dropdown3ValueChangedHappened(TMP_Dropdown dropdown)
-    {
+         void Dropdown3ValueChangedHappened(TMP_Dropdown dropdown)
+        {
         var indexChoisi = dropdown.value;
         choixDropdown3 = dropdown.options[indexChoisi].text;
         if (indexChoisi == 1 || indexChoisi == 2 || indexChoisi == 7)
@@ -518,20 +515,21 @@ public class Contraintes : MonoBehaviour
          }
          
       }
-     public void DropdownToiletteValueChangedHappened(TMP_Dropdown dropdown)
+    
+      void DropdownToiletteValueChangedHappened(TMP_Dropdown dropdown)
      {
          var newSelectedIndex = dropdown.value;
          choixNbToilettes = dropdown.options[newSelectedIndex].text;
          SetObjects(false,false,false,false,false,false,false,true);
      }
      
-     public void DropdownEtageValueChangedHappened(TMP_Dropdown dropdown)
+     void DropdownEtageValueChangedHappened(TMP_Dropdown dropdown)
      {
          var newSelectedIndex = dropdown.value;
          choixEtage = dropdown.options[newSelectedIndex].text;
          SetObjects(false,false,false,false,false,false,false,true);
      }
-     public void DropdownAileValueChangedHappened(TMP_Dropdown dropdown)
+     void DropdownAileValueChangedHappened(TMP_Dropdown dropdown)
      {
          var newSelectedIndex = dropdown.value;
          choixAile = dropdown.options[newSelectedIndex].text;
@@ -558,13 +556,13 @@ public class Contraintes : MonoBehaviour
              dropdownAileEtage.onValueChanged.AddListener(delegate { DropdownAileEtageValueChangedHappened(dropdownAileEtage); });
          }
      }
-     public void DropdownAileEtageValueChangedHappened(TMP_Dropdown dropdown)
+     void DropdownAileEtageValueChangedHappened(TMP_Dropdown dropdown)
      {
          var newSelectedIndex = dropdown.value;
          choixEtageDeAile = dropdown.options[newSelectedIndex].text;
          SetObjects(false,false,false,false,false,false,false,true);
      }
-     public void DropdownLocal1ValueChangedHappened(TMP_Dropdown dropdown)
+     void DropdownLocal1ValueChangedHappened(TMP_Dropdown dropdown)
      {
          SetSpecificObjects(true, true, true, false,false,false,false,false,false,false,false);
          var selectedIndex = dropdown.value;
@@ -592,7 +590,7 @@ public class Contraintes : MonoBehaviour
          
      }
      
-     public void DropdownLocal2ValueChangedHappened(TMP_Dropdown dropdown)
+     void DropdownLocal2ValueChangedHappened(TMP_Dropdown dropdown)
      {
          var newSelectedIndex = dropdown.value;
          choixNbLocal = dropdown.options[newSelectedIndex].text;
@@ -682,204 +680,6 @@ public class Contraintes : MonoBehaviour
         choixNbLocal = dropdown.options[newSelectedIndex].text;
         SetObjects(false, false, false, false, false, false, false, true);
     }
-
-    public List<string> CreerListeLocauxAileD()
-    {
-        var tabLocauxetage1 = new int[27];
-        for (var i = 0; i < tabLocauxetage1.Length; i++)
-            tabLocauxetage1[i] = i + 101;
-
-        var tabLocauxetage2 = new int[42];
-        for (var i = 0; i < tabLocauxetage2.Length; i++)
-            tabLocauxetage2[i] = i + 201;
-
-        var tabLocauxetage3 = new int[29];
-        for (var i = 0; i < tabLocauxetage3.Length; i++)
-            tabLocauxetage3[i] = i + 301;
-
-        var tabLocauxetage4 = new int[37];
-        for (var i = 0; i < tabLocauxetage4.Length; i++)
-            tabLocauxetage4[i] = i + 401;
-
-        var locaux = new List<int>();
-
-        locaux.AddRange(tabLocauxetage1);
-        locaux.AddRange(tabLocauxetage2);
-        locaux.AddRange(tabLocauxetage3);
-        locaux.AddRange(tabLocauxetage4);
-
-        var locauxD = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
-
-        return locauxD;
-    }
-
-    public List<string> CreerListeLocauxAileL()
-    {
-        var tabLocauxetage0 = new int[16];
-        for (var i = 0; i < tabLocauxetage0.Length; i++)
-            tabLocauxetage0[i] = i + 6;
-
-        var tabLocauxetage2 = new int[32];
-        for (var i = 0; i < tabLocauxetage2.Length; i++)
-            tabLocauxetage2[i] = i + 201;
-
-        var locaux = new List<int>();
-
-        locaux.AddRange(tabLocauxetage0);
-        locaux.AddRange(tabLocauxetage2);
-
-        var locauxL = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
-        return locauxL;
-    }
-
-    public List<string> CreerListeLocauxAileF()
-    {
-        var tabLocauxetage1 = new int[22];
-        for (var i = 0; i < tabLocauxetage1.Length; i++)
-            tabLocauxetage1[i] = i + 101;
-
-        var tabLocauxetage2 = new int[12];
-        for (var i = 0; i < tabLocauxetage2.Length; i++)
-            tabLocauxetage2[i] = i + 201;
-
-        var tabLocauxetage3 = new int[26];
-        for (var i = 0; i < tabLocauxetage3.Length; i++)
-            tabLocauxetage3[i] = i + 301;
-
-        var tabLocauxetage4 = new int[14];
-        for (var i = 0; i < tabLocauxetage4.Length; i++)
-            tabLocauxetage4[i] = i + 401;
-
-        var locaux = new List<int>();
-
-        locaux.AddRange(tabLocauxetage1);
-        locaux.AddRange(tabLocauxetage2);
-        locaux.AddRange(tabLocauxetage3);
-        locaux.AddRange(tabLocauxetage4);
-
-        var locauxF = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
-
-        return locauxF;
-    }
-
-    public List<string> CreerListeLocauxAileN()
-    {
-        var tabLocauxetage1 = new int[11];
-        for (var i = 0; i < tabLocauxetage1.Length; i++)
-            tabLocauxetage1[i] = i + 104;
-
-        var tabLocauxetage2 = new int[14];
-        for (var i = 0; i < tabLocauxetage2.Length; i++)
-            tabLocauxetage2[i] = i + 201;
-
-        var locaux = new List<int>();
-
-        locaux.AddRange(tabLocauxetage1);
-        locaux.AddRange(tabLocauxetage2);
-
-        var locauxN = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
-        return locauxN;
-    }
-
-    public List<string> CreerListeLocauxAileE()
-    {
-        var tabLocauxetage0 = new int[19];
-        for (var i = 0; i < tabLocauxetage0.Length; i++)
-            tabLocauxetage0[i] = i + 3;
-
-        var locaux = new List<int>();
-        locaux.AddRange(tabLocauxetage0);
-
-        var locauxE = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
-        return locauxE;
-    }
-
-    public List<string> CreerListeLocauxAileK()
-    {
-        var tabLocauxetage0 = new int[11];
-        for (var i = 0; i < tabLocauxetage0.Length; i++)
-            tabLocauxetage0[i] = i + 2;
-
-        var locaux = new List<int>();
-        locaux.AddRange(tabLocauxetage0);
-
-        var locauxK = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
-        return locauxK;
-    }
-
-    public List<string> CreerListeLocauxAileC()
-    {
-        var tabLocauxetage0 = new int[44];
-        for (var i = 0; i < tabLocauxetage0.Length; i++)
-            tabLocauxetage0[i] = i + 2;
-
-        var tabLocauxetage1 = new int[20];
-        for (var i = 0; i < tabLocauxetage1.Length; i++)
-            tabLocauxetage1[i] = i + 102;
-
-        var locaux = new List<int>();
-
-        locaux.AddRange(tabLocauxetage0);
-        locaux.AddRange(tabLocauxetage1);
-
-        var locauxC = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
-        return locauxC;
-    }
-
-    public List<string> CreerListeLocauxAileM()
-    {
-        var tabLocauxetage1 = new int[37];
-        for (var i = 0; i < tabLocauxetage1.Length; i++)
-            tabLocauxetage1[i] = i + 102;
-
-        var tabLocauxetage0 = new int[46];
-        for (var i = 0; i < tabLocauxetage0.Length; i++)
-            tabLocauxetage0[i] = i + 2;
-
-        var locaux = new List<int>();
-
-        locaux.AddRange(tabLocauxetage0);
-        locaux.AddRange(tabLocauxetage1);
-
-        var locauxM = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
-        return locauxM;
-    }
-
-    public List<string> CreerListeLocauxAileS()
-    {
-        var tabLocauxetage1 = new int[38];
-        for (var i = 0; i < tabLocauxetage1.Length; i++)
-            tabLocauxetage1[i] = i + 101;
-
-        var tabLocauxetage2 = new int[50];
-        for (var i = 0; i < tabLocauxetage2.Length; i++)
-            tabLocauxetage2[i] = i + 201;
-
-        var tabLocauxetage3 = new int[50];
-        for (var i = 0; i < tabLocauxetage3.Length; i++)
-            tabLocauxetage3[i] = i + 301;
-
-        var tabLocauxetage4 = new int[43];
-        for (var i = 0; i < tabLocauxetage4.Length; i++)
-            tabLocauxetage4[i] = i + 401;
-
-        var tabLocauxetage5 = new int[52];
-        for (var i = 0; i < tabLocauxetage5.Length; i++)
-            tabLocauxetage5[i] = i + 501;
-
-        var locaux = new List<int>();
-
-        locaux.AddRange(tabLocauxetage1);
-        locaux.AddRange(tabLocauxetage2);
-        locaux.AddRange(tabLocauxetage3);
-        locaux.AddRange(tabLocauxetage4);
-        locaux.AddRange(tabLocauxetage5);
-
-        var locauxS = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
-
-        return locauxS;
-    }
-
     public List<string> CreerListeEtageAileDEtF()
     {
         var etages = new List<string>();

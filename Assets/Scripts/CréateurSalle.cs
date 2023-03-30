@@ -28,8 +28,8 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
     // Start is called before the first frame update
     private void Start()
     {
-        //CréerSalle(); 
-        GénérerTablesEtChaises(false, Vector3.zero, 8, 9, 8);
+        CréerSalle(); 
+     //   GénérerTablesEtChaises(true, Vector3.zero, Mathf.RoundToInt(largeurSalle), Mathf.RoundToInt(longueurSalle), 8);
         // GénérerTablesEtChaises(false,Vector3.zero, 6,9,8);
     }
 
@@ -69,7 +69,7 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
 
         var floorPos = transform.position + new Vector3(longueurSalle / 2f, 0f, largeurSalle / 2f);
         var sol = Instantiate(solSalle, floorPos, Quaternion.Euler(0, 0f, 0f));
-        sol.transform.localScale = new Vector3(longueurSalle - 1, 1, largeurSalle - 1);
+        sol.transform.localScale = new Vector3(longueurSalle , 1, largeurSalle );
     }
 
     //pour le carrefour étudiant, faut les chaises se forment autour d'un point
@@ -117,7 +117,6 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
             position = new Vector3(j, 0, i);
             Instantiate(tablesEtChaises, position, rotation);
         }
-
 
         return;
     }

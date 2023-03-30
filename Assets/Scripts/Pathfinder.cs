@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using GameAI.Pathfinding;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace GameAI
@@ -9,52 +11,91 @@ namespace GameAI
     {
         public class Pathfinder
         {
-            public PathfindingNode ParentNode { get; set; }
+            public List<PathfindingNode> OpenList;
+            public List<PathfindingNode> ClosedList;
+            //public PathfindingNode ParentNode { get; set; }
 
             public PathfindingNode Départ { get; set; }
 
             public PathfindingNode Arrivée { get; set; }
             
-                
+            public PathfindingNode NodeActuel { get; set; }
+            public int GetNodePlusPetitCout(List<PathfindingNode> nodeList)
+            {
+                int indexPlusPetit = 0;
+                float plusPetitCout = nodeList[0].FCost;
+                for (int i = 1; i < nodeList.Count; i++)
+                {
+                    //this line ugly af
+                    if (plusPetitCout >nodeList[i].FCost||(plusPetitCout == nodeList[i].FCost
+                         &&nodeList[indexPlusPetit].HCost>nodeList[i].HCost))
+                    {
+                        plusPetitCout = nodeList[i].FCost;
+                        indexPlusPetit = i;
+                    }
+                }
+                //PathfindingNode n = nodeList[indexPlusPetit];
+                return indexPlusPetit;
+            }
 
-            /*public enum StatutPathfinder
+            public enum StatutPathfinder
             {
                 PAS_INITIALISÉ,
                 SUCCES,
                 ÉCHEC,
                 EN_MARCHE,
             }
-            abstract public class PathFinder<T>
-            {
-                public Node Départ { get; private set; }
-                public Node Destination { get; private set; }
-                
-                //check what needs to b unprivated/privated
             
-                public StatutPathfinder Statut
+            //verifier si la node est dans
+            //la liste et get le index de la node si ell est dedans
+            
+            public int EstDansLaListe(List<Node> nodeList, Node node)
+            {
+                for (int i = 0; i < nodeList.Count; ++i)
                 {
-                    get;
-                    set;
-                    
-                } = StatutPathfinder.PAS_INITIALISÉ;
-    
-                public delegate float CalculerCoût(Node a, Node b);
-                public CalculerCoût CoûtHeuristique { get; set; }
-                //not a real word
-                public CalculerCoût CoûtTransnodal { get; set; }
-                
-                
-                //pt mettre node class abstraite pr que ca herite de Node
-                public class NodePathfinder
-                {
-                    //la node jst avant quon arrive au nodepathfindr
-                    public NodePathfinder Parent { get; set; }
-                    public Vector3 Location { get; set; }
-                    
+                    if (nodeList[i].Nombre == node.Nombre && nodeList[i].Niveau == node.Niveau)
+                        return i;
                 }
-    
+                return -1;
             }
-            */
+            //not a real word
+            //public CalculerCoût CoûtTransnodal { get; set; }
+                
+           //a-star brouillon
+
+           public List<PathfindingNode> FindPathAStar()
+           {
+               List<PathfindingNode> path = new List<PathfindingNode>();
+               OpenList.Add(Départ);
+               path.Add(Départ);
+               while (NodeActuel!=Arrivée)
+               {
+                   NodeActuel = OpenList[GetNodePlusPetitCout(OpenList)];
+                   OpenList.Remove(NodeActuel);
+                   ClosedList.Add(NodeActuel);
+                   foreach (var voisin in NodeActuel.Voisins)
+                   {
+                       if (!voisin.EstTraversable&&!OpenList.Contains(voisin))
+                       {
+                           //voisin.Parent = NodeActuel;
+                           //float nouveauGCost
+                           if (voisin.GCost > 
+                               NodeActuel.GCost + Node.CalculerDistanceNodes(NodeActuel, voisin)||
+                               !ClosedList.Contains(voisin))
+                               
+                               voisin.Parent = NodeActuel;
+                       }
+                   }
+               }
+
+               return path;
+           }
+
+           // public List<PathfindingNode> FindPathDjikstra()
+           // {
+           //     
+           // }
+
         }
     }
 }

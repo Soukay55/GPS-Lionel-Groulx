@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using Unity.VisualScripting;
 
-public class Node //was abstract rly the rite move 4dis?
+public class Node 
 {
     public GPSCoordinate CoordonéesGPS { get; set; }
     public int Nombre { get; set; }
@@ -26,4 +26,11 @@ public class Node //was abstract rly the rite move 4dis?
         Niveau = étage;
         CoordonéesGPS = coordonéesGps;
     }
+
+    public static float CalculerDistanceNodes(Node A, Node B)
+    {
+     return GPSCoordinate.CalculerDistanceEntreDeuxCoordonnées(A.CoordonéesGPS, B.CoordonéesGPS);
+    }
+    
+     
 }

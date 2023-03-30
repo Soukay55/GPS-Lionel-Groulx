@@ -8,11 +8,11 @@ using System.IO;
 using System.Linq;
 using Unity.VisualScripting;
 
-public class SchoolGraph : MonoBehaviour
+public class FloorGraph : MonoBehaviour
 {
     private void Start()
     {
-        var GrapheÉcole = new SchoolGraph(GetNodeData("Nodes"));
+        var GrapheÉcole = new FloorGraph(GetNodeData("Nodes"));
     }
 
     private StreamReader fluxLecture;
@@ -28,8 +28,7 @@ public class SchoolGraph : MonoBehaviour
 
     private List<Node> nodesToAdd; // pour get les sommets c node.point so faut
     // add le calcul soit ds graphe ou node idk yet
-
-    public SchoolGraph(List<Node> nodes)
+    public FloorGraph(List<Node> nodes)
     {
         var Nodes = nodes;
     }
@@ -41,7 +40,7 @@ public class SchoolGraph : MonoBehaviour
 
         var nodes = new List<Node>();
         nodesToAdd = new List<Node>();
-
+        //edit linked nodes:only stairs can move to higher levels
         var données = string.Empty;
         using (fluxLecture)
         {

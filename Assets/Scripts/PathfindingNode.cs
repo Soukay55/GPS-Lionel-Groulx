@@ -4,7 +4,7 @@ using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEditor;
 using UnityEngine;
 
-public class PathfindingNode : Node,ITéléporteur
+public class PathfindingNode : Node
 {
     public float value;
     

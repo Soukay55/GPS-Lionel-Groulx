@@ -50,7 +50,7 @@ public class FloorGraph : MonoBehaviour
         }
 
         dataTab = données.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
-
+        
         var étageComparateur = Étage.A;
 
         for (var i = 0; i < dataTab.Count - 1; i += NB_DONNÉES_PAR_NODE)
@@ -100,7 +100,7 @@ public class FloorGraph : MonoBehaviour
     public List<string> ToNameList(string listeNoms)
     {
         var noms = listeNoms.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
-        if (noms.Count > 1)
+         if (noms.Count > 1)
             plusQueUnNom = true;
         return noms;
     }

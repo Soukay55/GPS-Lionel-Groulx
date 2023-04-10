@@ -14,53 +14,56 @@ namespace Pathfinding
     //plusieurs nodes à éviter
     //une node à passer
     //plusieurs nodes à passer
-    //plusieurs à passer, une à éviter
-    //une node à éviter, une node à passer
-    //plusieurs à passer,plusieurs à éviter
-    //plusieurs à éviter, une à passer
+    //plusieurs à passer ET une à éviter
+    //une node à éviter ET une node à passer
+    //plusieurs à passer ETplusieurs à éviter
+    //plusieurs à éviter ET une à passer
     //
-    
     public class Pathfinder
     {
+        //position de l'utilisateur reçue par le GPS
         public PathfindingNode Départ { get; set; }
-
+        
+        
+        //destination voulue
         public PathfindingNode Arrivée { get; set; }
-            
+        
+        
+        //self explanatory..
+        public List<PathfindingNode> OpenList { get; set; }
+        
+        public List<PathfindingNode> ClosedList{ get; set; }
+        
+        
+        //node que le pathfinder visite à l'instant présent
         public PathfindingNode NodeActuel { get; set; }
         
-        public PathfindingNode chosenNode { get; set; }
-
-        public List<PathfindingNode> NodesInévitables { get; set;}
         
+        //les nodes pour lesquelles l'utilisateur a imposé comme
+        //contrainte de ne pas vouloir passer
         public List<PathfindingNode>NodesÀÉviter { get; set; }
+        
+        
+        //chemin optimal trouvé par le pathfinder
+        public List<PathfindingNode>Path { get; set; }
 
-        public Pathfinder(Action PathfindingMethod, PathfindingNode départ,PathfindingNode end)
+        //aucune contrainte (constructeur de path "de base")
+        public Pathfinder( PathfindingNode départ,PathfindingNode end)
         {
             Départ=départ ;
             Arrivée = end;
 
         }
-
-        public Pathfinder(Action PathfindingMethod, PathfindingNode départ, PathfindingNode end,
-            List<PathfindingNode> nodesInévitables, List<PathfindingNode>nodesÀÉviter )
+        
+        //plusieurs nodes à passer OU à éviter
+        public Pathfinder( PathfindingNode départ, PathfindingNode end,
+            List<PathfindingNode> nodesChoisis )
         {
-            
+            Départ=départ ;
+            Arrivée = end;
         }
 
-        public Pathfinder(Action PathfindingMethod, PathfindingNode départ,PathfindingNode end, List<PathfindingNode> nodes, bool ÀÉviter)
-        {
-            
-        }
-
-        public Pathfinder(Action PathfindingMethod, PathfindingNode départ,
-            PathfindingNode end, PathfindingNode node, bool ÀÉviter)
-        {
-            
-        }
-            
-        public List<PathfindingNode> OpenList;
-        public List<PathfindingNode> ClosedList;
-        //public PathfindingNode ParentNode { get; set; }
+       
 
        
         public int GetNodePlusPetitCout(List<PathfindingNode> nodeList)

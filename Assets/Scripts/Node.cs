@@ -17,8 +17,9 @@ public class Node
 
     public Vector3 Position { get; set; } //position aek unity: désigne point(0,0),
     //and calculate this pos en faisant (0,0)+(distanceX,distanceY) de GPSCoord
+    
 
-
+    public List<float> ConnectedNodes { get; set; }
     public Node(int nombre, string nom, Étage étage, GPSCoordinate coordonéesGps)
     {
         Nombre = nombre;

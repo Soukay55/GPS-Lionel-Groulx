@@ -15,14 +15,16 @@ public class PathfindingNode : Node
 
     public string Instructions { get; set; }
 
-    public List<int> ConnectedNodes { get; set; }
+    public List<float> ConnectedNodes { get; set; }
 
     public List<PathfindingNode>Voisins { get; set; }//les voisins doivent
                                           //être calculés à partir d connectdnodes
 
-    public bool EstDansClosedList { get; set; } = false;
+    //public bool EstDansClosedList { get; set; } = false;
+    
+    public bool ÀÉviter { get; set; }
 
-    public bool EstDansOpenList { get; set; } = false;
+    //public bool EstDansOpenList { get; set; } = false;
 
 
     public float FCost
@@ -41,7 +43,7 @@ public class PathfindingNode : Node
 
     // Start is called before the first frame update
     public PathfindingNode(int nombre, string nom, bool estEndroitPublic, Étage étage,
-        List<int> connectedNodes, GPSCoordinate coordonéesGps) : base(nombre, nom, étage, coordonéesGps)
+        List<float> connectedNodes, GPSCoordinate coordonéesGps) : base(nombre, nom, étage, coordonéesGps)
     {
         ConnectedNodes = connectedNodes;
         EstEndroitPublic = estEndroitPublic;
@@ -49,8 +51,8 @@ public class PathfindingNode : Node
 
     public float GetGCost()
     {
-        return Parent.GCost +
-               GPSCoordinate.CalculerDistanceEntreDeuxCoordonnées(Parent.CoordonéesGPS, CoordonéesGPS);
+        return Parent.GCost +GPSCoordinate.
+                   CalculerDistanceEntreDeuxCoordonnées(Parent.CoordonéesGPS, CoordonéesGPS);
     }
 
     public void SetGCost()

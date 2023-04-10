@@ -3,7 +3,10 @@ guid: fe48cb1229e1cac46b932a3114da0fe7
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - prefabCouloir: {fileID: 3944435785803302332, guid: 1a88120bd6dd8ee498b3f6e181c8cea3, type: 3}
+  - prefabObjet: {instanceID: 0}
+  - parent: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

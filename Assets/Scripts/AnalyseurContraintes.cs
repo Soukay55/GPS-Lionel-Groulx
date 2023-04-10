@@ -9,13 +9,7 @@ public class AnalyseurContraintes : MonoBehaviour
 
    public void AnalyserContraintes(List<string> contraintes)
    {
-      foreach (var contrainte in contraintes)
-      {
-         if (contrainte.Contains("pas"))
-         {
-           // List<string>
-         }
-      }
+     
    }
 
 }

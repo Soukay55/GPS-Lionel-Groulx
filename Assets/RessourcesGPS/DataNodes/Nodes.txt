@@ -16,7 +16,7 @@
 15	3QuartCouloirL,L008ÀL012,L007ÀL015	false A 14,16
 16	FinCouloirL,Toilettes, DébutCouloirF,Entre2,L006	true	A	
 17	EscaliersF,L002ÀL004,F007ÀF05,F0010ÀF016	false	A	16,17B,18
-18	FinCouloirF, Sortie,F001ÀF007,F002ÀF010	false A 17,31
+18	FinCouloirF, Sortie,F001ÀF007,F002ÀF010	false A	17,31
 19	Cafétéria,QuartD	true	A	1,10,14
 20	EscaliersD,E007ÀE015	false	A	9,20B,21
 21	CafétériaModulaire,Toilettes,EscaliersC,CSO3	false	A	20,22,23

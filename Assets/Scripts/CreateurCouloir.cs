@@ -1,73 +1,123 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class CreateurCouloir : MonoBehaviour
 {
-    private GameObject[] noeuds;
+    private GameObject[]noeuds;
     [SerializeField] 
-    public GameObject prefabCouloir,prefabPorte;
+    public GameObject prefabCouloir,prefabObjet,parent;
     private int nbEnfants;
 
+
+    private static GameObject couloir;
     private void Start()
     {
         nbEnfants = gameObject.transform.childCount;
-        noeuds = new GameObject[nbEnfants];
+        couloir = new GameObject("Couloir");
+        
         for (var i = 0; i < nbEnfants - 1; i++)
+        {
+            GénérerObjetsMur(transform.GetChild(i).position,
+                transform.GetChild(i + 1).position,prefabObjet,8,-1);
+                
             CréerCouloir(transform.GetChild(i).position,
-                transform.GetChild(i + 1).position);
+                transform.GetChild(i + 1).position,prefabCouloir);
+        }
+            
         //CréerCouloir(transform.GetChild(0).localPosition, transform.GetChild(1).localPosition);
     }
 
    
-    private float largeurCouloir = 2f,
-        hauteurCouloir = 3f,
+    private static float largeurCouloir = 2f,
+        hauteurCouloir  =5f,
         longueurBloc = 1f;
 
-    //prend deux points A et B et génère un path fait d'un prefab allant de A à B
-    public void CréerCouloir(Vector3 pointA, Vector3 pointB)
+    private static float distance;
+    private static Vector3 position;
+    private static int nombreBlocs;
+    private static Quaternion rotation;
+    private static Vector3 direction;
+    
+    //Calcule la direction, rotation, distance, et la position du premier objet 
+    //pour les objets qui vont de pointA à pointB
+    static void CalculerDirRotDistPosChemin(Vector3 pointA, Vector3 pointB)
     {
-        var direction = (pointB - pointA).normalized;
-        var distance = Vector3.Distance(pointA, pointB);
-        var nombreBlocs = Mathf.RoundToInt(distance / longueurBloc);
-        var rotation = Quaternion.LookRotation(direction);
-        var position = pointA + longueurBloc / 2 * direction;
-        print(distance);
+        //direction du vecteur unitaire que le couloir suivra
+        direction = (pointB - pointA).normalized;
+        
+        //rotation des blocs de couloir
+        rotation = Quaternion.LookRotation(direction);
+        
+        //longueur du couloir
+        distance = Vector3.Distance(pointA, pointB);
+        
+        //self explanatory...
+        nombreBlocs = Mathf.RoundToInt(distance / longueurBloc);
+        
+        //position du premier blocCouloir
+        position = pointA;
+        
+        couloir.transform.position = pointA;
+        couloir.transform.rotation = rotation;
+    }
 
+    //prend deux points A et B et génère un couloir allant de A à B
+    public static void CréerCouloir(Vector3 pointA, Vector3 pointB, GameObject prefab)
+    {
+       CalculerDirRotDistPosChemin(pointA,pointB);
         for (var i = 0; i < nombreBlocs; i++)
         {
-            var blocCouloir = Instantiate(prefabCouloir, position, rotation);
+            var blocCouloir= Instantiate(prefab, position, rotation,couloir.transform);
             blocCouloir.transform.localScale = new Vector3(largeurCouloir,
                 hauteurCouloir, longueurBloc );
             position += longueurBloc * direction;
         }
-        
-        AjouterPortes(5,rotation,pointA,1,distance,direction);
     }
-
-    // code coté :1=droite, -1=gauche,0=both
-    //you deffo dont need this many params girllllll
-    public void AjouterPortes(int nbPortes,Quaternion rotation,Vector3 centreCouloir, int codeCôté,float distance, Vector3 direction)
+    
+    //Génère une série d'objets équidistants le long des murs d'un couloir
+    //si le "codeCouloir"=-1, les objets sont sur le mur de gauche
+    //si le "codeCouloir"=1, les objets sont sur le mur de droite
+    //si le "codeCouloir"=0, les objets sont alternés sur les deux murs
+    public static void GénérerObjetsMur(Vector3 pointA, Vector3 pointB, GameObject prefab,
+        int nbObjets, int codeCouloir)
     {
-        Vector3 position = centreCouloir;
-        position.x = centreCouloir.x - largeurCouloir / 2 * codeCôté;
-        position.z = centreCouloir.z += distance / nbPortes / 2;
-        for (var i = 0; i < nbPortes; i++)
-        {
-            Instantiate(prefabPorte, position, rotation);
-            position += (distance / nbPortes) * direction;
+        
+        CalculerDirRotDistPosChemin(pointA,pointB);
 
+        int j = -1+(int)MathF.Abs(codeCouloir);
+
+        
+
+        //si le codeCouloir était égal à zéro, il devient un, pour que le premier
+        //objet "alterné" sur le mur soit instancié sur le mur de gauche, et non au 
+        //milieu du couloir
+        
+        //maybe add parentCouloir this way the wall objects move at the same time the couloir moves
+        if (j!=0)
+        {
+            codeCouloir = 1;
+        }
+        
+        position += distance / (2 * nbObjets) * direction;
+        
+        var obj = Instantiate(prefab, position, rotation,couloir.transform);
+        obj.transform.Translate(codeCouloir * largeurCouloir / 2, 0, 0);
+
+        position = obj.transform.position;
+        
+        for (int i = 1; i < nbObjets; i++)
+        {
+            position += direction * distance / (nbObjets);
+            position.x += j * largeurCouloir;
+            
+            Instantiate(prefab, position, rotation,obj.transform);
+            
+            j *= -1;
         }
     }
-
-    // public void RemoveOverlap(GameObject objet)
-    // {
-    //     while (Physics.CheckSphere(objet.transform.position,largeurCouloir/2))
-    //     {
-    //         
-    //     }
-    //
-    //     
-    // }
+    
 }

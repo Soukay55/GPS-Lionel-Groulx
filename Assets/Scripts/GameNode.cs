@@ -21,7 +21,7 @@ public class GameNode : Node
     }
 
     public GameNode(int nombre, string nom, bool estEndroitPublic, Étage étage,
-        List<int> connectedNodes, GPSCoordinate coordonéesGps) : base(nombre, nom, étage, coordonéesGps)
+        List<float> connectedNodes, GPSCoordinate coordonéesGps) : base(nombre, nom, étage, coordonéesGps)
     {
         EstEndroitPublic = estEndroitPublic;
     }

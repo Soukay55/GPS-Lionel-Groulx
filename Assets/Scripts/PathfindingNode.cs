@@ -20,7 +20,9 @@ public class PathfindingNode : Node
 
     public float FCost
     {
-        get { return HCost + GCost;}  }
+        get { return HCost + GCost; }
+    }
+
     public float HCost { get; set; }
     public float GCost { get; set; }
 

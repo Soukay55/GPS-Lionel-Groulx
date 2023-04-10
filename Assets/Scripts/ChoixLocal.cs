@@ -204,9 +204,7 @@ public class ChoixLocal : MonoBehaviour
         return locauxS;
     }
 
-    [SerializeField]
-    //[Header("Boutons")]
-    public TMP_Dropdown dropdown1,
+    [SerializeField] public TMP_Dropdown dropdown1,
         dropdown2;
 
     public Button button;

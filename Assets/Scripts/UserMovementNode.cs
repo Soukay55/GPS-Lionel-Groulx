@@ -9,6 +9,5 @@ public class UserMovementNode : PathfindingNode
         List<int> connectedNodes, GPSCoordinate coordonéesGps) : base(nombre, nom, estEndroitPublic, étage,
         connectedNodes, coordonéesGps)
     {
-        
     }
 }

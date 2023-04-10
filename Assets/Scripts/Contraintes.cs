@@ -11,10 +11,8 @@ using Button = UnityEngine.UI.Button;
 
 public class Contraintes : MonoBehaviour
 {
-    
     public List<string> CreerListeLocauxAileD()
     {
-
         int[] tabLocauxetage1 = new int[27];
         for (int i = 0; i < tabLocauxetage1.Length; i++)
             tabLocauxetage1[i] = i + 101;
@@ -41,12 +39,10 @@ public class Contraintes : MonoBehaviour
         List<string> locauxD = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
 
         return locauxD;
-
     }
-    
+
     public List<string> CreerListeLocauxAileL()
     {
-
         int[] tabLocauxetage0 = new int[16];
         for (int i = 0; i < tabLocauxetage0.Length; i++)
             tabLocauxetage0[i] = i + 6;
@@ -56,17 +52,16 @@ public class Contraintes : MonoBehaviour
             tabLocauxetage2[i] = i + 201;
 
         List<int> locaux = new List<int>();
-        
+
         locaux.AddRange(tabLocauxetage0);
         locaux.AddRange(tabLocauxetage2);
-        
+
         List<string> locauxL = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
         return locauxL;
     }
-    
+
     public List<string> CreerListeLocauxAileF()
     {
-
         int[] tabLocauxetage1 = new int[22];
         for (int i = 0; i < tabLocauxetage1.Length; i++)
             tabLocauxetage1[i] = i + 101;
@@ -93,11 +88,10 @@ public class Contraintes : MonoBehaviour
         List<string> locauxF = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
 
         return locauxF;
-
     }
+
     public List<string> CreerListeLocauxAileN()
     {
-
         int[] tabLocauxetage1 = new int[11];
         for (int i = 0; i < tabLocauxetage1.Length; i++)
             tabLocauxetage1[i] = i + 104;
@@ -107,17 +101,16 @@ public class Contraintes : MonoBehaviour
             tabLocauxetage2[i] = i + 201;
 
         List<int> locaux = new List<int>();
-        
+
         locaux.AddRange(tabLocauxetage1);
         locaux.AddRange(tabLocauxetage2);
-        
+
         List<string> locauxN = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
         return locauxN;
     }
-    
+
     public List<string> CreerListeLocauxAileE()
     {
-
         int[] tabLocauxetage0 = new int[19];
         for (int i = 0; i < tabLocauxetage0.Length; i++)
             tabLocauxetage0[i] = i + 3;
@@ -128,10 +121,9 @@ public class Contraintes : MonoBehaviour
         List<string> locauxE = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
         return locauxE;
     }
-    
+
     public List<string> CreerListeLocauxAileK()
     {
-
         int[] tabLocauxetage0 = new int[11];
         for (int i = 0; i < tabLocauxetage0.Length; i++)
             tabLocauxetage0[i] = i + 2;
@@ -142,10 +134,9 @@ public class Contraintes : MonoBehaviour
         List<string> locauxK = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
         return locauxK;
     }
-    
+
     public List<string> CreerListeLocauxAileC()
     {
-
         int[] tabLocauxetage0 = new int[44];
         for (int i = 0; i < tabLocauxetage0.Length; i++)
             tabLocauxetage0[i] = i + 2;
@@ -155,17 +146,16 @@ public class Contraintes : MonoBehaviour
             tabLocauxetage1[i] = i + 102;
 
         List<int> locaux = new List<int>();
-        
+
         locaux.AddRange(tabLocauxetage0);
         locaux.AddRange(tabLocauxetage1);
-        
+
         List<string> locauxC = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
         return locauxC;
     }
-    
+
     public List<string> CreerListeLocauxAileM()
     {
-
         int[] tabLocauxetage1 = new int[37];
         for (int i = 0; i < tabLocauxetage1.Length; i++)
             tabLocauxetage1[i] = i + 102;
@@ -175,17 +165,16 @@ public class Contraintes : MonoBehaviour
             tabLocauxetage0[i] = i + 2;
 
         List<int> locaux = new List<int>();
-        
+
         locaux.AddRange(tabLocauxetage0);
         locaux.AddRange(tabLocauxetage1);
-        
+
         List<string> locauxM = locaux.ConvertAll<string>(delegate(int i) { return i.ToString(); });
         return locauxM;
     }
-    
+
     public List<string> CreerListeLocauxAileS()
     {
-
         int[] tabLocauxetage1 = new int[38];
         for (int i = 0; i < tabLocauxetage1.Length; i++)
             tabLocauxetage1[i] = i + 101;
@@ -201,7 +190,7 @@ public class Contraintes : MonoBehaviour
         int[] tabLocauxetage4 = new int[43];
         for (int i = 0; i < tabLocauxetage4.Length; i++)
             tabLocauxetage4[i] = i + 401;
-        
+
         int[] tabLocauxetage5 = new int[52];
         for (int i = 0; i < tabLocauxetage5.Length; i++)
             tabLocauxetage5[i] = i + 501;
@@ -218,7 +207,7 @@ public class Contraintes : MonoBehaviour
 
         return locauxS;
     }
-    
+
     public TMP_Dropdown dropdown1,
         dropdown2,
         dropdown3,
@@ -253,9 +242,9 @@ public class Contraintes : MonoBehaviour
     private string localChoisi;
     List<string> phrases = new List<string>();
     public string phrase;
-    public int compteurDePhrases =0 ;
+    public int compteurDePhrases = 0;
 
-    void SetObjects(bool etat1, bool etat2,bool etat3,bool etat4,bool etat5,bool etat6,bool etat7,bool etat8)
+    void SetObjects(bool etat1, bool etat2, bool etat3, bool etat4, bool etat5, bool etat6, bool etat7, bool etat8)
     {
         text1.gameObject.SetActive(etat1);
         dropdown1.gameObject.SetActive(etat2);
@@ -275,6 +264,9 @@ public class Contraintes : MonoBehaviour
     private void SetSpecificObjects(bool etat1, bool etat2, bool etat3, bool etat4, bool etat5, bool etat6, bool etat7,
         bool etat8, bool etat9, bool etat10, bool etat11)
     {
+        Debug.Log("called");
+        if (dropdownLocal1 == null || dropdownLocal2 == null || textLocal == null)
+            Debug.Log("something is null");
         dropdownLocal1.gameObject.SetActive(etat1);
         dropdownLocal2.gameObject.SetActive(etat2);
         textLocal.gameObject.SetActive(etat3);
@@ -304,11 +296,10 @@ public class Contraintes : MonoBehaviour
         ResetDropdown(dropdownEtages);
         ResetDropdown(dropdownAileEtage);
         ResetDropdown(dropdownToilettes);
-
     }
-    
-    
-    public void CreateDropdown(List<string> items, TMP_Dropdown dropdown )
+
+
+    public void CreateDropdown(List<string> items, TMP_Dropdown dropdown)
     {
         dropdown.ClearOptions();
 
@@ -398,7 +389,7 @@ public class Contraintes : MonoBehaviour
 
         dropdown2.onValueChanged.AddListener(delegate { Dropdown2ValueChangedHappened(dropdown2); });
         dropdown3.onValueChanged.AddListener(delegate { Dropdown3ValueChangedHappened(dropdown3); });
-       button.onClick.AddListener(ComportementBoutton);
+        button.onClick.AddListener(ComportementBoutton);
     }
 
     private void CreerPhrase()
@@ -408,7 +399,7 @@ public class Contraintes : MonoBehaviour
             phrase = $"Je voudrais {choixDropdown2} par {choixDropdown3}";
         if (choixDropdown3 == "un local spécifique")
             phrase = $"Je voudrais {choixDropdown2} par le local {choixAileLocal}{choixNbLocal}";
-        if (choixDropdown3=="une aile spécifique")
+        if (choixDropdown3 == "une aile spécifique")
             phrase = $"Je voudrais {choixDropdown2} par {choixAile}{choixEtageDeAile}00";
         if (choixDropdown3 == "un étage spécifique")
             phrase = $"Je voudrais {choixDropdown2} par l'étage {choixEtage}";
@@ -416,7 +407,7 @@ public class Contraintes : MonoBehaviour
             phrase = $"Je voudrais passer par {choixNbToilettes} {choixDropdown3}";
         if (choixDropdown2 == "ne pas passer" && choixDropdown3 == " toilette/s")
             phrase = $"Je voudrais éviter des toilettes";
-        
+
         phrases.Add(phrase);
         compteurDePhrases = phrases.Count;
     }
@@ -433,9 +424,9 @@ public class Contraintes : MonoBehaviour
 
     public void ComportementBoutton()
     {
-        if (compteurDePhrases>=3)
+        if (compteurDePhrases >= 3)
         {
-            MakeObjectsDisappear();// sauf la liste et le bouton suivant
+            MakeObjectsDisappear(); // sauf la liste et le bouton suivant
             //AfficherMessage(); 
         }
         else
@@ -443,13 +434,14 @@ public class Contraintes : MonoBehaviour
             CreerPhrase();
             //AfficherPhrase();
         }
-        
+
         Debug.Log(phrase);
         Debug.Log($"{compteurDePhrases}");
         ResetAllDropdowns();
-        SetObjects(false,false,true,true,true,true,true,false);
-        SetSpecificObjects(false,false,false,false,false,false,false,false,false,false,false);
+        SetObjects(false, false, true, true, true, true, true, false);
+        SetSpecificObjects(false, false, false, false, false, false, false, false, false, false, false);
     }
+
     void Dropdown1ValueChangedHappened(TMP_Dropdown dropdown)
     {
         var newSelectedIndex = dropdown.value;
@@ -464,24 +456,9 @@ public class Contraintes : MonoBehaviour
         var newSelectedIndex = dropdown.value;
         choixDropdown2 = dropdown.options[newSelectedIndex].text;
     }
-      void Dropdown3ValueChangedHappened(TMP_Dropdown dropdown)
-      {   
-          int indexChoisi = dropdown.value;
-          choixDropdown3 = dropdown.options[indexChoisi].text;
-         if (indexChoisi==1||indexChoisi==2||indexChoisi==7)
-             SetObjects(false,false,true,true,true,true,true,true);
-         if (indexChoisi == 3 && choixDropdown2=="passer")
-         {
-             MakeObjectsDisappear();
-             SetSpecificObjects(false, false, false, false,false,false,false,false,false,true,true);
-             dropdownToilettes.onValueChanged.AddListener(delegate { DropdownToiletteValueChangedHappened(dropdownToilettes); });
-         }
-         else
-         {
-             SetObjects(false,false,true,true,true,true,true,true);
-         }
-         void Dropdown3ValueChangedHappened(TMP_Dropdown dropdown)
-        {
+
+    void Dropdown3ValueChangedHappened(TMP_Dropdown dropdown)
+    {
         var indexChoisi = dropdown.value;
         choixDropdown3 = dropdown.options[indexChoisi].text;
         if (indexChoisi == 1 || indexChoisi == 2 || indexChoisi == 7)
@@ -506,100 +483,107 @@ public class Contraintes : MonoBehaviour
             SetSpecificObjects(true, false, true, false, false, false, false, false, false, false, false);
             dropdownLocal1.onValueChanged.AddListener(delegate { DropdownLocal1ValueChangedHappened(dropdownLocal1); });
         }
+        if (indexChoisi == 5)
+        {
+            MakeObjectsDisappear();
+            SetSpecificObjects(false, false, false, false, false, false, false, true, true, false, false);
+            dropdownEtages.onValueChanged.AddListener(delegate { DropdownEtageValueChangedHappened(dropdownEtages); });
+        }
 
-         if (indexChoisi==6)
-         {
-             MakeObjectsDisappear();
-             SetSpecificObjects(false, false, false, true,false,false,true,false,false,false,false);
-             dropdownAile.onValueChanged.AddListener(delegate { DropdownAileValueChangedHappened(dropdownAile); });
-         }
-         
-      }
-    
-      void DropdownToiletteValueChangedHappened(TMP_Dropdown dropdown)
-     {
-         var newSelectedIndex = dropdown.value;
-         choixNbToilettes = dropdown.options[newSelectedIndex].text;
-         SetObjects(false,false,false,false,false,false,false,true);
-     }
-     
-     void DropdownEtageValueChangedHappened(TMP_Dropdown dropdown)
-     {
-         var newSelectedIndex = dropdown.value;
-         choixEtage = dropdown.options[newSelectedIndex].text;
-         SetObjects(false,false,false,false,false,false,false,true);
-     }
-     void DropdownAileValueChangedHappened(TMP_Dropdown dropdown)
-     {
-         var newSelectedIndex = dropdown.value;
-         choixAile = dropdown.options[newSelectedIndex].text;
-         if (choixAile == "K" || choixAile == "E" || choixAile == "M")
-         {
-             SetSpecificObjects(false, false, false, true, false, false, true, false, false, false, false);
-             SetObjects(false,false,false,false,false,false,false,true);
-             choixEtageDeAile = "0";
-         }
-         else
-         {
-             SetSpecificObjects(false, false, false, true, true, true, true, false, false, false, false);
-             if (choixAile=="D"||choixAile=="F")
-                 CreateDropdown(CreerListeEtageAileDEtF(),dropdownAileEtage);
-             if(choixAile=="L")
-                 CreateDropdown(CreerListeEtageAileL(),dropdownAileEtage);
-             if(choixAile=="N")
-                 CreateDropdown(CreerListeEtageAileN(),dropdownAileEtage);
-             if(choixAile=="C")
-                 CreateDropdown(CreerListeEtageAileC(),dropdownAileEtage);
-             if(choixAile=="S")
-                 CreateDropdown(CreerListeEtageAileS(),dropdownAileEtage);
-             
-             dropdownAileEtage.onValueChanged.AddListener(delegate { DropdownAileEtageValueChangedHappened(dropdownAileEtage); });
-         }
-     }
-     void DropdownAileEtageValueChangedHappened(TMP_Dropdown dropdown)
-     {
-         var newSelectedIndex = dropdown.value;
-         choixEtageDeAile = dropdown.options[newSelectedIndex].text;
-         SetObjects(false,false,false,false,false,false,false,true);
-     }
-     void DropdownLocal1ValueChangedHappened(TMP_Dropdown dropdown)
-     {
-         SetSpecificObjects(true, true, true, false,false,false,false,false,false,false,false);
-         var selectedIndex = dropdown.value;
-         if (selectedIndex == 1)
-             CreateDropdown(CreerListeLocauxAileD(),dropdownLocal2);
-         if (selectedIndex == 2)
-             CreateDropdown(CreerListeLocauxAileL(),dropdownLocal2);
-         if (selectedIndex == 3)
-             CreateDropdown(CreerListeLocauxAileF(),dropdownLocal2);
-         if (selectedIndex == 4)
-             CreateDropdown(CreerListeLocauxAileN(),dropdownLocal2);
-         if (selectedIndex == 5)
-             CreateDropdown(CreerListeLocauxAileK(),dropdownLocal2);
-         if (selectedIndex == 6)
-             CreateDropdown(CreerListeLocauxAileC(),dropdownLocal2);
-         if (selectedIndex == 7)
-             CreateDropdown(CreerListeLocauxAileS(),dropdownLocal2);
-         if (selectedIndex== 8)
-             CreateDropdown(CreerListeLocauxAileM(),dropdownLocal2);
-         if (selectedIndex == 9)
-             CreateDropdown(CreerListeLocauxAileE(),dropdownLocal2);
-       
-         choixAileLocal = dropdown.options[selectedIndex].text;
-         dropdownLocal2.onValueChanged.AddListener(delegate { DropdownLocal2ValueChangedHappened(dropdownLocal2); });
-         
-     }
-     
-     void DropdownLocal2ValueChangedHappened(TMP_Dropdown dropdown)
-     {
-         var newSelectedIndex = dropdown.value;
-         choixNbLocal = dropdown.options[newSelectedIndex].text;
-         SetObjects(false,false,false,false,false,false,false,true);
-     }
-     
-        var newSelectedIndex = dropdown.value;
-        choixNbToilettes = dropdown.options[newSelectedIndex].text;
-        SetObjects(false, false, false, false, false, false, false, true);
+        if (indexChoisi == 6)
+        {
+            MakeObjectsDisappear();
+            SetSpecificObjects(false, false, false, true, false, false, true, false, false, false, false);
+            dropdownAile.onValueChanged.AddListener(delegate { DropdownAileValueChangedHappened(dropdownAile); });
+        }
+
+
+        void DropdownToiletteValueChangedHappened(TMP_Dropdown dropdown)
+        {
+            var newSelectedIndex = dropdown.value;
+            choixNbToilettes = dropdown.options[newSelectedIndex].text;
+            SetObjects(false, false, false, false, false, false, false, true);
+        }
+
+        void DropdownEtageValueChangedHappened(TMP_Dropdown dropdown)
+        {
+            var newSelectedIndex = dropdown.value;
+            choixEtage = dropdown.options[newSelectedIndex].text;
+            SetObjects(false, false, false, false, false, false, false, true);
+        }
+
+        void DropdownAileValueChangedHappened(TMP_Dropdown dropdown)
+        {
+            var newSelectedIndex = dropdown.value;
+            choixAile = dropdown.options[newSelectedIndex].text;
+            if (choixAile == "K" || choixAile == "E" || choixAile == "M")
+            {
+                SetSpecificObjects(false, false, false, true, false, false, true, false, false, false, false);
+                SetObjects(false, false, false, false, false, false, false, true);
+                choixEtageDeAile = "0";
+            }
+            else
+            {
+                SetSpecificObjects(false, false, false, true, true, true, true, false, false, false, false);
+                if (choixAile == "D" || choixAile == "F")
+                    CreateDropdown(CreerListeEtageAileDEtF(), dropdownAileEtage);
+                if (choixAile == "L")
+                    CreateDropdown(CreerListeEtageAileL(), dropdownAileEtage);
+                if (choixAile == "N")
+                    CreateDropdown(CreerListeEtageAileN(), dropdownAileEtage);
+                if (choixAile == "C")
+                    CreateDropdown(CreerListeEtageAileC(), dropdownAileEtage);
+                if (choixAile == "S")
+                    CreateDropdown(CreerListeEtageAileS(), dropdownAileEtage);
+
+                dropdownAileEtage.onValueChanged.AddListener(delegate
+                {
+                    DropdownAileEtageValueChangedHappened(dropdownAileEtage);
+                });
+            }
+        }
+
+        void DropdownAileEtageValueChangedHappened(TMP_Dropdown dropdown)
+        {
+            var newSelectedIndex = dropdown.value;
+            choixEtageDeAile = dropdown.options[newSelectedIndex].text;
+            SetObjects(false, false, false, false, false, false, false, true);
+        }
+
+        void DropdownLocal1ValueChangedHappened(TMP_Dropdown dropdown)
+        {
+            SetSpecificObjects(true, true, true, false, false, false, false, false, false, false, false);
+            var selectedIndex = dropdown.value;
+            if (selectedIndex == 1)
+                CreateDropdown(CreerListeLocauxAileD(), dropdownLocal2);
+            if (selectedIndex == 2)
+                CreateDropdown(CreerListeLocauxAileL(), dropdownLocal2);
+            if (selectedIndex == 3)
+                CreateDropdown(CreerListeLocauxAileF(), dropdownLocal2);
+            if (selectedIndex == 4)
+                CreateDropdown(CreerListeLocauxAileN(), dropdownLocal2);
+            if (selectedIndex == 5)
+                CreateDropdown(CreerListeLocauxAileK(), dropdownLocal2);
+            if (selectedIndex == 6)
+                CreateDropdown(CreerListeLocauxAileC(), dropdownLocal2);
+            if (selectedIndex == 7)
+                CreateDropdown(CreerListeLocauxAileS(), dropdownLocal2);
+            if (selectedIndex == 8)
+                CreateDropdown(CreerListeLocauxAileM(), dropdownLocal2);
+            if (selectedIndex == 9)
+                CreateDropdown(CreerListeLocauxAileE(), dropdownLocal2);
+
+            choixAileLocal = dropdown.options[selectedIndex].text;
+            dropdownLocal2.onValueChanged.AddListener(delegate { DropdownLocal2ValueChangedHappened(dropdownLocal2); });
+        }
+
+        void DropdownLocal2ValueChangedHappened(TMP_Dropdown dropdown)
+        {
+            var newSelectedIndex = dropdown.value;
+            choixNbLocal = dropdown.options[newSelectedIndex].text;
+            SetObjects(false, false, false, false, false, false, false, true);
+        }
+        
     }
 
     public void DropdownEtageValueChangedHappened(TMP_Dropdown dropdown)
@@ -680,6 +664,7 @@ public class Contraintes : MonoBehaviour
         choixNbLocal = dropdown.options[newSelectedIndex].text;
         SetObjects(false, false, false, false, false, false, false, true);
     }
+
     public List<string> CreerListeEtageAileDEtF()
     {
         var etages = new List<string>();

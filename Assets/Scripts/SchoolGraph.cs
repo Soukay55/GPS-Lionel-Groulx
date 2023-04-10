@@ -61,11 +61,11 @@ public class SchoolGraph : MonoBehaviour
             var nom = ToNameList(dataTab[i + 1])[0];
 
             var endroitPublic = ToBool(dataTab[i + 2]);
-            
+
             var étage = ToÉtage(dataTab[i + 3]);
-            
+
             var connectedNodes = ToList(dataTab[i + 4]);
-            
+
             var coordonéesGps = ToGpsCoordinate(dataTab[i + 5]);
 
             if (étage > étageComparateur)

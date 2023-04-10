@@ -14,8 +14,7 @@ namespace GameAI
             public PathfindingNode Départ { get; set; }
 
             public PathfindingNode Arrivée { get; set; }
-            
-                
+
 
             /*public enum StatutPathfinder
             {

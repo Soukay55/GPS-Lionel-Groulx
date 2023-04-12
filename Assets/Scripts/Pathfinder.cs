@@ -66,21 +66,9 @@ namespace Pathfinding
        
 
        
-        public int GetNodePlusPetitCout(List<PathfindingNode> nodeList)
+        public virtual int GetNodePlusPetitCout(List<PathfindingNode> nodeList)
         {
             int indexPlusPetit = 0;
-            float plusPetitCout = nodeList[0].FCost;
-            for (int i = 1; i < nodeList.Count; i++)
-            {
-                //this line ugly af
-                if (plusPetitCout >nodeList[i].FCost||(plusPetitCout == nodeList[i].FCost
-                                                       &&nodeList[indexPlusPetit].HCost>nodeList[i].HCost))
-                {
-                    plusPetitCout = nodeList[i].FCost;
-                    indexPlusPetit = i;
-                }
-            }
-            //PathfindingNode n = nodeList[indexPlusPetit];
             return indexPlusPetit;
         }
 

@@ -77,7 +77,7 @@ namespace Pathfinding
         {
             float length = 0;
             
-            for (int i = 0; i < Path.Count; i++)
+            for (int i = 0; i < Path.Count-1; i++)
             {
                 length+=Node.CalculerDistanceNodes(Path[i], Path[i + 1]);
             }

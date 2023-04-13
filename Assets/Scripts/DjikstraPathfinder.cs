@@ -118,13 +118,7 @@ public class DjikstraPathfinder : Pathfinder
         return matriceAdja;
     }
     
-    //pour calculer la distance entre deux nodes inévitables,
-    //il faut trouver la longueur du path avec AStar
-    public float GetShortestPathLength(PathfindingNode départ, PathfindingNode arrivée)
-    {
-        return -1;
-    }
-    
+   
     //on veut un cycle hamiltonien, mais le node départ ne doit être atteint qu'une fois
     //en utilisant le FindPathAStar, on évite de repasser deux fois sur un node déja visité
     
@@ -201,46 +195,90 @@ public class DjikstraPathfinder : Pathfinder
         {
             for (int i = 0; i < nombreNodes; i++)
             {
-                PermutationsPossibles(nombreNodes-1, nombresÀPermuter, permutations);
+                PermutationsPossibles(nombreNodes - 1, nombresÀPermuter, permutations);
                 if (nombreNodes % 2 == 0)
                 {
-                    Intervertir(i, nombreNodes-1, nombresÀPermuter);
+                    Intervertir(i, nombreNodes - 1, nombresÀPermuter);
                 }
                 else
                 {
-                    Intervertir(0, nombreNodes-1, nombresÀPermuter);
+                    Intervertir(0, nombreNodes - 1, nombresÀPermuter);
                 }
             }
         }
-        
-        
-        
-      
-        
+
         return permutations;
     }
-    //Pathfinder #1 and #2: plusieurs à passer OU (plusieurs à passer ET plusieurs/une à éviter)
     
+    //Pour tous les problèmes de Pathfinding ou il y a des nodes que l'on doit
+    //obligatoirement passer 
     
-    public List<PathfindingNode> FindPathDjikstra()
+    //Pathfinder pour cas #1 ou cas #2: plusieurs à passer OU (plusieurs à passer ET plusieurs/une à éviter)
+    //
+    //Maybe create a Path class? easier to manipulate?
+    //
+    //Approche naive pour le pathfinding
+    public List<PathfindingNode> FindPathDjikstra1()
     {
         int nombreNodes = NodesInévitables.Count;
-
         int[] nombresÀPermuter = new int[nombreNodes];
-        for (int i = nombreNodes; i > 0; i--) nombresÀPermuter[i - 1] = i;
-
+              for (int i = nombreNodes; i > 0; i--) nombresÀPermuter[i - 1] = i;
         int[,] permutations= new int[FactorielDe(nombreNodes), nombreNodes];
+        
+        permutations=PermutationsPossibles(nombreNodes, nombresÀPermuter, permutations);
         float[,]distances=CréerMatriceAdjacence();
         
-        OpenList.Add(Départ);
+        NodesInévitables.Insert(0,Départ);
+        NodesInévitables.Add(Arrivée);
+
+        //Maybe make these properties of DjikstraPathFindr instead? code getting crowded AF!!!
+        List<PathfindingNode> BestPath = NodesInévitables;
+        List<PathfindingNode> CurrentPath = new List<PathfindingNode>();
+        float currentPathLength = 0;
+        float bestPathLength = distances[0,permutations[0,0]]
+                               +distances[permutations[0,nombreNodes-1],nombreNodes+1];
         
-        while (NodeActuel != Arrivée)
+        for (int i=0;i<nombreNodes;i++)
         {
-            //CurrentNode=
+            bestPathLength += distances[permutations[0, i], permutations[0, i + 1]];
         }
-        return NodesÀÉviter;
+
+        for (int i = 1; i < FactorielDe(nombreNodes) - 1; i++)
+        {
+            //Maybe create a Func that removes everything except Départ & Arrivée
+            //so you don't have to clear and add at each iteration of the loop
+            CurrentPath.Clear();
+            CurrentPath.Add(Départ);
+            currentPathLength = distances[0, permutations[i, 0]]
+                                 + distances[permutations[i, nombreNodes + 1], nombreNodes + 1];
+            
+            for (int j = 0; i < nombreNodes; i++)
+            {
+                CurrentPath.Insert(j+1,NodesInévitables[permutations[i,j]]);
+                currentPathLength += distances[permutations[i, j], permutations[i, j + i]];
+            }
+            
+            CurrentPath.Add(Arrivée);
+
+            if (currentPathLength < bestPathLength)
+            {
+                BestPath = CurrentPath;
+                bestPathLength = currentPathLength;
+            }
+
+        }
+        
+        //On doit maintenant trouver le meilleur "Path" A-Star entre chacuns de ces nodes
+        
+        
+        return BestPath;
     }
-    
+
+    public List<PathfindingNode> FindPathDjikstra()
+    {
+        return NodesInévitables;
+    }
+
     public override int GetNodePlusPetitCout(List<PathfindingNode> nodeList)
     {
         int indexPlusPetit = 0;

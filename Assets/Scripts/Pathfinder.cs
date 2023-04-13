@@ -48,8 +48,16 @@ namespace Pathfinding
         public List<PathfindingNode>Path { get; set; }
 
         //aucune contrainte (constructeur de path "de base")
+        
+        public Pathfinder()
+        {
+            OpenList = new List<PathfindingNode>();
+            ClosedList = new List<PathfindingNode>();
+        }
         public Pathfinder( PathfindingNode départ,PathfindingNode end)
         {
+            OpenList = new List<PathfindingNode>();
+            ClosedList = new List<PathfindingNode>();
             Départ=départ ;
             Arrivée = end;
 
@@ -59,10 +67,23 @@ namespace Pathfinding
         public Pathfinder( PathfindingNode départ, PathfindingNode end,
             List<PathfindingNode> nodesChoisis )
         {
+            OpenList = new List<PathfindingNode>();
+            ClosedList = new List<PathfindingNode>();
             Départ=départ ;
             Arrivée = end;
         }
 
+        public float CalculatePathLength()
+        {
+            float length = 0;
+            
+            for (int i = 0; i < Path.Count; i++)
+            {
+                length+=Node.CalculerDistanceNodes(Path[i], Path[i + 1]);
+            }
+
+            return length;
+        }
        
 
        

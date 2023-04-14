@@ -1,64 +1,74 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GPSCoordinate
 {
-    private const float PROP_DEGRÉ_RAD = Mathf.PI / 180,
-        RAYON_TERRE_METRE = 6371106;
-
     public double Latitude { get; set; }
     public double Longitude { get; set; }
+    
+
 
     public GPSCoordinate(double latitude, double longitude)
     {
         Latitude = latitude;
         Longitude = longitude;
     }
-
+    
     public static float CalculerDistanceEntreDeuxCoordonnées(GPSCoordinate A, GPSCoordinate B)
     {
-        //la formule haversine va lowkey fuckup l'accuracy pcq c ptit test aek pyth
-
-        var latARad = (float)(A.Latitude * PROP_DEGRÉ_RAD);
-        var latBRad = (float)(B.Latitude * PROP_DEGRÉ_RAD);
-        var longARad = (float)(A.Longitude * PROP_DEGRÉ_RAD);
-        var longBRad = (float)(B.Longitude * PROP_DEGRÉ_RAD);
-
-        var deltaLong = longBRad - longARad;
-
-        var deltaLat = latBRad - latARad;
-
-        var a = Mathf.Sin(deltaLat / 2) * Mathf.Sin(deltaLat / 2) +
-                Mathf.Cos(latARad) * Mathf.Cos(latBRad) *
-                Mathf.Sin(deltaLong / 2) * Mathf.Sin(deltaLong / 2);
-
-        var c = 2 * Mathf.Atan2(Mathf.Sqrt(a), Mathf.Sqrt(1 - a));
-
-        return RAYON_TERRE_METRE * c;
+        return PositionRelativeENUCoords(A, B).magnitude;
     }
 
-    //bearing ou ps?
-    public static float CalculerDistanceXEntreDeuxCoordonnées(GPSCoordinate A, GPSCoordinate B)
+    //position relative en coordonnées ENU (East-North-Up)
+    public static Vector3 PositionRelativeENUCoords(GPSCoordinate A, GPSCoordinate B)
     {
-        var deltaLat = (float)(B.Latitude * PROP_DEGRÉ_RAD - A.Latitude * PROP_DEGRÉ_RAD);
-        return Mathf.Abs(CalculerDistanceEntreDeuxCoordonnées(A, B) * Mathf.Sin(deltaLat));
+        float PROP_DEGRÉ_RAD = Mathf.PI / 180;
+        
+        float latRad = (float)A.Latitude * PROP_DEGRÉ_RAD;
+        float lonRad = (float)A.Longitude * PROP_DEGRÉ_RAD;
+        
+        Vector3 posA = CartesianToECEF(A),
+            posB=CartesianToECEF(B);
+
+        float x = -1 * (posB.x - posA.x) * Mathf.Sin(lonRad) + (posB.y - posA.y) *
+            Mathf.Cos(lonRad);
+        float y = -1 * (posB.x - posA.x) * Mathf.Sin(latRad) * Mathf.Cos(lonRad)
+                  - (posB.y - posA.y) * Mathf.Sin(lonRad) * Mathf.Sin(latRad) +
+                  (posB.z - posA.z) * Mathf.Cos(latRad);
+        float z = 0;
+        
+        //Le z et le y ne représentent pas la même chose physiquement
+        //dans l'espace géographique et dans unity
+        return new Vector3(x, z, y);
+
     }
 
-    public static float
-        CalculerDistanceYEntreDeuxCoordonnées(GPSCoordinate A, GPSCoordinate B) //le y c le z dans vector3
+    //Ceci nous donne les coordonées ENU
+    public static Vector3 CartesianToECEF(GPSCoordinate coordonée)
     {
-        var deltaLong = (float)(B.Longitude * PROP_DEGRÉ_RAD - A.Longitude * PROP_DEGRÉ_RAD);
-        return Mathf.Abs(CalculerDistanceEntreDeuxCoordonnées(A, B) * Mathf.Sin(deltaLong));
+        float PROP_DEGRÉ_RAD = Mathf.PI / 180,
+        RAYON = 6378137, //Longeur de l'Axe principal du système mondial géosétique
+        APLATISSEMENT = 1 / 298.257223563f,
+        ECCENTRICITÉ_TERRE_CARRÉ = (Mathf.Pow(RAYON,2) //déviation de la terre par rapport à un cercle parfait
+                      -  Mathf.Pow(RAYON * (1 - APLATISSEMENT),2)) / Mathf.Pow(RAYON,2) ;
+        
+        float latRad = (float)coordonée.Latitude * PROP_DEGRÉ_RAD;
+        float lonRad = (float)coordonée.Longitude * PROP_DEGRÉ_RAD;
+        
+        //rayon de courbature vertical
+        float N = RAYON /
+                          Mathf.Sqrt(1 - ECCENTRICITÉ_TERRE_CARRÉ * 
+                              Mathf.Pow((Mathf.Sin(latRad)), 2));
+        
+        float x = N*Mathf.Cos(latRad)
+                                   *Mathf.Cos(lonRad);
+        float y = N*Mathf.Cos(latRad)
+                                  *Mathf.Sin(lonRad);
+        float z = Mathf.Pow((1 - APLATISSEMENT), 2) * N * Mathf.Sin(latRad);
+            
+        return new Vector3(x,y,z);
     }
-
-    // Start is called before the first frame update
-    private void Start()
-    {
-    }
-
-    // Update is called once per frame
-    private void Update()
-    {
-    }
+  
 }

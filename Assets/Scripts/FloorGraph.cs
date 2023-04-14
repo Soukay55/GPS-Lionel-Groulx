@@ -35,6 +35,7 @@ public class FloorGraph : MonoBehaviour
 
     public List<PathfindingNode> GetNodeData(string fichierNodesName)
     {
+        //all of this needs to be done in a separate function
         var fichierÀlire = $"{PATH}/{fichierNodesName}";
         fluxLecture = new StreamReader(fichierÀlire);
 
@@ -50,6 +51,7 @@ public class FloorGraph : MonoBehaviour
         }
 
         dataTab = données.Split("\t", StringSplitOptions.RemoveEmptyEntries).ToList();
+        //all of the above in a separate method
         
         var étageComparateur = Étage.A;
         var cpt = 1;
@@ -123,7 +125,7 @@ public class FloorGraph : MonoBehaviour
 
     public GPSCoordinate ToGpsCoordinate(string coordonéeGPS)
     {
-        var coord = coordonéeGPS.Split(",", StringSplitOptions.RemoveEmptyEntries);
+        var coord = coordonéeGPS.Split("@", StringSplitOptions.RemoveEmptyEntries);
 
         return new GPSCoordinate(double.Parse(coord[0]), double.Parse(coord[1]));
     }

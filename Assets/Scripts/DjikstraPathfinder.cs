@@ -217,7 +217,7 @@ public class DjikstraPathfinder : Pathfinder
     //
     //Maybe create a Path class? easier to manipulate?
     //
-    //Approche naive pour le pathfinding
+    //Approche naive pour le pathfinding: adaptation du "TSP"
     public List<PathfindingNode> FindPathDjikstra1()
     {
         int nombreNodes = NodesInévitables.Count;
@@ -270,8 +270,33 @@ public class DjikstraPathfinder : Pathfinder
         
         //On doit maintenant trouver le meilleur "Path" A-Star entre chacuns de ces nodes
         
+        GetPathFromSubPath(BestPath);
         
         return BestPath;
+    }
+
+    public void GetPathFromSubPath(List<PathfindingNode> path)
+    {
+        AStarPathfinder pathfinder = new AStarPathfinder();
+
+        for (int i = 0; i < NodesInévitables.Count-1; i++)
+        {
+            pathfinder.Départ = path[i];
+            pathfinder.Arrivée = path[i + 1];
+            
+            Insérer(path, path.Count-(NodesInévitables.Count-i)+1,pathfinder.FindPathAStar());
+
+        }
+
+    }
+
+    //à tester to be sure
+    public void Insérer(List<PathfindingNode>path,int index, List<PathfindingNode>listeÀInsérer)
+    {
+        for (int i = 0; i < listeÀInsérer.Count; i++)
+        {
+            path.Insert(index+i,listeÀInsérer[i]);
+        }
     }
 
     public List<PathfindingNode> FindPathDjikstra()

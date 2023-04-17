@@ -14,23 +14,7 @@ public class CreateurCouloir : MonoBehaviour
 
 
     private static GameObject couloir;
-    private void Start()
-    {
-        nbEnfants = gameObject.transform.childCount;
-        couloir = new GameObject("Couloir");
-        
-        for (var i = 0; i < nbEnfants - 1; i++)
-        {
-            GénérerObjetsMur(transform.GetChild(i).position,
-                transform.GetChild(i + 1).position,prefabObjet,8,-1);
-                
-            CréerCouloir(transform.GetChild(i).position,
-                transform.GetChild(i + 1).position,prefabCouloir);
-        }
-            
-        //CréerCouloir(transform.GetChild(0).localPosition, transform.GetChild(1).localPosition);
-    }
-
+   
    
     private static float largeurCouloir = 2f,
         hauteurCouloir  =5f,
@@ -44,8 +28,10 @@ public class CreateurCouloir : MonoBehaviour
     
     //Calcule la direction, rotation, distance, et la position du premier objet 
     //pour les objets qui vont de pointA à pointB
-    static void CalculerDirRotDistPosChemin(Vector3 pointA, Vector3 pointB)
+    public static Tuple<float,Vector3,int,Quaternion, Vector3, GameObject> CalculerDirRotDistPosChemin(Vector3 pointA, Vector3 pointB)
     {
+        couloir = new GameObject("Couloir");
+        
         //direction du vecteur unitaire que le couloir suivra
         direction = (pointB - pointA).normalized;
         
@@ -63,10 +49,12 @@ public class CreateurCouloir : MonoBehaviour
         
         couloir.transform.position = pointA;
         couloir.transform.rotation = rotation;
+        return new Tuple<float, Vector3, int, Quaternion, Vector3,GameObject>
+            (distance, position, nombreBlocs, rotation, direction,couloir);
     }
 
     //prend deux points A et B et génère un couloir allant de A à B
-    public static void CréerCouloir(Vector3 pointA, Vector3 pointB, GameObject prefab)
+    public static GameObject CréerCouloir(Vector3 pointA, Vector3 pointB, GameObject prefab)
     {
        CalculerDirRotDistPosChemin(pointA,pointB);
         for (var i = 0; i < nombreBlocs; i++)
@@ -76,6 +64,8 @@ public class CreateurCouloir : MonoBehaviour
                 hauteurCouloir, longueurBloc );
             position += longueurBloc * direction;
         }
+
+        return couloir;
     }
     
     //Génère une série d'objets équidistants le long des murs d'un couloir
@@ -89,8 +79,6 @@ public class CreateurCouloir : MonoBehaviour
         CalculerDirRotDistPosChemin(pointA,pointB);
 
         int j = -1+(int)MathF.Abs(codeCouloir);
-
-        
 
         //si le codeCouloir était égal à zéro, il devient un, pour que le premier
         //objet "alterné" sur le mur soit instancié sur le mur de gauche, et non au 

@@ -17,16 +17,11 @@ public class PathfindingNode : Node
 
     public List<float> ConnectedNodes { get; set; }
 
-    public List<PathfindingNode>Voisins { get; set; }//les voisins doivent
-                                          //être calculés à partir d connectdnodes
-
-    //public bool EstDansClosedList { get; set; } = false;
-    
-    public bool ÀÉviter { get; set; }
-
-    //public bool EstDansOpenList { get; set; } = false;
-
-
+    public List<PathfindingNode> Voisins
+    {
+        get; set;
+    }
+            
     public float FCost
     {
         get { return HCost + GCost;}
@@ -47,6 +42,7 @@ public class PathfindingNode : Node
     {
         ConnectedNodes = connectedNodes;
         EstEndroitPublic = estEndroitPublic;
+        
     }
 
     public float GetGCost()
@@ -69,5 +65,19 @@ public class PathfindingNode : Node
     public void SetHCost()
     {
         //GCost = GetHCost();
+    }
+
+    //maybe check 4 optimization
+    public void GetNeighbours(École école)
+    {
+        int floor;
+        
+        //i.e si ConnectedNode=3.2, c'est la Node Numéro3 de l'étage 2
+        foreach (var node in ConnectedNodes)
+        {
+            floor = (int)((node - (int)node) * 10);
+            Voisins.Add(école.Floors[floor].Nodes[(int)node]);
+        }
+        
     }
 }

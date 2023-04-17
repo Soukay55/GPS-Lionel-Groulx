@@ -10,5 +10,6 @@ public enum Étage
     G,
     H,
     I,
-    O
+    O,
+    NombreÉtages
 }

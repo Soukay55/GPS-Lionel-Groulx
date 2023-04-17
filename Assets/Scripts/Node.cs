@@ -27,7 +27,7 @@ public class Node
         Nombre = nombre;
         Nom = nom;
         CoordonéesGPS = coordonéesGps;
-        ConnectedNodes = ConnectedNodes;
+        ConnectedNodes = connectedNodes;
     }
     public Node(int nombre, string nom, Étage étage, GPSCoordinate coordonéesGps)
     {
@@ -46,6 +46,7 @@ public class Node
     {
         
     }
+    
 
     public void SetPosition(Node origine)
     {

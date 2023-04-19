@@ -6,7 +6,7 @@ using Pathfinding;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
-
+//some of these methods need to go in Pathfinder theres too many lines
 
 //plusieurs nodes à passer
 //plusieurs à passer ET une à éviter
@@ -14,7 +14,7 @@ using UnityEngine;
 //au moins une aile/étage/toilette à passer
 //au moins une aile/étage/toilette à passer ET une/plusieurs à éviter
 //au moins une aile/étage/toilette à passer
-//                      ET une/plusieurs à éviter ET une/plusieurs à passer
+//ET une/plusieurs à éviter ET une/plusieurs à passer
 public class DjikstraPathfinder : Pathfinder
 {
 
@@ -157,6 +157,8 @@ public class DjikstraPathfinder : Pathfinder
         return BestPath;
     }
     
+    //in the end, arrivée is going to be at the beginning of the Path, so
+    //the first position needs to be modified
     //Pathfinder pour le cas #1 et #2 mais pour 6 nodes et plus
     public List<PathfindingNode> FindPathDjikstra()
     {
@@ -187,38 +189,43 @@ public class DjikstraPathfinder : Pathfinder
             //que Départ, alors on met tous les couts pour celui-ci à infini 
             Coûts[nbNodes - 1, i] = Mathf.Infinity;
         }
-        
         RéduireMatrice();
-        
-        
-        
         
         return NodesInévitables;
     }
+    
+    public int Assigner()
+    {
+        int nbZéros=0;
+        char[,] états = new char[Coûts.GetLength(0), Coûts.GetLength(1)];
+        
+        
+        for (int i = 0; i <Coûts.GetLength(0);i++)
+        {
+            for (int j=0;j<Coûts.GetLength(1);j++)
+            {
+                //erreur de précision du float
+                if (Coûts[i, j] < 0.0002f)
+                {
+                    //nbZéros++;
+                  //  états[i,j]=""
+                }
+    
+                if (nbZéros > 1)
+                {
+                    
+                }
+            }
+        }
 
-    // public Tuple<int, int> Assigner()
-    // {
-    //     int nbZéros=0;
-    //     public int[,]matriceÉtat=new int[Coûts.GetLength(0),]
-    //         
-    //     for (int i = 0; i < Coûts.GetLength(0); i++)
-    //     {
-    //         for (int j = 0; j < Coûts.GetLength(1); j++)
-    //         {
-    //             //(erreur décimale du float)
-    //             if (Coûts[i, j] <= 0.0002)
-    //             {
-    //                 nbZéros++;
-    //             }
-    //         }
-    //
-    //         if (nbZéros == 1)
-    //         {
-    //             
-    //         }
-    //     }
-    //     return 
-    // }
+        return 3;
+        
+    }
+
+    public bool EstCycleHamiltonien(List<PathfindingNode>Path)
+    {
+        return Path.IndexOf(Arrivée) < Path.Count - 1;
+    }
 
     public void RéduireMatrice()
     {
@@ -315,7 +322,6 @@ public class DjikstraPathfinder : Pathfinder
         }
 
     }
-    
     
     
     //PermutationsPossibles calcule toutes les permutations possibles par lesquelles doivent passer

@@ -42,7 +42,7 @@ public class CreateurCouloir : MonoBehaviour
         distance = Vector3.Distance(pointA, pointB);
         
         //self explanatory...
-        nombreBlocs = Mathf.RoundToInt(distance / longueurBloc);
+        nombreBlocs = Mathf.CeilToInt(distance / longueurBloc);
         
         //position du premier blocCouloir
         position = pointA;

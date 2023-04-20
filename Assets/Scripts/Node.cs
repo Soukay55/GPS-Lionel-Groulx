@@ -51,7 +51,7 @@ public class Node
     public void SetPosition(Node origine)
     {
         Position = GPSCoordinate.PositionRelativeENUCoords
-            (origine.CoordonéesGPS, CoordonéesGPS);
+            (origine.CoordonéesGPS, CoordonéesGPS) * 9;
     }
     
      

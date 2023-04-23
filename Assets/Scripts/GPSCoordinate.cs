@@ -7,8 +7,8 @@ public class GPSCoordinate
 {
     public double Latitude { get; set; }
     public double Longitude { get; set; }
-    
 
+    private static float PROP_DEGRÉ_RAD = Mathf.PI / 180;
 
     public GPSCoordinate(double latitude, double longitude)
     {
@@ -48,8 +48,7 @@ public class GPSCoordinate
     //Ceci nous donne les coordonées ENU
     public static Vector3 CartesianToECEF(GPSCoordinate coordonée)
     {
-        float PROP_DEGRÉ_RAD = Mathf.PI / 180,
-        RAYON = 6378137, //Longeur de l'Axe principal du système mondial géosétique
+        float RAYON = 6378137, //Longeur de l'Axe principal du système mondial géosétique
         APLATISSEMENT = 1 / 298.257223563f,
         ECCENTRICITÉ_TERRE_CARRÉ = (Mathf.Pow(RAYON,2) //déviation de la terre par rapport à un cercle parfait
                       -  Mathf.Pow(RAYON * (1 - APLATISSEMENT),2)) / Mathf.Pow(RAYON,2) ;
@@ -69,6 +68,15 @@ public class GPSCoordinate
         float z = Mathf.Pow((1 - APLATISSEMENT), 2) * N * Mathf.Sin(latRad);
             
         return new Vector3(x,y,z);
+    }
+
+    public static Vector3 RotateAroundOriginZero(Vector3 point,float angle)
+    {
+        float angleRad = angle * PROP_DEGRÉ_RAD;
+        
+        Vector3 pointRot=new Vector3(point.x * Mathf.Cos(angleRad) - point.z * Mathf.Sin(angleRad),
+                0,point.x * Mathf.Sin(angleRad) + point.z * Mathf.Cos(angleRad));
+        return pointRot;
     }
   
 }

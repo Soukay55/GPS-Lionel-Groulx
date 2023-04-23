@@ -265,17 +265,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 261742695}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cf99f1b9152c7184db82696dca5077e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  longueurSalle: 0
-  largeurSalle: 0
-  coinSalle: {fileID: 0}
-  "cot\xE9Salle": {fileID: 0}
-  solSalle: {fileID: 0}
-  tablesEtChaises: {fileID: 0}
+  longueur: 0
+  largeur: 0
+  salle: {fileID: 4121246665368076967, guid: 47d7caffe78f62e4ba8c490d1e285fc1, type: 3}
+  tablesEtChaises: {fileID: 8186648423099785340, guid: adf0b7e912e132846b08d55b02f50001, type: 3}
 --- !u!135 &261742697
 SphereCollider:
   m_ObjectHideFlags: 0

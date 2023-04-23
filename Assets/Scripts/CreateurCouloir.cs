@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -47,7 +49,7 @@ public class CreateurCouloir : MonoBehaviour
         distance = Vector3.Distance(pointA, pointB);
         
         //self explanatory...
-        nombreBlocs = Mathf.FloorToInt(distance / longueurBloc);
+        nombreBlocs = Mathf.CeilToInt(distance / longueurBloc);
         
         //position du premier blocCouloir
         position = pointA;
@@ -66,7 +68,7 @@ public class CreateurCouloir : MonoBehaviour
        CalculerDirRotDistPosChemin(pointA,pointB, prefab);
         for (var i = 0; i < nombreBlocs; i++)
         {
-            var blocCouloir= Instantiate(prefab, position, rotation,couloir.transform);
+            Instantiate(prefab, position, rotation,couloir.transform);
             //blocCouloir.transform.localScale = new Vector3(largeurCouloir,
               // hauteurCouloir, longueurBloc );
             
@@ -76,28 +78,51 @@ public class CreateurCouloir : MonoBehaviour
         return couloir;
     }
 
-    public static void DétruireMursIntérieur(GameObject murs)
+    public static void DétruireMursIntérieur(GameObject poly, List<List<int>> mursDétruits)
     {
-        Transform parent = murs.transform;
-        for (int j=0;j<parent.childCount;j++)
+        Transform aile = poly.transform;
+        List<Transform> couloirsÀDétruire=new List<Transform>();
+        
+        for (int j=0;j<aile.childCount;j++)
         {
-            Transform child = parent.GetChild(j).transform;
-            
-            for (int i=0;i<child.childCount;i++)
+            Transform couloir = aile.GetChild(j);
+            for (int i=0;i<couloir.childCount;i++)
             {
-                position = child.GetChild(i).position;
-                Collider[] objs=Physics.OverlapSphere(position, 0.0001f);
+                position = couloir.GetChild(i).position;
+               
+                Collider[] objs=Physics.OverlapSphere(position, 0.00001f);
                 if (objs.Length > 1)
                 {
                     for (int k = 0; k < objs.Length; k++)
                     {
-                        Destroy((objs[k].gameObject.transform.parent.gameObject));
+                        var r = objs[k].gameObject.transform.parent.gameObject;
+                        var ensembleMurs = r.transform.parent.transform;
+                        
+                        var indexEnsembleMurs = ensembleMurs.GetSiblingIndex();
+                        var indexAile = ensembleMurs.transform.parent.transform.GetSiblingIndex();
+
+                        mursDétruits[indexAile][indexEnsembleMurs]++;
+                        Destroy((r));
                     }
+                    
                     Array.Clear(objs,0,objs.Length);
                 }
-            }   
+
+            }
+            
+            if(mursDétruits[aile.GetSiblingIndex()][j]==couloir.childCount)
+                couloirsÀDétruire.Add(couloir);
+
+        }
+
+        foreach(var couloir in couloirsÀDétruire)
+        {
+            // couloir.parent = null;
+            // Destroy(couloir.gameObject);
+            couloir.gameObject.name = "miso soup";
         }
         
+
     }
 
 
@@ -139,44 +164,44 @@ public class CreateurCouloir : MonoBehaviour
         }
     }
 
-    public static void GénérerCoquilleExterne(GameObject mursExt, GameObject prefab)
-    {
-        
-        List<Vector3> points = new List<Vector3>();
-        for (int i = 0; i < mursExt.transform.childCount; i++)
-        {
-            var poly = mursExt.transform.GetChild(i).transform;
-            for (int j = 0; j < poly.childCount; j++)
-            {
-                points.Add(poly.GetChild(j).transform.position);
-            }
-        }
-        
-        
-        Polygone coqExt = new Polygone("CoquilleExterne", points);
-        Vector3 centroide = coqExt.CalculerCentroide();
-        List<Vector3> newPoints = new List<Vector3>();
-        
-        foreach (var point in coqExt.Points)
-        {
-            print("hi");
-            newPoints.Add(centroide + (point - centroide) * 1.2f);
-        }
-        
-        coqExt.SetPoints(newPoints);
-        coqExt.DessinerPolygone(prefab,mursExt);
-    }
+    // public static void GénérerCoquilleExterne(GameObject mursExt, GameObject prefab)
+    // {
+    //     
+    //     
+    //     for (int i = 0; i < mursExt.transform.childCount; i++)
+    //     {
+    //         List<Vector3> points = new List<Vector3>();
+    //         var poly = mursExt.transform.GetChild(i).transform;
+    //         for (int j = 0; j < poly.childCount; j++)
+    //         {
+    //             points.Add(poly.GetChild(j).transform.position);
+    //         }
+    //         
+    //         Polygone coqExt = new Polygone("CoquilleExterne", points);
+    //         GameObject coquilleExt = new GameObject(coqExt.Nom);
+    //         Vector3 centroide = coqExt.CalculerCentroide();
+    //         List<Vector3> newPoints = new List<Vector3>();
+    //     
+    //         foreach (var point in coqExt.Points)
+    //         {
+    //             Instantiate(prefab, point, Quaternion.identity);
+    //             newPoints.Add(centroide + (point - centroide) * 1.2f);
+    //         }
+    //         
+    //         coqExt.SetPoints(newPoints);
+    //         coqExt.DessinerPolygone(prefab,coquilleExt);
+    //     }
+    //
+    // }
 
     public static void ScaleCouloir(Transform couloir)
     {
-        
         var c = GetCouloirLength(couloir);
-        if (c != distance)
+        if (c -distance>0.001f)
         {
-            print(distance);
-            print(c);
-            couloir.transform.localScale = new Vector3(couloir.transform.localScale.x, couloir.transform.localScale.y,
-                couloir.transform.localScale.z* (distance / c));
+            couloir.transform.localScale = new Vector3(couloir.transform.localScale.x,
+                couloir.transform.localScale.y,
+                couloir.transform.localScale.z * (distance / c));
         }
     }
 

@@ -7,17 +7,12 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
 {
     
 
-    [Range(0.0f, 30.0f)] public float longueur,
-        largeur;
-
-    [SerializeField] public GameObject salle,
-    tablesEtChaises;
-    
+    public static GameObject salle = GameObject.Find("Salle");
+    public static GameObject tableEtChaises=GameObject.Find("TablesEtChaises");
+    public static GameObject tableRondeEtChaises=GameObject.Find("TableRondeetChaise");
     // Start is called before the first frame update
     private void Start()
     {
-        //GénérerTablesEtChaises(transform.position,12,0,6,tablesEtChaises);
-        CréerSalleRectangulaire(60,90,30,transform.position,salle);
     }
     
    
@@ -29,7 +24,7 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
 
     }
 
-    public static void CréerSallePoly()
+    public static void CréerSallePolygonale()
     {
         
     }
@@ -41,11 +36,10 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
         //float nbTables = 8;
         if (dimensionY==0)
         {
-            Debug.Log("bonjour");
             float angle;
             var rayonMax = dimensionX / 2f;
             bool tableDevant=false;
-            var tableCentre = Instantiate(prefab, pointDépart, Quaternion.identity);
+            var tableCentre = Instantiate(tableRondeEtChaises, pointDépart, Quaternion.identity);
     
             for (float j = 1; j < rayonMax + 1; j += 1)
             {
@@ -99,7 +93,7 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
         for (var j = 0; j < dimensionY; j++)
         {
             position = new Vector3(j, 0, i);
-            Instantiate(prefab, position, rotation);
+            Instantiate(tableEtChaises, position, rotation);
         }
     
         return;

@@ -28,12 +28,14 @@ public class CreateurCouloir : MonoBehaviour
     private static Quaternion rotation;
     private static Vector3 direction;
     
+    
     //Calcule la direction, rotation, distance, et la position du premier objet 
     //pour les objets qui vont de pointA à pointB
     public static Tuple<float,Vector3,int,Quaternion, Vector3, GameObject> CalculerDirRotDistPosChemin(Vector3 pointA, Vector3 pointB, GameObject prefab)
     {
         Transform blocCouloir = prefab.transform.GetChild(0).transform;
         largeurCouloir = blocCouloir.localScale.x;
+        print(blocCouloir.localScale.x);
         hauteurCouloir = blocCouloir.localScale.y; 
         longueurBloc = blocCouloir.localScale.z;
         
@@ -56,25 +58,36 @@ public class CreateurCouloir : MonoBehaviour
         
         couloir.transform.position = pointA;
         couloir.transform.rotation = rotation;
+        
         return new Tuple<float, Vector3, int, Quaternion, Vector3,GameObject>
             (distance, position, nombreBlocs, rotation, direction,couloir);
     }
 
-    //clean up the getParent lines ewwwwwwwwwww
+    // public static Transform GetLowestChild(Transform ancestor)
+    // {
+    //     Transform lowestDescendant = ancestor;
+    //     while (lowestDescendant.childCount != 0)
+    //     {
+    //         lowestDescendant = lowestDescendant.GetChild(0);
+    //     }
+    //
+    //     return lowestDescendant;
+    // }
+    
+    
     //prend deux points A et B et génère un couloir allant de A à B
     public static GameObject CréerCouloir(Vector3 pointA, Vector3 pointB, GameObject prefab)
     {
-    
        CalculerDirRotDistPosChemin(pointA,pointB, prefab);
         for (var i = 0; i < nombreBlocs; i++)
         {
             Instantiate(prefab, position, rotation,couloir.transform);
-            //blocCouloir.transform.localScale = new Vector3(largeurCouloir,
               // hauteurCouloir, longueurBloc );
             
             position += longueurBloc * direction;
         }
-
+        ScaleCouloir(couloir.transform);
+        
         return couloir;
     }
 
@@ -164,44 +177,21 @@ public class CreateurCouloir : MonoBehaviour
         }
     }
 
-    // public static void GénérerCoquilleExterne(GameObject mursExt, GameObject prefab)
-    // {
-    //     
-    //     
-    //     for (int i = 0; i < mursExt.transform.childCount; i++)
-    //     {
-    //         List<Vector3> points = new List<Vector3>();
-    //         var poly = mursExt.transform.GetChild(i).transform;
-    //         for (int j = 0; j < poly.childCount; j++)
-    //         {
-    //             points.Add(poly.GetChild(j).transform.position);
-    //         }
-    //         
-    //         Polygone coqExt = new Polygone("CoquilleExterne", points);
-    //         GameObject coquilleExt = new GameObject(coqExt.Nom);
-    //         Vector3 centroide = coqExt.CalculerCentroide();
-    //         List<Vector3> newPoints = new List<Vector3>();
-    //     
-    //         foreach (var point in coqExt.Points)
-    //         {
-    //             Instantiate(prefab, point, Quaternion.identity);
-    //             newPoints.Add(centroide + (point - centroide) * 1.2f);
-    //         }
-    //         
-    //         coqExt.SetPoints(newPoints);
-    //         coqExt.DessinerPolygone(prefab,coquilleExt);
-    //     }
-    //
-    // }
-
     public static void ScaleCouloir(Transform couloir)
     {
         var c = GetCouloirLength(couloir);
         if (c -distance>0.001f)
         {
-            couloir.transform.localScale = new Vector3(couloir.transform.localScale.x,
-                couloir.transform.localScale.y,
-                couloir.transform.localScale.z * (distance / c));
+            var blocCouloir = couloir.GetChild(0).GetChild(0);
+            var constMultipl = 1;
+            for (int i = 0; i < 2; i++)
+            {
+                blocCouloir.position += direction*constMultipl*((c - distance) / 2)/2;
+                blocCouloir.localScale -= new Vector3(0,
+                    0, ((c - distance) / 2));
+                blocCouloir = couloir.GetChild(couloir.childCount-1).GetChild(0);
+                constMultipl *= -1;
+            }
         }
     }
 

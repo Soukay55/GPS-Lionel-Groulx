@@ -21,9 +21,9 @@ public class ShowVerticesComponent : MonoBehaviour
     private void Start()
     {
         vertices = GetComponent<MeshFilter>().sharedMesh.vertices;
-
-        var nVertices = vertices.Length;
         Debug.Log(vertices.Length);
+        var nVertices = vertices.Length;
+        
         vert2unique = new int[nVertices, 2];
         positions = new int[nVertices, 2];
         positions[0, 0] = 0;

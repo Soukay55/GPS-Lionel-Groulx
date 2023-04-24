@@ -7,6 +7,7 @@ using UnityEngine;
 using System.IO;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEngine.Animations;
 
 public class Node 
 {
@@ -20,6 +21,14 @@ public class Node
     
 
     public List<float> ConnectedNodes { get; set; }
+    
+    public Node(int nombre, string nom, GPSCoordinate coordonéesGps, List<float>connectedNodes )
+    {
+        Nombre = nombre;
+        Nom = nom;
+        CoordonéesGPS = coordonéesGps;
+        ConnectedNodes = connectedNodes;
+    }
     public Node(int nombre, string nom, Étage étage, GPSCoordinate coordonéesGps)
     {
         Nombre = nombre;
@@ -30,7 +39,19 @@ public class Node
 
     public static float CalculerDistanceNodes(Node A, Node B)
     {
-     return GPSCoordinate.CalculerDistanceEntreDeuxCoordonnées(A.CoordonéesGPS, B.CoordonéesGPS);
+        return GPSCoordinate.CalculerDistanceEntreDeuxCoordonnées(A.CoordonéesGPS, B.CoordonéesGPS);
+    }
+
+    public void DrawNode()
+    {
+        
+    }
+    
+
+    public void SetPosition(Node origine)
+    {
+        Position = GPSCoordinate.PositionRelativeENUCoords
+            (origine.CoordonéesGPS, CoordonéesGPS) * 9;
     }
     
      

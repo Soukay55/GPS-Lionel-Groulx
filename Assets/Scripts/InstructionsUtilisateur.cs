@@ -11,11 +11,10 @@ public class InstructionsUtilisateur : MonoBehaviour
 
     public static void GénérerInstructions(List<PathfindingNode> trajetUtilisateur)
     {
-        for (int i = 0; i < trajetUtilisateur.Count - 2; i++)
-        {
+        for (int i = 0; i < trajetUtilisateur.Count - 2; i += 2)
             CalculerAngle(trajetUtilisateur[i], trajetUtilisateur[i + 1],
-                trajetUtilisateur[i + 2]);
-        }
+            trajetUtilisateur[i + 2]);
+
 
         instructionsUtilisateur += "Continuer tout droit";
 

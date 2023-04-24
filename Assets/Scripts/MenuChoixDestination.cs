@@ -5,7 +5,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class ChoixLocal : MonoBehaviour
+public class MenuChoixDestination : MonoBehaviour
 {
     public List<string> CreerListeLocauxAileD()
     {
@@ -211,25 +211,18 @@ public class ChoixLocal : MonoBehaviour
     public string userInput1;
     public string userInput2;
 
+    public const string AILES = " DLFNKCSME";
+    public string Destination { get; set; }
+    
+
     public void Start()
     {
         dropdown2.gameObject.SetActive(false);
         button.gameObject.SetActive(false);
         dropdown1.options.Clear();
-        var items = new List<string>();
-        items.Add(" ");
-        items.Add("Aile D");
-        items.Add("Aile L");
-        items.Add("Aile F");
-        items.Add("Aile N");
-        items.Add("Aile K");
-        items.Add("Aile C");
-        items.Add("Aile S");
-        items.Add("Aile M");
-        items.Add("Aile E");
 
-
-        foreach (var item in items) dropdown1.options.Add(new TMP_Dropdown.OptionData() { text = item });
+        foreach (var i in AILES)
+            dropdown1.options.Add(new TMP_Dropdown.OptionData() { text = i.ToString() });
 
         dropdown1.onValueChanged.AddListener(delegate { Dropdown1ValueChangedHappened(dropdown1); });
     }
@@ -266,8 +259,7 @@ public class ChoixLocal : MonoBehaviour
         SetObjects(true, true, true);
         var newSelectedIndex = dropdown.value;
         userInput2 = dropdown.options[newSelectedIndex].text;
-        Debug.Log(userInput1);
-        Debug.Log(userInput2);
+        Destination = $"{userInput1}{userInput2}";
     }
 
 

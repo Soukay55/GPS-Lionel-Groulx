@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UI.Button;
+using Pathfinding;
 
 public class Contraintes : MonoBehaviour
 {
@@ -218,7 +219,8 @@ public class Contraintes : MonoBehaviour
         dropdownToilettes,
         dropdownEtages;
 
-    public Button button;
+    public Button button,
+        bouttonSuivant;
 
     public TMP_Text text1,
         text2,
@@ -228,6 +230,16 @@ public class Contraintes : MonoBehaviour
         textEtage,
         textLocal,
         textAile,
+        textContraintes1,
+        textContraintes2,
+        textContraintes3,
+        textContraintes4,
+        textContraintes5,
+        textContraintes6,
+        textContraintes7,
+        textContraintes8,
+        textContraintes9,
+        messageContraintes,
         textAileEtage;
 
     public string choixDropdown2,
@@ -240,8 +252,7 @@ public class Contraintes : MonoBehaviour
         choixNbLocal;
 
     private string localChoisi;
-    List<string> phrases = new List<string>();
-    public string phrase;
+
 
     void SetObjects(bool etat1, bool etat2, bool etat3, bool etat4, bool etat5, bool etat6, bool etat7, bool etat8)
     {
@@ -263,9 +274,6 @@ public class Contraintes : MonoBehaviour
     private void SetSpecificObjects(bool etat1, bool etat2, bool etat3, bool etat4, bool etat5, bool etat6, bool etat7,
         bool etat8, bool etat9, bool etat10, bool etat11)
     {
-        Debug.Log("called");
-        if (dropdownLocal1 == null || dropdownLocal2 == null || textLocal == null)
-            Debug.Log("something is null");
         dropdownLocal1.gameObject.SetActive(etat1);
         dropdownLocal2.gameObject.SetActive(etat2);
         textLocal.gameObject.SetActive(etat3);
@@ -375,6 +383,7 @@ public class Contraintes : MonoBehaviour
     {
         SetObjects(true, true, false, false, false, false, false, false);
         SetSpecificObjects(false, false, false, false, false, false, false, false, false, false, false);
+        bouttonSuivant.gameObject.SetActive(false);
 
         dropdown1.onValueChanged.AddListener(delegate { Dropdown1ValueChangedHappened(dropdown1); });
 
@@ -389,8 +398,20 @@ public class Contraintes : MonoBehaviour
         dropdown2.onValueChanged.AddListener(delegate { Dropdown2ValueChangedHappened(dropdown2); });
         dropdown3.onValueChanged.AddListener(delegate { Dropdown3ValueChangedHappened(dropdown3); });
         button.onClick.AddListener(ComportementBoutton);
+        bouttonSuivant.onClick.AddListener(ComportementBouttonSuivant);
+
     }
 
+    
+    List<string> phrases = new List<string>();
+    public string phrase;
+
+    public PathfindingNode depart;
+    public PathfindingNode arrivee;
+    private List<PathfindingNode> NodesAEviter, NodesInevitables;
+    private Node ChosenNode;
+    private List<Func<Boolean>> contraintes;
+    
     private void CreerPhrase()
     {
         if (choixDropdown3 == " la cafétéria" || choixDropdown3 == "le carrefour étudiant" ||
@@ -406,37 +427,51 @@ public class Contraintes : MonoBehaviour
             phrase = $"Je voudrais passer par {choixNbToilettes} {choixDropdown3}";
         if (choixDropdown2 == "ne pas passer" && choixDropdown3 == " toilette/s")
             phrase = $"Je voudrais éviter des toilettes";
+        
+        phrases.Add(phrase);
     }
 
-    // private void AfficherPhrase()
-    // {
-    //     afficher tout les items de la liste a chaque click donc des phrases vont sajouter a fur et a mesure
-    // }
+    private void AfficherPhrase()
+    {
+        textContraintes1.text = phrases[0];
+        textContraintes2.text = phrases[1];
+        textContraintes3.text = phrases[2];
+        textContraintes4.text = phrases[3];
+        textContraintes5.text = phrases[4];
+        textContraintes6.text = phrases[5];
+        textContraintes7.text = phrases[6];
+        textContraintes8.text = phrases[7];
+        textContraintes9.text = phrases[8];
+    }
 
-    // private void AfficherMessage()
-    // {
-    //     afficher le message de maximum a lutilisateur.
-    // }
+    private void AfficherMessage()
+    {
+        messageContraintes.text = "Vous avez atteint la limite de 8 contraintes";
+    }
 
     public void ComportementBoutton()
     {
-        phrases.Add(phrase);
-        if (phrases.Count >= 3)
+        bouttonSuivant.gameObject.SetActive(true);
+        
+        if (phrases.Count == 8)
         {
             MakeObjectsDisappear(); // sauf la liste et le bouton suivant
-            //AfficherMessage(); 
+            SetSpecificObjects(false,false,false,false,false,false,false,false,false,false,false);
+            AfficherMessage(); 
         }
         else
         {
             CreerPhrase();
-            //AfficherPhrase();
+            ResetAllDropdowns();
+            SetObjects(false, false, true, true, true, true, true, false);
+            SetSpecificObjects(false, false, false, false, false, false, false, false, false, false, false);
+            AfficherPhrase();
         }
+    }
 
-        Debug.Log(phrase);
-        Debug.Log($"{phrases.Count}");
-        ResetAllDropdowns();
-        SetObjects(false, false, true, true, true, true, true, false);
-        SetSpecificObjects(false, false, false, false, false, false, false, false, false, false, false);
+    public void ComportementBouttonSuivant()
+    {
+        
     }
 
     void Dropdown1ValueChangedHappened(TMP_Dropdown dropdown)
@@ -633,5 +668,39 @@ public class Contraintes : MonoBehaviour
         etages.Add("1");
         etages.Add("2");
         return etages;
+    }
+
+    public void AnalyseurContraintes(List<string> listeContraintes,École école)
+    {
+        if (contraintes.Count == 0)
+            new AStarPathfinder(depart, arrivee);
+        for (int i = 0; i < listeContraintes.Count; i++)
+        {
+            if (listeContraintes[i].Contains("Pas passer"))
+            {
+                 
+            }
+        }
+        
+
+    }
+
+    public static void AnalyseurDestination(string choix)
+    {
+        MenuChoixDestination destination = new MenuChoixDestination();
+        ///arrivee =GetNode(destination.Destination);
+    }
+
+    public void GetNode(string destination,École école)
+    {
+        int indexNode = 0;
+        Étage étage = GetÉtage(destination);
+
+        //FloorGraph floor = école[(int)étage]
+    }
+
+    public Étage GetÉtage(string destination)
+    {
+        return Étage.A;
     }
 }

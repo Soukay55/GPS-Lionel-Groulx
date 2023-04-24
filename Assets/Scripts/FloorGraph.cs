@@ -30,7 +30,7 @@ public class FloorGraph : MonoBehaviour
     // add le calcul soit ds graphe ou node idk yet
     public FloorGraph(List<PathfindingNode> nodes)
     {
-        var Nodes = nodes;
+        var Nodes = nodes;    
     }
 
     public List<PathfindingNode> GetNodeData(string fichierNodesName)

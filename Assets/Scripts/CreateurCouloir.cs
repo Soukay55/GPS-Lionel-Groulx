@@ -63,17 +63,6 @@ public class CreateurCouloir : MonoBehaviour
             (distance, position, nombreBlocs, rotation, direction,couloir);
     }
 
-    // public static Transform GetLowestChild(Transform ancestor)
-    // {
-    //     Transform lowestDescendant = ancestor;
-    //     while (lowestDescendant.childCount != 0)
-    //     {
-    //         lowestDescendant = lowestDescendant.GetChild(0);
-    //     }
-    //
-    //     return lowestDescendant;
-    // }
-    
     
     //prend deux points A et B et génère un couloir allant de A à B
     public static GameObject CréerCouloir(Vector3 pointA, Vector3 pointB, GameObject prefab)

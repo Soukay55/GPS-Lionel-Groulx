@@ -19,8 +19,7 @@ public class LoadingScreen : MonoBehaviour
         {
             //maybe create a FileReadingTool
             //that converts a 2d vectors string into 3d vectors string
-            points.Add(
-                FileReadingTools.ToVector3((donnée.Insert(donnée.IndexOf(",") - 1, ",0"))));
+            points.Add(FileReadingTools.ToVector3((donnée.Insert(donnée.IndexOf(",") - 1, ",0"))));
             j++;
         }
 

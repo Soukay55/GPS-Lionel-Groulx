@@ -70,7 +70,7 @@ public class FileReadingTools
     {
         var nodeList = new List<float>();
         var nodeListString = new List<string>();
-        nodeListString = nodes.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
+        nodeListString = nodes.Split("-", StringSplitOptions.RemoveEmptyEntries).ToList();
         foreach (var node in nodeListString) nodeList.Add(float.Parse(node, CultureInfo.InvariantCulture));
         return nodeList;
     }

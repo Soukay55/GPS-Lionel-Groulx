@@ -37,8 +37,10 @@ namespace Pathfinding
         
         //node que le pathfinder visite à l'instant présent
         public PathfindingNode NodeActuel { get; set; }
-        
-        
+
+        public StatutPathfinder Statut { get; set; }
+
+
         //les nodes pour lesquelles l'utilisateur a imposé comme
         //contrainte de ne pas vouloir passer
         public List<PathfindingNode>NodesÀÉviter { get; set; }
@@ -56,6 +58,7 @@ namespace Pathfinding
         }
         public Pathfinder( PathfindingNode départ,PathfindingNode end)
         {
+            
             OpenList = new List<PathfindingNode>();
             ClosedList = new List<PathfindingNode>();
             Départ=départ ;
@@ -93,13 +96,13 @@ namespace Pathfinding
             return indexPlusPetit;
         }
 
-        // public enum StatutPathfinder
-        // {
-        //     PAS_INITIALISÉ,
-        //     SUCCES,
-        //     ÉCHEC,
-        //     EN_MARCHE,
-        // }
+        public enum StatutPathfinder
+        {
+            PAS_INITIALISÉ,
+            SUCCES,
+            ÉCHEC,
+            EN_MARCHE,
+        }
             
         //verifier si la node est dans
         //la liste et get le index de la node si ell est dedans

@@ -347,4 +347,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   murExt: {fileID: 5853849374306636767, guid: 75d090ac95c7c6e4a9d2c387c0fdb408, type: 3}
   murInt: {fileID: 7311290681508252227, guid: 54307ca56523f2d4cbbbd0f08b54fa18, type: 3}
-  prefab: {fileID: 6353514038975882799, guid: 789259c0639d0b64587234b0dd0beefa, type: 3}
+  "mat\xE9rielSol": {fileID: 2100000, guid: 6f4826f88ac4f1c4a838c7d90757ba90, type: 2}

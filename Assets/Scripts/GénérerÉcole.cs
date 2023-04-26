@@ -14,7 +14,7 @@ public class GénérerÉcole : MonoBehaviour
     [SerializeField]
     public GameObject murExt;
     public GameObject murInt;
-    public GameObject prefab;
+    public Material matérielSol;
     
     private const int NB_INFOS_PAR_NODES = 4;
     
@@ -24,9 +24,10 @@ public class GénérerÉcole : MonoBehaviour
     {
         List<Node> points = GetListePoints(FileReadingTools.LireFichierTxt("OutsideData.txt"));
         GetPolygons(points);
+        
         GénérerMursExt(); 
         GénérerMursInt();
-       // GénérerSols();
+        GénérerSols();
         
     }
     
@@ -37,7 +38,9 @@ public class GénérerÉcole : MonoBehaviour
         foreach (var node in pointList)
         {
             if (node.ConnectedNodes[0] != 0)
+            {
                 polygones.Add( Polygone.GetPolygon(node, pointList));
+            }
         }
         Ailes = polygones;
     }
@@ -56,7 +59,7 @@ public class GénérerÉcole : MonoBehaviour
             nombre = int.Parse(dataTab[i], CultureInfo.InvariantCulture);
             coords = FileReadingTools.ToGpsCoordinate(dataTab[i+1].Replace(" ", ""));
             nom = dataTab[i+2];
-            connectedNodes = dataTab[i + 3] == "n" ?  new List<float>() { 0 } :
+            connectedNodes = dataTab[i + 3] == "n" ?  new List<float> { 0 } :
                 FileReadingTools.ToList(dataTab[i + 3]);
             
             listePoints.Add(new Node(nombre,nom,coords, connectedNodes));
@@ -93,7 +96,6 @@ public class GénérerÉcole : MonoBehaviour
             poly.transform.SetParent(outsideWalls.transform);
             aile.DessinerPolygone(murExt, poly);
             CreateurCouloir.DétruireMursIntérieur(poly, mursDétruits);
-            
         }
 
         for (int j = 0; j < outsideWalls.transform.childCount; j++)
@@ -141,7 +143,7 @@ public class GénérerÉcole : MonoBehaviour
     {
         foreach (var aile in Ailes)
         {
-            aile.CréerSol();
+            aile.CréerSol(matérielSol);
             aile.Sol.transform.SetParent(GameObject.Find(aile.Nom).transform);
         }
     }

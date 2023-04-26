@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -24,7 +25,7 @@ public class Polygone
     public void SetPoints(List<Vector3> points)
     {
         Points = points;
-        if (!IsClockwise())
+        if (!IsClockwise(Points))
         {
             Points.Reverse();
         }
@@ -45,28 +46,36 @@ public class Polygone
         return new Polygone(node.Nom, points);
     }
 
-    public void CréerSol()
+    public void CréerSol(Material matérielSol)
     {
         Sol = new GameObject("Sol" + " de l'" + Nom);
         var sol=Sol.AddComponent<MeshFilter>();
         Sol.AddComponent<MeshCollider>();
         Sol.AddComponent<MeshRenderer>();
 
-        Mesh mesh = new Mesh();
-
+        Mesh mesh = new Mesh(); 
+        
         mesh.vertices = Points.ToArray();
-        List<int>triangles=Triangulate();
+        mesh.triangles=Triangulate();
+        mesh.uv = GetUVs();
 
-        int i = 0;
-        
-        foreach (var triangle in triangles)
-        {
-            // var c=GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            // c.transform.position = Points[triangle];
-            // c.transform.SetParent(Sol.transform);
-        }
-        
+        mesh.RecalculateBounds();
+        mesh.RecalculateNormals();
+
+        sol.GetComponent<MeshRenderer>().material = matérielSol;
         sol.mesh = mesh;
+    }
+
+    public Vector2[] GetUVs()
+    {
+        List<Vector2> uvs = new List<Vector2>();
+        
+        foreach (var point in Points)
+        {
+            uvs.Add(new Vector2(point.x,point.z)/9);
+        }
+
+        return uvs.ToArray();
     }
 
     public void DessinerPolygone(GameObject prefab, GameObject parent)
@@ -96,12 +105,12 @@ public class Polygone
         return s;
     }
 
-    public bool IsClockwise()
+    public bool IsClockwise(List<Vector3>points)
     {
         Vector3 A = CalculerCentroide();
 
-        Vector3 AB = Points[0] - A;
-        Vector3 AC = Points[1] - A;
+        Vector3 AB = points[0] - A;
+        Vector3 AC = points[1] - A;
 
         return Vector3.Cross(AB, AC).y > 0;
     }
@@ -120,48 +129,44 @@ public class Polygone
             sommePoints += point;
 
         }
-
+        
         return sommePoints / Points.Count;
+        
     }
     
-    public List <int> Triangulate()
+    public int[]Triangulate()
     {
         List<int> triangles = new List<int>();
         List<int> indexes = CreateIndexList();
-
+        int v = 0;
+        
         while (indexes.Count > 3)
         {
+            v++;
             for (int i = 0; i < indexes.Count; i++)
             {
                 var pointA = Points[indexes[(i-1+indexes.Count)%indexes.Count]];
-                var pointB = Points[i];
+                var pointB = Points[indexes[i]];
                 var pointC = Points[indexes[(i + 1)%indexes.Count]];
 
                 if (IsConvex(pointA, pointB, pointC)&&
                     !ContainsOtherVertices(pointA, pointB, pointC, indexes))
                 {
                     triangles.Add(indexes[(i-1+indexes.Count)%indexes.Count]);
-                    triangles.Add(i);
+                    triangles.Add(indexes[i]);
                     triangles.Add(indexes[(i + 1)%indexes.Count]);
 
                     indexes.RemoveAt(i);
                     break;
                 }
-                
             }
-            
         }
 
         triangles.Add(indexes[0]);
         triangles.Add(indexes[1]);
         triangles.Add(indexes[2]);
 
-        for (int i = 0; i < triangles.Count; i++)
-        {
-            Debug.Log(Nom+Points[triangles[i]]);
-        }
-
-        return triangles;
+        return triangles.ToArray();
 
     }
 
@@ -181,7 +186,7 @@ public class Polygone
     public bool IsConvex(Vector3 pointA, Vector3 pointB, Vector3 pointC)
     {
         Vector3 vecteurBA = pointA-pointB;
-        Vector3 vecteurBC= pointC - pointB;
+        Vector3 vecteurBC= pointC-pointB;
 
         return Vector3.Cross(vecteurBA, vecteurBC).y < 0;
     }
@@ -190,11 +195,16 @@ public class Polygone
     {
         foreach (var point in indexList)
         {
-            if (Points[point] != pointA || Points[point] != pointB || Points[point] != pointA)
+            
+            if (Points[point] != pointA & Points[point] != pointB & Points[point] != pointC)
             {
-                return IsInTriangle(pointA, pointB, pointC, Points[point]);
+                
+                if(IsInTriangle(pointA, pointB, pointC, Points[point]))
+                    return true;
             }
+
         }
+
         return false;
     }
 

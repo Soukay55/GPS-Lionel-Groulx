@@ -110,7 +110,7 @@ public class École
     public bool EstEndroitPublic(string nom)
     {
         List<string> endroitsPub
-            = new List<string>() { "Escaliers", "Carrefour", "Cafétéria", "Entre2" };
+            = new List<string>() { "Escaliers", "Carrefour", "Cafétéria", "Entre2","Bibliothèque","Toilettes" };
         return endroitsPub.Contains(nom);
     }
 }

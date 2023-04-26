@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using TMPro;
 using Unity.VisualScripting;
@@ -9,6 +10,7 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UI.Button;
 using Pathfinding;
+using Pathfinding.Locations.Types;
 
 public class Contraintes : MonoBehaviour
 {
@@ -238,7 +240,6 @@ public class Contraintes : MonoBehaviour
         textContraintes6,
         textContraintes7,
         textContraintes8,
-        textContraintes9,
         messageContraintes,
         textAileEtage;
 
@@ -408,8 +409,8 @@ public class Contraintes : MonoBehaviour
 
     public PathfindingNode depart;
     public PathfindingNode arrivee;
-    private List<PathfindingNode> NodesAEviter, NodesInevitables;
-    private Node ChosenNode;
+    private List<PathfindingNode> NodesÀÉviter, NodesInévitables;
+    private PathfindingNode ChosenNode;
     private List<Func<Boolean>> contraintes;
     
     private void CreerPhrase()
@@ -441,7 +442,6 @@ public class Contraintes : MonoBehaviour
         textContraintes6.text = phrases[5];
         textContraintes7.text = phrases[6];
         textContraintes8.text = phrases[7];
-        textContraintes9.text = phrases[8];
     }
 
     private void AfficherMessage()
@@ -670,37 +670,147 @@ public class Contraintes : MonoBehaviour
         return etages;
     }
 
+    private bool ContientPasPasser(string contrainte)
+    {
+        if (contrainte.Contains("pas passer"))
+            return true;
+        else
+        {
+            return false;
+        }
+    }
+
     public void AnalyseurContraintes(List<string> listeContraintes,École école)
     {
+        MenuChoixDestination destination = new MenuChoixDestination();
         if (contraintes.Count == 0)
-            new AStarPathfinder(depart, arrivee);
+        {
+            new AStarPathfinder(depart, GetNode(destination.Destination,école));
+        }
         for (int i = 0; i < listeContraintes.Count; i++)
         {
-            if (listeContraintes[i].Contains("Pas passer"))
+            if (listeContraintes[i].Contains("pas passer"))
+            { 
+                CreerListeNodesAeviter(listeContraintes,école);
+                // si il ya juste des pas passer
+                if (listeContraintes.TrueForAll(ContientPasPasser))
+                {
+                    new AStarPathfinder(depart, arrivee, NodesÀÉviter);
+                    NodesÀÉviter.Clear();
+                }
+            }
+
+            if (!(listeContraintes.Contains("pas ")))
             {
-                 
+                if (listeContraintes.Count == 1 && listeContraintes[0].Contains("local spécifique"))
+                {
+                    string localACroiser = $"{choixAileLocal}{choixNbLocal}";
+                    ChosenNode = GetNode(localACroiser, école);
+                    new AStarPathfinder(depart, arrivee, ChosenNode);
+                }
+
+                if (listeContraintes.Count > 1 && listeContraintes[i].Contains("pas passer") &&
+                    listeContraintes.Where(x => !(x.Contains("pas "))).Count() == 1)
+                {
+                    CreerListeNodesAeviter(listeContraintes, école);
+                    new AStarPathfinder(depart, arrivee, NodesÀÉviter, ChosenNode);
+                }
             }
         }
-        
+    }
+    
 
+    public void CreerListeNodesAeviter(List<string> listeContraintes, École école)
+    {
+
+        for (int i = 0; i < listeContraintes.Count; i++)
+        {
+            if (listeContraintes[i].Contains("pas passer"))
+            {
+                if (listeContraintes[i].Contains("étage spécifique"))
+                {
+                    FloorGraph floor = école.Floors[int.Parse(choixEtage)];
+                    NodesÀÉviter.AddRange(floor.Nodes);
+                }
+
+                if (listeContraintes[i].Contains("aile spécifique"))
+                {
+                    FloorGraph floor = école.Floors[int.Parse(choixEtageDeAile)];
+                    foreach (var nodes in floor.Nodes)
+                    {
+                        if (nodes.Nom[1] == choixAile[0])
+                            NodesÀÉviter.Add(nodes);
+                    }
+                }
+
+                if (listeContraintes[i].Contains("toilette/s"))
+                {
+                    foreach (var floors in école.Floors)
+                    {
+                        foreach (var nodes in floors.Nodes)
+                        {
+                            if (nodes.Nom == "Toilettes")
+                                NodesÀÉviter.Add(nodes);
+                        }
+                    }
+                }
+
+                if (listeContraintes[i].Contains("local spécifique"))
+                {
+                    string localAEviter = $"{choixAileLocal}{choixNbLocal}";
+                    NodesÀÉviter.Add(GetNode(localAEviter, école));
+                }
+            }
+        }
     }
 
-    public static void AnalyseurDestination(string choix)
+    public static PathfindingNode GetNode(string destination,École école)
     {
-        MenuChoixDestination destination = new MenuChoixDestination();
-        ///arrivee =GetNode(destination.Destination);
+        FloorGraph floor = école.Floors[GetÉtage(destination)];
+        PathfindingNode noeud = floor.Nodes[0];
+        foreach (var node in floor.Nodes)
+        {
+            if (!EstLocal(destination))
+            {
+                if (node.Nom == destination)
+                    noeud = node;
+            }
+            else
+            {
+                if (destination[0] == node.Nom[0])
+                {
+                    string[] nombres = node.Nom.Split('À');
+                    if (int.Parse(destination.Remove(0)) >= int.Parse(nombres[0]) ||
+                        int.Parse(destination.Remove(0)) >= int.Parse(nombres[1]))
+                        noeud = node;
+                }
+            }
+        }
+
+        return noeud;
     }
 
-    public void GetNode(string destination,École école)
+    public static int GetÉtage(string destination)
     {
-        int indexNode = 0;
-        Étage étage = GetÉtage(destination);
-
-        //FloorGraph floor = école[(int)étage]
+        int etage;
+        if (EstLocal(destination))
+            etage = int.Parse(destination[1].ToString());
+        else
+        {
+            if (destination[0] == 'B')
+                etage = 3;
+            else
+            {
+                etage = 0;
+            }
+        }
+        return etage;
     }
 
-    public Étage GetÉtage(string destination)
+    public static bool EstLocal(string destination)
     {
-        return Étage.A;
+        if(destination[1]!='a')
+            return MenuChoixDestination.AILES.Contains(destination[0]);
+        return false;
     }
 }

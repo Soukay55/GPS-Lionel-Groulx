@@ -243,7 +243,7 @@ public class Contraintes : MonoBehaviour
         messageContraintes,
         textAileEtage;
 
-    public string choixDropdown2,
+    public static string choixDropdown2,
         choixDropdown3,
         choixNbToilettes,
         choixEtage,
@@ -407,11 +407,11 @@ public class Contraintes : MonoBehaviour
     List<string> phrases = new List<string>();
     public string phrase;
 
-    public PathfindingNode depart;
-    public PathfindingNode arrivee;
-    private List<PathfindingNode> NodesÀÉviter, NodesInévitables;
-    private PathfindingNode ChosenNode;
-    private List<Func<Boolean>> contraintes;
+    public static PathfindingNode depart;
+    public static PathfindingNode arrivee;
+    private static List<PathfindingNode> NodesÀÉviter, NodesInévitables;
+    private static PathfindingNode ChosenNode;
+    private static List<Func<Boolean>> contraintes;
     
     private void CreerPhrase()
     {
@@ -471,7 +471,7 @@ public class Contraintes : MonoBehaviour
 
     public void ComportementBouttonSuivant()
     {
-        
+        SceneManager.LoadScene(5);
     }
 
     void Dropdown1ValueChangedHappened(TMP_Dropdown dropdown)
@@ -670,7 +670,7 @@ public class Contraintes : MonoBehaviour
         return etages;
     }
 
-    private bool ContientPasPasser(string contrainte)
+    private static bool ContientPasPasser(string contrainte)
     {
         if (contrainte.Contains("pas passer"))
             return true;
@@ -680,12 +680,14 @@ public class Contraintes : MonoBehaviour
         }
     }
 
-    public void AnalyseurContraintes(List<string> listeContraintes,École école)
+    public static AStarPathfinder pathfinder = new AStarPathfinder();
+
+    public static void AnalyseurContraintes(List<string> listeContraintes,École école)
     {
         MenuChoixDestination destination = new MenuChoixDestination();
         if (contraintes.Count == 0)
         {
-            new AStarPathfinder(depart, GetNode(destination.Destination,école));
+            pathfinder = new AStarPathfinder(depart, GetNode(destination.Destination,école));
         }
         for (int i = 0; i < listeContraintes.Count; i++)
         {
@@ -695,7 +697,7 @@ public class Contraintes : MonoBehaviour
                 // si il ya juste des pas passer
                 if (listeContraintes.TrueForAll(ContientPasPasser))
                 {
-                    new AStarPathfinder(depart, arrivee, NodesÀÉviter);
+                    pathfinder = new AStarPathfinder(depart, arrivee, NodesÀÉviter);
                     NodesÀÉviter.Clear();
                 }
             }
@@ -706,21 +708,21 @@ public class Contraintes : MonoBehaviour
                 {
                     string localACroiser = $"{choixAileLocal}{choixNbLocal}";
                     ChosenNode = GetNode(localACroiser, école);
-                    new AStarPathfinder(depart, arrivee, ChosenNode);
+                    pathfinder = new AStarPathfinder(depart, arrivee, ChosenNode);
                 }
 
                 if (listeContraintes.Count > 1 && listeContraintes[i].Contains("pas passer") &&
                     listeContraintes.Where(x => !(x.Contains("pas "))).Count() == 1)
                 {
                     CreerListeNodesAeviter(listeContraintes, école);
-                    new AStarPathfinder(depart, arrivee, NodesÀÉviter, ChosenNode);
+                    pathfinder =  new AStarPathfinder(depart, arrivee, NodesÀÉviter, ChosenNode);
                 }
             }
         }
     }
     
 
-    public void CreerListeNodesAeviter(List<string> listeContraintes, École école)
+    public static void CreerListeNodesAeviter(List<string> listeContraintes, École école)
     {
 
         for (int i = 0; i < listeContraintes.Count; i++)

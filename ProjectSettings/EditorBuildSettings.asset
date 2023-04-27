@@ -29,4 +29,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Loading.unity
     guid: 147ea9b4097e7ec449b7ccf67ab9cf47
+  - enabled: 1
+    path: Assets/Scenes/First Person test.unity
+    guid: 5093296bf50d61b419701ce93d0cb81f
+  - enabled: 1
+    path: Assets/Scenes/Navigation.unity
+    guid: 5883c65237a471a4c8a607231a549335
+  - enabled: 1
+    path: Assets/Scenes/Trajet2D.unity
+    guid: e24194983a22bae4684cb8ccb729e795
   m_configObjects: {}

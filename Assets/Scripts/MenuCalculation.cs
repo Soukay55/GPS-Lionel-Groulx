@@ -1,29 +1,74 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Pathfinding;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem.HID;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MenuCalculation : MonoBehaviour
 {
     public TMP_Text texteAffiché;
-    private LoadingScreen teleportation;
-    private LoadingScreen calulation;
-    public void GenererLoadingScreen(List<PathfindingNode> nodes )
+    public TMP_Text message;
+    public  Button naviguer;
+    public  Button voirTrajet;
+    private PathfindingNode node;
+
+    public  void GenererLoadingScreen(PathfindingNode node, Pathfinder.StatutPathfinder statut)
     {
-        teleportation.gameObject.SetActive(false);
-        calulation.gameObject.SetActive(false);
-        foreach (var node in nodes)
+        if (statut== Pathfinder.StatutPathfinder.EN_MARCHE)
         {
-            if (node.Instructions.Contains("escaliers"))
+            if(node.Instructions.Contains("escaliers"))
             {
-                teleportation.gameObject.SetActive(true);
                 texteAffiché.text = "Téléportation";
             }
             else
             {
-                calulation.gameObject.SetActive(true);
                 texteAffiché.text = "Calculation du trajet";
             }
         }
     }
+
+    public void GenererMessage()
+    {
+        if (Contraintes.pathfinder.Statut == Pathfinder.StatutPathfinder.SUCCES)
+        {
+            naviguer.gameObject.SetActive(true);
+            naviguer.gameObject.SetActive(true);
+        }
+        if (Contraintes.pathfinder.Statut == Pathfinder.StatutPathfinder.ÉCHEC)
+        {
+            message.text =
+                "Il est impossible de générer un chemin qui respecte toutes les contraintes que vous avez imposées";
+        }
+    }
+
+    public void Start()
+    {
+        naviguer.gameObject.SetActive(false);
+        voirTrajet.gameObject.SetActive(false);
+        GenererLoadingScreen(node,Contraintes.pathfinder.Statut);
+        naviguer.onClick.AddListener(ComportementBouttonNaviguer);
+        voirTrajet.onClick.AddListener(ComportementBouttonTrajet);
+
+    }
+
+    public void Update()
+    {
+        GenererLoadingScreen(node,Contraintes.pathfinder.Statut);
+    }
+
+    private static void ComportementBouttonNaviguer()
+    {
+        SceneManager.LoadScene(7);
+    }
+    
+    private static void ComportementBouttonTrajet()
+    {
+        SceneManager.LoadScene(8);
+    }
+    
 }
+

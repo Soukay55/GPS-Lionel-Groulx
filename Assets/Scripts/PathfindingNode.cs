@@ -67,7 +67,6 @@ public class PathfindingNode : Node
         //GCost = GetHCost();
     }
 
-    //maybe check 4 optimization
     public void GetNeighbours(École école)
     {
         int floor;

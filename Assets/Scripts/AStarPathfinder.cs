@@ -19,7 +19,9 @@ public class AStarPathfinder : Pathfinder
     public PathfindingNode ChosenNode { get; set; }
     
     //aucune contrainte, mais plusieurs paths différents à créer
-    public AStarPathfinder(){}
+    public AStarPathfinder()
+    {
+    }
     
     //aucune contrainte
     public AStarPathfinder(PathfindingNode départ, PathfindingNode end)

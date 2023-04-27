@@ -93,6 +93,7 @@ public class CreateurCouloir : MonoBehaviour
                 position = couloir.GetChild(i).position;
                
                 Collider[] objs=Physics.OverlapSphere(position, 0.00001f);
+                
                 if (objs.Length > 1)
                 {
                     for (int k = 0; k < objs.Length; k++)

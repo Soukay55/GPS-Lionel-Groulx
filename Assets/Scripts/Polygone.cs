@@ -18,12 +18,15 @@ public class Polygone
     
     public Polygone(string nom, List<Vector3> points)
     {
+        Points = new List<Vector3>();
         SetPoints(points);
         Nom = "Aile" + nom;
     }
 
     public void SetPoints(List<Vector3> points)
     {
+        Points.Clear();
+        
         Points = points;
         if (!IsClockwise(Points))
         {
@@ -34,6 +37,7 @@ public class Polygone
 
     //instancie un polygone,
     //donc doit être statique
+    
     public static Polygone GetPolygon(Node node, List<Node> nodes)
     {
         List<Vector3> points = new List<Vector3>();
@@ -42,7 +46,7 @@ public class Polygone
         {
             points.Add(nodes[(int)(connectedNode - 1)].Position);
         }
-
+ 
         return new Polygone(node.Nom, points);
     }
 

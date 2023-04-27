@@ -67,6 +67,7 @@ public class GénérerÉcole : MonoBehaviour
 
         listePoints[15].Position = new Vector3(0, 0, 0);
         int k = 1;
+        
         foreach (var NODE in listePoints)
         {
             NODE.SetPosition(listePoints[15]);
@@ -106,12 +107,16 @@ public class GénérerÉcole : MonoBehaviour
             {
 
                 var couloir = polygone.GetChild(i);
-
-                if (couloir.childCount != 0)
+                var objs = Physics.OverlapSphere(couloir.position, 0.0000001f);
+                print(objs.Length);
+                if (objs.Length!=0)
                 {
-                    var s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    s.transform.position = couloir.transform.position;
-                    s.transform.localScale = Vector3.one * 30;
+                    if (objs[0].transform.gameObject.name.Contains("Cube"))
+                    {
+                        var s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                        s.transform.position = couloir.transform.position;
+                        s.transform.localScale = Vector3.one * 30;   
+                    }
                 }
             }
         }
@@ -131,10 +136,11 @@ public class GénérerÉcole : MonoBehaviour
         
         foreach (var polygone in Ailes)
         {
+            DevancerMurs(polygone);
             GameObject poly = new GameObject(polygone.Nom);
             poly.transform.SetParent(insideWalls.transform);
             polygone.DessinerPolygone(murInt,poly);
-            DevancerMurs(poly);
+            
         }
         
     }
@@ -148,19 +154,20 @@ public class GénérerÉcole : MonoBehaviour
         }
     }
 
-    public void DevancerMurs(GameObject polygone)
+    public void DevancerMurs(Polygone polygone)
     {
         float largeurMurExt = murExt.transform.GetChild(0).transform.localScale.x;
-        for (int i = 0; i < polygone.transform.childCount; i++)
+        Vector3 centroide =polygone.CalculerCentroide();
+        List<Vector3> nvPoints = new List<Vector3>();
+
+        foreach (var point in polygone.Points)
         {
-            Transform mur = polygone.transform.GetChild(i).transform;
-            for (int j = 0; j < mur.childCount; j++)
-            {
-                var blocMur = mur.GetChild(j);
-                blocMur.localPosition += new Vector3(largeurMurExt/2 ,0,0);
-            }
+            var vecteurPtCentre = (centroide - point).normalized;
+            nvPoints.Add(point+vecteurPtCentre*(largeurMurExt));
         }
-        
+
+        polygone.SetPoints(nvPoints);
+
     }
 
     public List<List<int>> CréerListeDIndex()

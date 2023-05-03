@@ -1,14 +1,34 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 public class LoadingScreen : MonoBehaviour
 {
     List<Vector3> Points { get; set; }
+    private float t;
+    private int ptIndex;
+
+    [SerializeField]
+    private GameObject pointDéplacement;
 
     private void Start()
     {
-        Points = GetSplineData(FileReadingTools.LireFichierTxt("DataSpline"));
+        Points = GetSplineData(FileReadingTools.LireFichierTxt("DataSpline.txt"));
+        ptIndex = 0;
+        pointDéplacement = Instantiate(pointDéplacement);
+        
+        CréérLigne();
+
+    }
+
+    void CréérLigne()
+    {
+        LineRenderer ligne=gameObject.GetComponent<LineRenderer>();
+        ligne.positionCount = Points.Count;
+        ligne.SetPositions(Points.ToArray());
     }
 
     public List<Vector3> GetSplineData(List<string> data)
@@ -17,18 +37,52 @@ public class LoadingScreen : MonoBehaviour
         int j = 0;
         foreach (var donnée in data)
         {
-            //maybe create a FileReadingTool
-            //that converts a 2d vectors string into 3d vectors string
-            points.Add(FileReadingTools.ToVector3((donnée.Insert(donnée.IndexOf(",") - 1, ",0"))));
+            points.Add(FileReadingTools.ToVector3(donnée));
             j++;
         }
-
+    
         return points;
     }
 
-    // public float[] GetCoeffs(List<Vector3> splinePoints)
-    // {
-    // }
+    public Vector3 QuadraticLerp(Vector3 ptA,Vector3 ptB,Vector3 ptC,float t)
+    {
+        var pointA = Vector3.Lerp(ptA, ptB,t);
+        var pointB = Vector3.Lerp(ptB, ptC, t);
+        
+        return Vector3.Lerp(pointA, pointB, t);
+        
+    }
+    private void Update()
+    {
+        t = (Time.deltaTime + t);
+        
+        pointDéplacement.transform.position= QuadraticLerp(Points[ptIndex]+Vector3.up,
+            Points[ptIndex+1]+Vector3.up,Points[ptIndex+2]+Vector3.up, t);
+        pointDéplacement.transform.rotation=Quaternion.LookRotation(Points[ptIndex+2]
+                                                                    -Points[ptIndex]);
+        if (t - 1>=0)
+        {
+            t = 0;
+            if (Points.Count-ptIndex<5)
+            {
+                ptIndex = 0;
+                
+                Destroy(pointDéplacement);
+                Wait();
+                pointDéplacement = Instantiate(pointDéplacement);
+            }
+            else
+            {
+                ptIndex+=2;
+            }
+                
+        }
+       
+    }
 
-    
+    public static IEnumerator Wait()
+    {
+        yield return new WaitForEndOfFrame();
+    }
+
 }

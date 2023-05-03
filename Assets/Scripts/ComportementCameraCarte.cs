@@ -8,12 +8,6 @@ public class ComportementCameraCarte : MonoBehaviour
     private Vector3 toucheDepart;
     public float zoomOutMin = 3;
     public float zoomOutMax = 8;
-
-    private void Start()
-    {
-        
-    }
-
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))

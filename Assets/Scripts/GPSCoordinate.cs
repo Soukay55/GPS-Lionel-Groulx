@@ -57,19 +57,17 @@ public class GPSCoordinate
         float lonRad = (float)coordonée.Longitude * PROP_DEGRÉ_RAD;
         
         //rayon de courbature vertical
-        float N = RAYON /
-                          Mathf.Sqrt(1 - ECCENTRICITÉ_TERRE_CARRÉ * 
+        float N = RAYON / Mathf.Sqrt(1 - ECCENTRICITÉ_TERRE_CARRÉ * 
                               Mathf.Pow((Mathf.Sin(latRad)), 2));
         
-        float x = N*Mathf.Cos(latRad)
-                                   *Mathf.Cos(lonRad);
-        float y = N*Mathf.Cos(latRad)
-                                  *Mathf.Sin(lonRad);
+        float x = N*Mathf.Cos(latRad) * Mathf.Cos(lonRad);
+        float y = N*Mathf.Cos(latRad) * Mathf.Sin(lonRad);
         float z = Mathf.Pow((1 - APLATISSEMENT), 2) * N * Mathf.Sin(latRad);
-            
+        
         return new Vector3(x,y,z);
     }
 
+    //utilise la matrice de rotation afin de tourner un point autour de l'origine
     public static Vector3 RotateAroundOriginZero(Vector3 point,float angle)
     {
         float angleRad = angle * PROP_DEGRÉ_RAD;

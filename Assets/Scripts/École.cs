@@ -10,46 +10,61 @@ using Unity.VisualScripting;
 
 public class École
 {
-    //GetNodeData should be in here and not in FloorGraph???
+    //take care of commented part of GetNodeData
     public List<FloorGraph> Floors { get; set; }
-
-    public List<string> dataTab;
-    private const int NB_DONNÉES_PAR_NODE = 6;
-    public bool plusQueUnNom = false;
-
-    private List<PathfindingNode> nodes;
-    private List<PathfindingNode> nodesToAdd;
-    public FloorGraph floor;
+    public List<Node>CoordonéesÉcole{ get; set; }
     
+    public const int HAUTEUR_ÉCOLE = 380;
 
-    void Awake()
-    {
-        //CréerÉcole();
-    }
-
-    public École()
+    private const int NB_DONNÉES_PAR_NODE = 5;
+    public int[,]Niveaux { get; set; }
+    public List<Polygone>Ailes { get; set; }
+    
+    public École(string fichierNom,Node origine)
     {
         Floors = new List<FloorGraph>();
+        Niveaux = new int[(int)Étage.NombreÉtages, (int)Aile.NombreAiles];
         
         for (int i = 0; i <(int) Étage.NombreÉtages; i++)
         {
             Floors.Add(new FloorGraph());
         }
+        
+        RemplirMatriceÉtages();
+        GetNodes(origine);
+        GetNodeData(fichierNom);
+        
     }
-
-    public List<PathfindingNode> GetNodeData(string fichierNodesName)
+    
+    public void GetPolygons(List<Node>pointList)
     {
-        dataTab = FileReadingTools.LireFichierTxt(fichierNodesName);
+        List<Polygone> polygones = new List<Polygone>();
+
+        foreach (var node in pointList)
+        {
+            if (node.ConnectedNodes[0] != 0)
+            {
+                polygones.Add( Polygone.GetPolygon(node, pointList));
+            }
+        }
+        
+        Ailes = polygones;
+    }
+    
+    public void GetNodeData(string fichierNodesName)
+    {
+        var dataTab = FileReadingTools.LireFichierTxt(fichierNodesName);
 
         var étageComparateur = Étage.A;
-        var cpt = 1;
+        bool plusQueUnNom = false;
         
         
+        //voisins conversion problem
         for (var i = 0; i < dataTab.Count - 1; i += NB_DONNÉES_PAR_NODE)
         {
             var nombre = int.Parse(dataTab[i], CultureInfo.InvariantCulture);
 
-            var nom = FileReadingTools.ToNameList(dataTab[i + 1], ref plusQueUnNom)[0];
+            var noms = FileReadingTools.ToNameList(dataTab[i + 1], ref plusQueUnNom);
 
             var endroitPublic = FileReadingTools.ToBool(dataTab[i + 2]);
 
@@ -57,60 +72,152 @@ public class École
 
             var connectedNodes = FileReadingTools.ToList(dataTab[i + 4]);
 
-            var coordonéesGps = FileReadingTools.ToGpsCoordinate(dataTab[i + 5]);
-            
-            floor = Floors[(int)étage];
+            var position= CoordonéesÉcole[nombre-1].Position;
 
-            //lorsqu'on atteint la fin de l'étage, on rajoute les nodesÀAjouter.
-            //On doit ajouter chaque node à la liste de connectedNodes
-            if (étage > étageComparateur)
-            {
-                foreach (var node in nodesToAdd)
-                {
-                    connectedNodes.Add(node.Nombre);
-                    nodes[node.Nombre + nodes.Count - 1].ConnectedNodes.Add(cpt);
-                    node.Nombre = cpt;
-                    cpt++;
-                }
-                
-                Floors[(int)étage-1].Ajouter(nodesToAdd);
-                
-                //O as in the letter
-                if (étage != Étage.O)
-                    étageComparateur++;
-                
-                //cpt représente le numéro du node dans son étage respectif
-                cpt = 1;
-                
-
-            }
+            var coordonéesGPS = CoordonéesÉcole[nombre - 1].CoordonéesGPS;
             
-            floor.Ajouter(new PathfindingNode(nombre, nom, endroitPublic, étage, connectedNodes, coordonéesGps));
-            cpt++;
-            if (plusQueUnNom = true)
-            {
-                var nameList = FileReadingTools.ToNameList(dataTab[i + 1], ref plusQueUnNom);
-                //THE NUMBER ISNT THE SAME FOR ALL OF THEM!
-                //WHEN ADAPT NUMBER, THE CONNECTED NODES FOR EACH NODE NEEDS
-                foreach (var name in nameList.Skip(1))
-                {
-                    nodesToAdd.Add(new PathfindingNode(nombre, name, EstEndroitPublic(name),
-                        étage, connectedNodes, coordonéesGps));
-                }
-            }
+            //make them game nodes they are not used for pathfinding here
+            Floors[(int)étage].Ajouter
+                (new PathfindingNode(nombre, noms, endroitPublic, étage, connectedNodes, position,coordonéesGPS));
+            
         }
-
-        return nodes;
+        
     }
-
-    public void AjouterÉtage()
-    {
-    }
-
+    
     public bool EstEndroitPublic(string nom)
     {
         List<string> endroitsPub
             = new List<string>() { "Escaliers", "Carrefour", "Cafétéria", "Entre2","Bibliothèque","Toilettes" };
         return endroitsPub.Contains(nom);
     }
+    
+    //explain this in comments
+    public void RemplirMatriceÉtages()
+    {
+        int[,] matriceÉtages = new int[(int)Étage.NombreÉtages,(int)Aile.NombreAiles];
+        
+        //étage auquel s'arrête chaque aile, selon index
+        
+        int[] étagesMax = { 3, 4, 4, 1, 0, 0, 0, 5, 1, 0, 4 };
+        
+        //irrégularité de l'AileC
+        matriceÉtages[1,4]=HAUTEUR_ÉCOLE/((int)Étage.NombreÉtages*2);
+        
+        for (int i = 1; i < (int)Étage.NombreÉtages; i++)
+        {
+            for (int j = 0; j < (int)Aile.NombreAiles; j++)
+            {
+                //maybe simplify en ayant une var facteurMulti qui change si c F ou S
+                if (étagesMax[j] >= i)
+                {
+                    //indexs de l'aile F et S
+                    if(i>2&&j>6)
+                    {
+                        matriceÉtages[i, j] = matriceÉtages[i - 1, j] + HAUTEUR_ÉCOLE
+                            / (int)Étage.NombreÉtages-1;
+                    }
+                    else
+                    {
+                        matriceÉtages[i, j] = matriceÉtages[i - 1, j] + HAUTEUR_ÉCOLE
+                            / ((int)Étage.NombreÉtages);
+                    }
+                }
+            }
+        }
+
+        Niveaux = matriceÉtages;
+
+    }
+    
+    public void GetNodes(Node origine)
+    {
+        int i = 1;
+        var points = new List<Node>();
+        var coords=FileReadingTools.LireFichierTxt("InsideData.txt");
+        
+        foreach (var coord in coords)
+        {
+            var c=new Node(i,FileReadingTools.ToGpsCoordinate(coord));
+            c.SetPosition(origine);
+            c.Position = GPSCoordinate.RotateAroundOriginZero(c.Position, 46.3f);
+            points.Add(c);
+            i++;
+        }
+
+        CoordonéesÉcole = points;
+    }
+
+    //can only be called AFTER SetPolygons. Modify code in GénérerÉcole
+    //so that you can get polygons here
+    public void SetPositionsAndGetAiles()
+    {
+        for (int i = 0; i < Floors.Count; i++)
+        {
+            FloorGraph floor = Floors[i];
+            for (int j = 0; j < floor.Nodes.Count; j++)
+            {
+                var node = floor.Nodes[j];
+                node.GetAile(Ailes);
+                GetNeighbours(node);   
+                
+                if(i==0&&(j==51||j==63))
+                {
+                    node.Position +=                             
+                        Vector3.up * Niveaux[i+1, (int)Aile.C]; 
+                }  
+                
+                node.Position +=
+                    Vector3.up * Niveaux[i, (int)node.Aile];
+            }
+
+        }
+    }
+    
+    public void GetNeighbours(PathfindingNode node)
+    {
+        foreach (var connectedNode in node.ConnectedNodes)
+        {
+            var floor = Mathf.RoundToInt((connectedNode-(int)connectedNode)*10);
+            int index;
+
+            for (int i = 0; i <Floors[floor].Nodes.Count; i++)
+            {
+                if (Floors[floor].Nodes[i].Nombre==(int)(connectedNode))
+                {
+                    index = i;
+                    node.Voisins.Add(Floors[floor].Nodes[index]);
+                    break;
+                }
+            
+            }
+        }
+    }
+
+}
+
+public enum Étage
+{
+    A,
+    B,
+    G,
+    H,
+    I,
+    O,
+    NombreÉtages
+}
+
+public enum Aile
+{
+    N,
+    D,
+    L,
+    E,
+    C,
+    CM,
+    X,
+    S,
+    M,
+    K,
+    F,
+    NombreAiles
 }

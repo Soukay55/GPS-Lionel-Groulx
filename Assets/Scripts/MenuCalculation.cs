@@ -20,7 +20,7 @@ public class MenuCalculation : MonoBehaviour
     {
         if (statut== Pathfinder.StatutPathfinder.EN_MARCHE)
         {
-            if(node.Instructions.Contains("escaliers"))
+            if(node.Instructions.Contains("Escaliers"))
             {
                 texteAffiché.text = "Téléportation";
             }
@@ -31,6 +31,7 @@ public class MenuCalculation : MonoBehaviour
         }
     }
 
+    //?????????????????????
     public void GenererMessage()
     {
         if (Contraintes.pathfinder.Statut == Pathfinder.StatutPathfinder.SUCCES)
@@ -60,6 +61,7 @@ public class MenuCalculation : MonoBehaviour
         GenererLoadingScreen(node,Contraintes.pathfinder.Statut);
     }
 
+    //à la place, fonction statique
     private static void ComportementBouttonNaviguer()
     {
         SceneManager.LoadScene(7);

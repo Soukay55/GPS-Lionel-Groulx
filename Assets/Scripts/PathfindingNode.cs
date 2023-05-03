@@ -6,12 +6,13 @@ using UnityEngine;
 
 public class PathfindingNode : Node
 {
-    public float value;
+    //they aint needa name they for pathfinding
     
+    public List<string>Noms { get; set; }
     public PathfindingNode Parent { get; set; }
     public bool EstEndroitPublic { get; set; } //anything that isnt a classsroom
 
-    public bool EstTraversable { get; set; }
+    public bool EstTraversable { get; set; } = true;
 
     public string Instructions { get; set; }
 
@@ -42,13 +43,24 @@ public class PathfindingNode : Node
     {
         ConnectedNodes = connectedNodes;
         EstEndroitPublic = estEndroitPublic;
-        
+        Voisins = new List<PathfindingNode>();
+    }
+
+    public PathfindingNode(int nombre, List<string> noms ,bool estEndroitPublic,
+        Étage étage,  List<float> connectedNodes,Vector3 position,GPSCoordinate coordonéesGps)
+        :base(nombre,noms,étage,position,coordonéesGps)
+    {
+        ConnectedNodes = connectedNodes;
+        EstEndroitPublic = estEndroitPublic;
+        Voisins = new List<PathfindingNode>();
+        Noms = noms;
     }
 
     public float GetGCost()
     {
         return Parent.GCost +GPSCoordinate.
-                   CalculerDistanceEntreDeuxCoordonnées(Parent.CoordonéesGPS, CoordonéesGPS);
+                   CalculerDistanceEntreDeuxCoordonnées
+                       (Parent.CoordonéesGPS, CoordonéesGPS);
     }
 
     public void SetGCost()
@@ -62,22 +74,8 @@ public class PathfindingNode : Node
             (pointArrivée.CoordonéesGPS, CoordonéesGPS);
     }
     
-    public void SetHCost()
-    {
-        //GCost = GetHCost();
-    }
+    //this should take care of the Niveaux[,]adjustment ??
 
-    //maybe check 4 optimization
-    public void GetNeighbours(École école)
-    {
-        int floor;
-        
-        //i.e si ConnectedNode=3.2, c'est la Node Numéro3 de l'étage 2
-        foreach (var node in ConnectedNodes)
-        {
-            floor = (int)((node - (int)node) * 10);
-            Voisins.Add(école.Floors[floor].Nodes[(int)node]);
-        }
-        
-    }
+    
+    
 }

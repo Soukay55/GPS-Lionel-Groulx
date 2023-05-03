@@ -31,11 +31,12 @@ public class CreateurCouloir : MonoBehaviour
     
     //Calcule la direction, rotation, distance, et la position du premier objet 
     //pour les objets qui vont de pointA à pointB
+    
+    //tuple not necessary rn
     public static Tuple<float,Vector3,int,Quaternion, Vector3, GameObject> CalculerDirRotDistPosChemin(Vector3 pointA, Vector3 pointB, GameObject prefab)
     {
         Transform blocCouloir = prefab.transform.GetChild(0).transform;
         largeurCouloir = blocCouloir.localScale.x;
-        print(blocCouloir.localScale.x);
         hauteurCouloir = blocCouloir.localScale.y; 
         longueurBloc = blocCouloir.localScale.z;
         
@@ -67,7 +68,8 @@ public class CreateurCouloir : MonoBehaviour
     //prend deux points A et B et génère un couloir allant de A à B
     public static GameObject CréerCouloir(Vector3 pointA, Vector3 pointB, GameObject prefab)
     {
-       CalculerDirRotDistPosChemin(pointA,pointB, prefab);
+        CalculerDirRotDistPosChemin(pointA,pointB, prefab);
+       
         for (var i = 0; i < nombreBlocs; i++)
         {
             Instantiate(prefab, position, rotation,couloir.transform);
@@ -93,6 +95,7 @@ public class CreateurCouloir : MonoBehaviour
                 position = couloir.GetChild(i).position;
                
                 Collider[] objs=Physics.OverlapSphere(position, 0.00001f);
+                
                 if (objs.Length > 1)
                 {
                     for (int k = 0; k < objs.Length; k++)
@@ -123,7 +126,6 @@ public class CreateurCouloir : MonoBehaviour
             // Destroy(couloir.gameObject);
             couloir.gameObject.name = "miso soup";
         }
-        
 
     }
 
@@ -169,7 +171,7 @@ public class CreateurCouloir : MonoBehaviour
     public static void ScaleCouloir(Transform couloir)
     {
         var c = GetCouloirLength(couloir);
-        if (c -distance>0.001f)
+        if (c - distance > 0.001f)
         {
             var blocCouloir = couloir.GetChild(0).GetChild(0);
             var constMultipl = 1;

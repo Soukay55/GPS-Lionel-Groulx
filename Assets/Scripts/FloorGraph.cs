@@ -24,15 +24,15 @@ public class FloorGraph
         Nodes.Add(node);
     }
     
-    public void Ajouter(List<PathfindingNode> node)
-    {
-        Nodes.Concat(node);
-    }
 
-    public void GénérerÉtage(Étage étage)
-    {
-        
-    }
+
+    // public void SetPositions()
+    // {
+    //     foreach (var VARIABLE in COLLECTION)
+    //     {
+    //         
+    //     }
+    // }
 
 
 

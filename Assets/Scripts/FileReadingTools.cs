@@ -15,6 +15,7 @@ public class FileReadingTools
     static private List<string> dataTab;
     static private StreamReader fluxLecture;
     
+    //this should autmatically add the ".txt" in the string input
     public static List<string> LireFichierTxt(string nomFichier)
     {
         var fichierÀlire = $"{PATH}/{nomFichier}";
@@ -37,10 +38,7 @@ public class FileReadingTools
 
     public static bool ToBool(string valeurBool)
     {
-        if (valeurBool == "true")
-            return true;
-
-        return false;
+        return valeurBool.Contains("t");
     }
 
     public static List<string> ToNameList(string listeNoms, ref bool plusQueUnNom)
@@ -70,8 +68,8 @@ public class FileReadingTools
     {
         var nodeList = new List<float>();
         var nodeListString = new List<string>();
-        nodeListString = nodes.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
-        foreach (var node in nodeListString) nodeList.Add(float.Parse(node, CultureInfo.InvariantCulture));
+        nodeListString = nodes.Split("-", StringSplitOptions.RemoveEmptyEntries).ToList();
+        foreach (var node in nodeListString) nodeList.Add(float.Parse(node));
         return nodeList;
     }
 
@@ -80,5 +78,6 @@ public class FileReadingTools
         var étages = "ABGHIO";
         return (Étage)étages.IndexOf(étage);
     }
-    
+
+
 }

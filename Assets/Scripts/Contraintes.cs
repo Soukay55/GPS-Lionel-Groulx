@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using TMPro;
 using Unity.VisualScripting;
@@ -8,6 +9,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UI.Button;
+using Pathfinding;
+using Pathfinding.Locations.Types;
 
 public class Contraintes : MonoBehaviour
 {
@@ -218,7 +221,8 @@ public class Contraintes : MonoBehaviour
         dropdownToilettes,
         dropdownEtages;
 
-    public Button button;
+    public Button button,
+        bouttonSuivant;
 
     public TMP_Text text1,
         text2,
@@ -228,9 +232,18 @@ public class Contraintes : MonoBehaviour
         textEtage,
         textLocal,
         textAile,
+        textContraintes1,
+        textContraintes2,
+        textContraintes3,
+        textContraintes4,
+        textContraintes5,
+        textContraintes6,
+        textContraintes7,
+        textContraintes8,
+        messageContraintes,
         textAileEtage;
 
-    public string choixDropdown2,
+    public static string choixDropdown2,
         choixDropdown3,
         choixNbToilettes,
         choixEtage,
@@ -240,9 +253,7 @@ public class Contraintes : MonoBehaviour
         choixNbLocal;
 
     private string localChoisi;
-    List<string> phrases = new List<string>();
-    public string phrase;
-    public int compteurDePhrases = 0;
+
 
     void SetObjects(bool etat1, bool etat2, bool etat3, bool etat4, bool etat5, bool etat6, bool etat7, bool etat8)
     {
@@ -264,9 +275,6 @@ public class Contraintes : MonoBehaviour
     private void SetSpecificObjects(bool etat1, bool etat2, bool etat3, bool etat4, bool etat5, bool etat6, bool etat7,
         bool etat8, bool etat9, bool etat10, bool etat11)
     {
-        Debug.Log("called");
-        if (dropdownLocal1 == null || dropdownLocal2 == null || textLocal == null)
-            Debug.Log("something is null");
         dropdownLocal1.gameObject.SetActive(etat1);
         dropdownLocal2.gameObject.SetActive(etat2);
         textLocal.gameObject.SetActive(etat3);
@@ -376,6 +384,7 @@ public class Contraintes : MonoBehaviour
     {
         SetObjects(true, true, false, false, false, false, false, false);
         SetSpecificObjects(false, false, false, false, false, false, false, false, false, false, false);
+        bouttonSuivant.gameObject.SetActive(false);
 
         dropdown1.onValueChanged.AddListener(delegate { Dropdown1ValueChangedHappened(dropdown1); });
 
@@ -390,8 +399,20 @@ public class Contraintes : MonoBehaviour
         dropdown2.onValueChanged.AddListener(delegate { Dropdown2ValueChangedHappened(dropdown2); });
         dropdown3.onValueChanged.AddListener(delegate { Dropdown3ValueChangedHappened(dropdown3); });
         button.onClick.AddListener(ComportementBoutton);
+        bouttonSuivant.onClick.AddListener(ComportementBouttonSuivant);
+
     }
 
+    
+    List<string> phrases = new List<string>();
+    public string phrase;
+
+    public static PathfindingNode depart;
+    public static PathfindingNode arrivee;
+    private static List<PathfindingNode> NodesÀÉviter, NodesInévitables;
+    private static PathfindingNode ChosenNode;
+    private static List<Func<Boolean>> contraintes;
+    
     private void CreerPhrase()
     {
         if (choixDropdown3 == " la cafétéria" || choixDropdown3 == "le carrefour étudiant" ||
@@ -407,52 +428,64 @@ public class Contraintes : MonoBehaviour
             phrase = $"Je voudrais passer par {choixNbToilettes} {choixDropdown3}";
         if (choixDropdown2 == "ne pas passer" && choixDropdown3 == " toilette/s")
             phrase = $"Je voudrais éviter des toilettes";
-
+        
         phrases.Add(phrase);
-        compteurDePhrases = phrases.Count;
     }
 
-    // private void AfficherPhrase()
-    // {
-    //     afficher tout les items de la liste a chaque click donc des phrases vont sajouter a fur et a mesure
-    // }
+    private void AfficherPhrase()
+    {
+        textContraintes1.text = phrases[0];
+        textContraintes2.text = phrases[1];
+        textContraintes3.text = phrases[2];
+        textContraintes4.text = phrases[3];
+        textContraintes5.text = phrases[4];
+        textContraintes6.text = phrases[5];
+        textContraintes7.text = phrases[6];
+        textContraintes8.text = phrases[7];
+    }
 
-    // private void AfficherMessage()
-    // {
-    //     afficher le message de maximum a lutilisateur.
-    // }
+    private void AfficherMessage()
+    {
+        messageContraintes.text = "Vous avez atteint la limite de 8 contraintes";
+    }
 
     public void ComportementBoutton()
     {
-        if (compteurDePhrases >= 3)
+        bouttonSuivant.gameObject.SetActive(true);
+        
+        if (phrases.Count == 8)
         {
             MakeObjectsDisappear(); // sauf la liste et le bouton suivant
-            //AfficherMessage(); 
+            SetSpecificObjects(false,false,false,false,false,false,false,false,false,false,false);
+            AfficherMessage(); 
         }
         else
         {
             CreerPhrase();
-            //AfficherPhrase();
+            ResetAllDropdowns();
+            SetObjects(false, false, true, true, true, true, true, false);
+            SetSpecificObjects(false, false, false, false, false, false, false, false, false, false, false);
+            AfficherPhrase();
         }
+    }
 
-        Debug.Log(phrase);
-        Debug.Log($"{compteurDePhrases}");
-        ResetAllDropdowns();
-        SetObjects(false, false, true, true, true, true, true, false);
-        SetSpecificObjects(false, false, false, false, false, false, false, false, false, false, false);
+    public void ComportementBouttonSuivant()
+    {
+        SceneManager.LoadScene(5);
     }
 
     void Dropdown1ValueChangedHappened(TMP_Dropdown dropdown)
     {
         var newSelectedIndex = dropdown.value;
         if (newSelectedIndex == 1)
-            SetObjects(false, false, true, true, true, true, true, false);
+            SetObjects(false, false, true, true, true, false, true, false);
         if (newSelectedIndex == 2)
             SceneManager.LoadScene(5);
     }
 
     void Dropdown2ValueChangedHappened(TMP_Dropdown dropdown)
     {
+        SetObjects(false, false, true, true, true, true, true, false);
         var newSelectedIndex = dropdown.value;
         choixDropdown2 = dropdown.options[newSelectedIndex].text;
     }
@@ -463,7 +496,7 @@ public class Contraintes : MonoBehaviour
         choixDropdown3 = dropdown.options[indexChoisi].text;
         if (indexChoisi == 1 || indexChoisi == 2 || indexChoisi == 7)
             SetObjects(false, false, true, true, true, true, true, true);
-        if (indexChoisi == 3 && choixDropdown2 == "Passer")
+        if (indexChoisi == 3 && choixDropdown2 == "passer")
         {
             MakeObjectsDisappear();
             SetSpecificObjects(false, false, false, false, false, false, false, false, false, true, true);
@@ -483,6 +516,7 @@ public class Contraintes : MonoBehaviour
             SetSpecificObjects(true, false, true, false, false, false, false, false, false, false, false);
             dropdownLocal1.onValueChanged.AddListener(delegate { DropdownLocal1ValueChangedHappened(dropdownLocal1); });
         }
+
         if (indexChoisi == 5)
         {
             MakeObjectsDisappear();
@@ -496,104 +530,24 @@ public class Contraintes : MonoBehaviour
             SetSpecificObjects(false, false, false, true, false, false, true, false, false, false, false);
             dropdownAile.onValueChanged.AddListener(delegate { DropdownAileValueChangedHappened(dropdownAile); });
         }
-
-
-        void DropdownToiletteValueChangedHappened(TMP_Dropdown dropdown)
-        {
-            var newSelectedIndex = dropdown.value;
-            choixNbToilettes = dropdown.options[newSelectedIndex].text;
-            SetObjects(false, false, false, false, false, false, false, true);
-        }
-
-        void DropdownEtageValueChangedHappened(TMP_Dropdown dropdown)
-        {
-            var newSelectedIndex = dropdown.value;
-            choixEtage = dropdown.options[newSelectedIndex].text;
-            SetObjects(false, false, false, false, false, false, false, true);
-        }
-
-        void DropdownAileValueChangedHappened(TMP_Dropdown dropdown)
-        {
-            var newSelectedIndex = dropdown.value;
-            choixAile = dropdown.options[newSelectedIndex].text;
-            if (choixAile == "K" || choixAile == "E" || choixAile == "M")
-            {
-                SetSpecificObjects(false, false, false, true, false, false, true, false, false, false, false);
-                SetObjects(false, false, false, false, false, false, false, true);
-                choixEtageDeAile = "0";
-            }
-            else
-            {
-                SetSpecificObjects(false, false, false, true, true, true, true, false, false, false, false);
-                if (choixAile == "D" || choixAile == "F")
-                    CreateDropdown(CreerListeEtageAileDEtF(), dropdownAileEtage);
-                if (choixAile == "L")
-                    CreateDropdown(CreerListeEtageAileL(), dropdownAileEtage);
-                if (choixAile == "N")
-                    CreateDropdown(CreerListeEtageAileN(), dropdownAileEtage);
-                if (choixAile == "C")
-                    CreateDropdown(CreerListeEtageAileC(), dropdownAileEtage);
-                if (choixAile == "S")
-                    CreateDropdown(CreerListeEtageAileS(), dropdownAileEtage);
-
-                dropdownAileEtage.onValueChanged.AddListener(delegate
-                {
-                    DropdownAileEtageValueChangedHappened(dropdownAileEtage);
-                });
-            }
-        }
-
-        void DropdownAileEtageValueChangedHappened(TMP_Dropdown dropdown)
-        {
-            var newSelectedIndex = dropdown.value;
-            choixEtageDeAile = dropdown.options[newSelectedIndex].text;
-            SetObjects(false, false, false, false, false, false, false, true);
-        }
-
-        void DropdownLocal1ValueChangedHappened(TMP_Dropdown dropdown)
-        {
-            SetSpecificObjects(true, true, true, false, false, false, false, false, false, false, false);
-            var selectedIndex = dropdown.value;
-            if (selectedIndex == 1)
-                CreateDropdown(CreerListeLocauxAileD(), dropdownLocal2);
-            if (selectedIndex == 2)
-                CreateDropdown(CreerListeLocauxAileL(), dropdownLocal2);
-            if (selectedIndex == 3)
-                CreateDropdown(CreerListeLocauxAileF(), dropdownLocal2);
-            if (selectedIndex == 4)
-                CreateDropdown(CreerListeLocauxAileN(), dropdownLocal2);
-            if (selectedIndex == 5)
-                CreateDropdown(CreerListeLocauxAileK(), dropdownLocal2);
-            if (selectedIndex == 6)
-                CreateDropdown(CreerListeLocauxAileC(), dropdownLocal2);
-            if (selectedIndex == 7)
-                CreateDropdown(CreerListeLocauxAileS(), dropdownLocal2);
-            if (selectedIndex == 8)
-                CreateDropdown(CreerListeLocauxAileM(), dropdownLocal2);
-            if (selectedIndex == 9)
-                CreateDropdown(CreerListeLocauxAileE(), dropdownLocal2);
-
-            choixAileLocal = dropdown.options[selectedIndex].text;
-            dropdownLocal2.onValueChanged.AddListener(delegate { DropdownLocal2ValueChangedHappened(dropdownLocal2); });
-        }
-
-        void DropdownLocal2ValueChangedHappened(TMP_Dropdown dropdown)
-        {
-            var newSelectedIndex = dropdown.value;
-            choixNbLocal = dropdown.options[newSelectedIndex].text;
-            SetObjects(false, false, false, false, false, false, false, true);
-        }
-        
     }
 
-    public void DropdownEtageValueChangedHappened(TMP_Dropdown dropdown)
+
+    void DropdownToiletteValueChangedHappened(TMP_Dropdown dropdown)
+    {
+        var newSelectedIndex = dropdown.value;
+        choixNbToilettes = dropdown.options[newSelectedIndex].text;
+        SetObjects(false, false, false, false, false, false, false, true);
+    }
+
+    void DropdownEtageValueChangedHappened(TMP_Dropdown dropdown)
     {
         var newSelectedIndex = dropdown.value;
         choixEtage = dropdown.options[newSelectedIndex].text;
         SetObjects(false, false, false, false, false, false, false, true);
     }
 
-    public void DropdownAileValueChangedHappened(TMP_Dropdown dropdown)
+    void DropdownAileValueChangedHappened(TMP_Dropdown dropdown)
     {
         var newSelectedIndex = dropdown.value;
         choixAile = dropdown.options[newSelectedIndex].text;
@@ -624,14 +578,14 @@ public class Contraintes : MonoBehaviour
         }
     }
 
-    public void DropdownAileEtageValueChangedHappened(TMP_Dropdown dropdown)
+    void DropdownAileEtageValueChangedHappened(TMP_Dropdown dropdown)
     {
         var newSelectedIndex = dropdown.value;
         choixEtageDeAile = dropdown.options[newSelectedIndex].text;
         SetObjects(false, false, false, false, false, false, false, true);
     }
 
-    public void DropdownLocal1ValueChangedHappened(TMP_Dropdown dropdown)
+    void DropdownLocal1ValueChangedHappened(TMP_Dropdown dropdown)
     {
         SetSpecificObjects(true, true, true, false, false, false, false, false, false, false, false);
         var selectedIndex = dropdown.value;
@@ -657,6 +611,7 @@ public class Contraintes : MonoBehaviour
         choixAileLocal = dropdown.options[selectedIndex].text;
         dropdownLocal2.onValueChanged.AddListener(delegate { DropdownLocal2ValueChangedHappened(dropdownLocal2); });
     }
+
 
     public void DropdownLocal2ValueChangedHappened(TMP_Dropdown dropdown)
     {
@@ -713,5 +668,151 @@ public class Contraintes : MonoBehaviour
         etages.Add("1");
         etages.Add("2");
         return etages;
+    }
+
+    private static bool ContientPasPasser(string contrainte)
+    {
+        if (contrainte.Contains("pas passer"))
+            return true;
+        else
+        {
+            return false;
+        }
+    }
+
+    public static AStarPathfinder pathfinder = new AStarPathfinder();
+
+    public static void AnalyseurContraintes(List<string> listeContraintes,École école)
+    {
+        MenuChoixDestination destination = new MenuChoixDestination();
+        if (contraintes.Count == 0)
+        {
+            pathfinder = new AStarPathfinder(depart, GetNode(destination.Destination,école));
+        }
+        for (int i = 0; i < listeContraintes.Count; i++)
+        {
+            if (listeContraintes[i].Contains("pas passer"))
+            { 
+                CreerListeNodesAeviter(listeContraintes,école);
+                // si il ya juste des pas passer
+                if (listeContraintes.TrueForAll(ContientPasPasser))
+                {
+                    pathfinder = new AStarPathfinder(depart, arrivee, NodesÀÉviter);
+                    NodesÀÉviter.Clear();
+                }
+            }
+
+            if (!(listeContraintes.Contains("pas ")))
+            {
+                if (listeContraintes.Count == 1 && listeContraintes[0].Contains("local spécifique"))
+                {
+                    string localACroiser = $"{choixAileLocal}{choixNbLocal}";
+                    ChosenNode = GetNode(localACroiser, école);
+                    pathfinder = new AStarPathfinder(depart, arrivee, ChosenNode);
+                }
+
+                if (listeContraintes.Count > 1 && listeContraintes[i].Contains("pas passer") &&
+                    listeContraintes.Where(x => !(x.Contains("pas "))).Count() == 1)
+                {
+                    CreerListeNodesAeviter(listeContraintes, école);
+                    pathfinder =  new AStarPathfinder(depart, arrivee, NodesÀÉviter, ChosenNode);
+                }
+            }
+        }
+    }
+    
+
+    public static void CreerListeNodesAeviter(List<string> listeContraintes, École école)
+    {
+
+        for (int i = 0; i < listeContraintes.Count; i++)
+        {
+            if (listeContraintes[i].Contains("pas passer"))
+            {
+                if (listeContraintes[i].Contains("étage spécifique"))
+                {
+                    FloorGraph floor = école.Floors[int.Parse(choixEtage)];
+                    NodesÀÉviter.AddRange(floor.Nodes);
+                }
+
+                if (listeContraintes[i].Contains("aile spécifique"))
+                {
+                    FloorGraph floor = école.Floors[int.Parse(choixEtageDeAile)];
+                    foreach (var nodes in floor.Nodes)
+                    {
+                        if (nodes.Nom[1] == choixAile[0])
+                            NodesÀÉviter.Add(nodes);
+                    }
+                }
+
+                if (listeContraintes[i].Contains("toilette/s"))
+                {
+                    foreach (var floors in école.Floors)
+                    {
+                        foreach (var nodes in floors.Nodes)
+                        {
+                            if (nodes.Nom == "Toilettes")
+                                NodesÀÉviter.Add(nodes);
+                        }
+                    }
+                }
+
+                if (listeContraintes[i].Contains("local spécifique"))
+                {
+                    string localAEviter = $"{choixAileLocal}{choixNbLocal}";
+                    NodesÀÉviter.Add(GetNode(localAEviter, école));
+                }
+            }
+        }
+    }
+
+    public static PathfindingNode GetNode(string destination,École école)
+    {
+        FloorGraph floor = école.Floors[GetÉtage(destination)];
+        PathfindingNode noeud = floor.Nodes[0];
+        foreach (var node in floor.Nodes)
+        {
+            if (!EstLocal(destination))
+            {
+                if (node.Nom == destination)
+                    noeud = node;
+            }
+            else
+            {
+                if (destination[0] == node.Nom[0])
+                {
+                    string[] nombres = node.Nom.Split('À');
+                    if (int.Parse(destination.Remove(0)) >= int.Parse(nombres[0]) ||
+                        int.Parse(destination.Remove(0)) >= int.Parse(nombres[1]))
+                        noeud = node;
+                }
+            }
+        }
+
+        return noeud;
+    }
+
+    public static int GetÉtage(string destination)
+    {
+        int etage;
+        if (EstLocal(destination))
+            etage = int.Parse(destination[1].ToString());
+        else
+        {
+            if (destination[0] == 'B')
+                etage = 3;
+            else
+            {
+                etage = 0;
+            }
+        }
+        return etage;
+    }
+
+    public static bool EstLocal(string destination)
+    {
+        if(destination[1]!='a')
+            return MenuChoixDestination.AILES.Contains(destination[0]);
+        return false;
     }
 }

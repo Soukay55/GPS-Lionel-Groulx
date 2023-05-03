@@ -25,8 +25,6 @@ public class Polygone
 
     public void SetPoints(List<Vector3> points)
     {
-        Points.Clear();
-        
         Points = points;
         if (!IsClockwise(Points))
         {
@@ -50,6 +48,7 @@ public class Polygone
         return new Polygone(node.Nom, points);
     }
 
+    //name is innapropriate because this method is also used to create roof
     public void CréerSol(Material matérielSol)
     {
         Sol = new GameObject("Sol" + " de l'" + Nom);
@@ -81,7 +80,7 @@ public class Polygone
 
         return uvs.ToArray();
     }
-
+    
     public void DessinerPolygone(GameObject prefab, GameObject parent)
     {
 
@@ -112,7 +111,6 @@ public class Polygone
     public bool IsClockwise(List<Vector3>points)
     {
         Vector3 A = CalculerCentroide();
-
         Vector3 AB = points[0] - A;
         Vector3 AC = points[1] - A;
 
@@ -185,8 +183,7 @@ public class Polygone
         }
         return indexList;
     }
-
-    //not sure
+    
     public bool IsConvex(Vector3 pointA, Vector3 pointB, Vector3 pointC)
     {
         Vector3 vecteurBA = pointA-pointB;
@@ -199,14 +196,12 @@ public class Polygone
     {
         foreach (var point in indexList)
         {
-            
             if (Points[point] != pointA & Points[point] != pointB & Points[point] != pointC)
             {
                 
                 if(IsInTriangle(pointA, pointB, pointC, Points[point]))
                     return true;
             }
-
         }
 
         return false;
@@ -224,5 +219,27 @@ public class Polygone
 
         return Vector3.Cross(AÀpoint, AB).y< 0 && Vector3.Cross(BÀpoint, BC).y < 0 &&  Vector3.Cross(CÀpoint, CA).y < 0;
     }
-    
+
+    public bool EstDansAile(Vector3 point)
+    {
+        bool àLIntérieur = false;
+        Vector3 point1;
+        Vector3 point2;
+        int nbPoints = Points.Count;
+
+        for (int i = 0, j = nbPoints - 1; i < nbPoints; j = i++)
+        {
+            point1 = Points[i];
+            point2 = Points[j];
+
+            if (((point1.z > point.z) != (point2.z > point.z)) &&
+                (point.x < (point2.x - point1.x) * (point.z - point1.z) / (point2.z - point1.z) + point1.x))
+            {
+                àLIntérieur = !àLIntérieur;
+            }
+        }
+
+        return àLIntérieur;
+    }
+
 }

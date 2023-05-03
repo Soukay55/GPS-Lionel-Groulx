@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Pathfinding;
 using Unity.VisualScripting;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 //cas possibles de contraintes avec cet algorithme:
 //une node à éviter
@@ -19,9 +20,7 @@ public class AStarPathfinder : Pathfinder
     public PathfindingNode ChosenNode { get; set; }
     
     //aucune contrainte, mais plusieurs paths différents à créer
-    public AStarPathfinder()
-    {
-    }
+    public AStarPathfinder() { }
     
     //aucune contrainte
     public AStarPathfinder(PathfindingNode départ, PathfindingNode end)
@@ -36,6 +35,7 @@ public class AStarPathfinder : Pathfinder
         :base(départ,end,nodes)
     {
         NodesÀÉviter = nodes;
+        
         //ecq ça devrait être fait avant d'appeler le constructeur?..
         foreach (var node in nodes)
         {
@@ -48,8 +48,9 @@ public class AStarPathfinder : Pathfinder
     public AStarPathfinder( PathfindingNode départ,
         PathfindingNode end, PathfindingNode node):base(départ,end)
     {
+        //ChosenNode property is redundant rn
         ChosenNode = node;
-        Path = FindPathAStar();//!
+        Path = FindPathAStar(ChosenNode);
     }
     
     //(une node à éviter OU plusieurs node à éviter) ET une node à passer
@@ -57,9 +58,14 @@ public class AStarPathfinder : Pathfinder
         PathfindingNode end, List<PathfindingNode> nodesÀÉviter,PathfindingNode nodeÀPasser)
     :base(départ, end,nodesÀÉviter)
     {
+        foreach (var node in nodesÀÉviter)
+        {
+            node.EstTraversable = false;
+        }
+        
         NodesÀÉviter = nodesÀÉviter;
         ChosenNode = nodeÀPasser;
-        Path = FindPathAStar();//!
+        Path = FindPathAStar(ChosenNode);
     }
 
 
@@ -69,17 +75,27 @@ public class AStarPathfinder : Pathfinder
         OpenList.Add(Départ);
         while (NodeActuel!=Arrivée)
         {
+            if (OpenList.Count == 0)
+            {
+                Statut = StatutPathfinder.ÉCHEC;
+                return null;
+            }
+
+            Statut = StatutPathfinder.EN_MARCHE;
+            
             NodeActuel = OpenList[GetNodePlusPetitCout(OpenList)];
             OpenList.Remove(NodeActuel);
             ClosedList.Add(NodeActuel);
+            
+            
+            //optimization?
             foreach (var voisin in NodeActuel.Voisins)
             {
-                if (!voisin.EstTraversable&&!ClosedList.Contains(voisin))
-                   //le code est laid try to optimize
+                if (voisin.EstTraversable&&!ClosedList.Contains(voisin))
                 {
                     if (voisin.GCost >
-                        NodeActuel.GCost + Node.CalculerDistanceNodes(NodeActuel, voisin) ||
-                        !OpenList.Contains(voisin))
+                        NodeActuel.GCost + Node.CalculerDistanceNodes
+                            (NodeActuel, voisin)|| !OpenList.Contains(voisin))
                     {
                         voisin.Parent = NodeActuel;
                         voisin.GCost = voisin.GetGCost();
@@ -94,6 +110,8 @@ public class AStarPathfinder : Pathfinder
             }
         }
 
+        Statut = StatutPathfinder.SUCCES;
+        
         while (NodeActuel.Parent != null)
         {
             path.Add(NodeActuel.Parent);
@@ -101,9 +119,22 @@ public class AStarPathfinder : Pathfinder
         }
         
         path.Reverse();
-        path.Insert(0,Départ);
         path.Add(Arrivée);
-        return path;
+        
+        OpenList.Clear();
+        ClosedList.Clear();
+        
+        Unparent(path);
+        
+        return path; 
+    }
+
+    public void Unparent(List<PathfindingNode>nodes)
+    {
+        foreach (var node in nodes)
+        {
+            if (node.Parent != null) node.Parent = null;
+        }
     }
 
     public List<PathfindingNode> FindPathAStar(PathfindingNode nodeÀPasser)
@@ -125,9 +156,19 @@ public class AStarPathfinder : Pathfinder
         //à la position finale
         Départ = nodeÀPasser;
         Arrivée = contenantTempo;
+
+        //before doing this:bool Repasser
+        foreach (var node in path1.Skip(1))
+        {
+            if((path1.Count-1)-path1.IndexOf(node)<3)
+            node.EstTraversable = false;
+        }
+        
+        
         path2 = FindPathAStar();
         
         //on enlève la nodeÀPasser, puisqu'elle apparaît dans les deux chemins
+        Debug.Log(Statut);
         path2.Remove(nodeÀPasser);
         
         //on colle les deux chemins ensemble
@@ -137,6 +178,7 @@ public class AStarPathfinder : Pathfinder
     public override int GetNodePlusPetitCout(List<PathfindingNode> nodeList)
     {
         int indexPlusPetit = 0;
+
         float plusPetitCout = nodeList[0].FCost;
         for (int i = 1; i < nodeList.Count; i++)
         {

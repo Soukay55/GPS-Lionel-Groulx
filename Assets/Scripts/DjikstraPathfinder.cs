@@ -5,6 +5,7 @@ using System.Linq;
 using Pathfinding;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 //some of these methods need to go in Pathfinder theres too many lines
 
@@ -36,7 +37,7 @@ public class DjikstraPathfinder : Pathfinder
         :base(départ,end,nodes)
     {
         NodesInévitables = nodes;
-        Path = FindPathDjikstra();//!
+        Path = FindPathDjikstra1();//!
     }
 
     //plusieurs nodes à passer ET (une node à éviter OU plusieurs nodes à éviter)
@@ -46,7 +47,7 @@ public class DjikstraPathfinder : Pathfinder
     {
         NodesInévitables = nodesàPasser;
         NodesÀÉviter = nodesÉviter;
-        Path = FindPathDjikstra();//!
+        Path = FindPathDjikstra1();//!
     }
     
     
@@ -103,8 +104,10 @@ public class DjikstraPathfinder : Pathfinder
     public List<PathfindingNode> FindPathDjikstra1()
     {
         int nombreNodes = NodesInévitables.Count;
+        
         int[] nombresÀPermuter = new int[nombreNodes];
               for (int i = nombreNodes; i > 0; i--) nombresÀPermuter[i - 1] = i;
+              
         int[,] permutations= new int[FactorielDe(nombreNodes), nombreNodes];
         
         permutations=PermutationsPossibles(nombreNodes, nombresÀPermuter, permutations);
@@ -116,11 +119,13 @@ public class DjikstraPathfinder : Pathfinder
         //Maybe make these properties of DjikstraPathFindr instead? code getting crowded AF!!!
         List<PathfindingNode> BestPath = NodesInévitables;
         List<PathfindingNode> CurrentPath = new List<PathfindingNode>();
+        
         float currentPathLength = 0;
+        
         float bestPathLength = Coûts[0,permutations[0,0]]
                                +Coûts[permutations[0,nombreNodes-1],nombreNodes+1];
         
-        for (int i=0;i<nombreNodes;i++)
+        for (int i=0;i<nombreNodes-1;i++)
         {
             bestPathLength += Coûts[permutations[0, i], permutations[0, i + 1]];
         }
@@ -420,6 +425,7 @@ public class DjikstraPathfinder : Pathfinder
         }
     }
 
+    //hmm 
     public override int GetNodePlusPetitCout(List<PathfindingNode> nodeList)
     {
         int indexPlusPetit = 0;

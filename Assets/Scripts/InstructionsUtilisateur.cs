@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class InstructionsUtilisateur : MonoBehaviour
@@ -9,13 +10,14 @@ public class InstructionsUtilisateur : MonoBehaviour
 
     public static string instructionsUtilisateur = String.Empty;
 
+    public static TMP_Text instructions;
+
     public static void GénérerInstructions(List<PathfindingNode> trajetUtilisateur)
     {
-        for (int i = 0; i < trajetUtilisateur.Count - 2; i++)
-        {
+        for (int i = 0; i < trajetUtilisateur.Count - 2; i += 2)
             CalculerAngle(trajetUtilisateur[i], trajetUtilisateur[i + 1],
-                trajetUtilisateur[i + 2]);
-        }
+            trajetUtilisateur[i + 2]);
+
 
         instructionsUtilisateur += "Continuer tout droit";
 
@@ -25,6 +27,8 @@ public class InstructionsUtilisateur : MonoBehaviour
         trajetUtilisateur[trajetUtilisateur.Count - 2].Instructions = instructionsUtilisateur;
 
         trajetUtilisateur[trajetUtilisateur.Count - 1].Instructions = "Vous êtes arrivés.";
+        
+        
 
         instructionsUtilisateur = String.Empty;
     }
@@ -42,6 +46,7 @@ public class InstructionsUtilisateur : MonoBehaviour
         instructionsUtilisateur += "Continuer tout droit";
         instructionsUtilisateur += PourDMètres(nodeA, nodeB);
         nodeA.Instructions = instructionsUtilisateur;
+        AfficherInstructions(nodeA);
         instructionsUtilisateur = String.Empty;
         if (angleDegre < 120)
         {
@@ -53,6 +58,7 @@ public class InstructionsUtilisateur : MonoBehaviour
                 nodeB.Instructions = "Tourner à droite";
             }
         }
+        AfficherInstructions(nodeB);
     }
 
     public static string PourDMètres(PathfindingNode nodeB, PathfindingNode nodeA)
@@ -63,5 +69,10 @@ public class InstructionsUtilisateur : MonoBehaviour
                        Mathf.Pow((nodeB.Position.z - nodeA.Position.z), 2));
         string nbMetres = $" pour {d} mètres";
         return nbMetres;
+    }
+
+    public static void AfficherInstructions(PathfindingNode currentNode)
+    {
+        instructions.text = currentNode.Instructions;
     }
 }

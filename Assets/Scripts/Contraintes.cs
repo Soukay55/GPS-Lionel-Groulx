@@ -240,6 +240,7 @@ public class Contraintes : MonoBehaviour
         textContraintes6,
         textContraintes7,
         textContraintes8,
+        textContraintes9,
         messageContraintes,
         textAileEtage;
 
@@ -325,6 +326,16 @@ public class Contraintes : MonoBehaviour
         items.Add("un étage spécifique");
         items.Add("une aile spécifique");
         items.Add("la bibliothèque");
+        var contraintes = phrases;
+        foreach (var phrase in contraintes)
+        {
+            if (phrase.Contains("par le local"))
+                items.Remove("un local spécifique");
+            if (phrase.Contains("l'étage"))
+                items.Remove("un étage spécifique");
+            if (phrase.Contains("par l'aile"))
+                items.Remove("une aile spécifique");
+        }
         return items;
     }
 
@@ -421,7 +432,7 @@ public class Contraintes : MonoBehaviour
         if (choixDropdown3 == "un local spécifique")
             phrase = $"Je voudrais {choixDropdown2} par le local {choixAileLocal}{choixNbLocal}";
         if (choixDropdown3 == "une aile spécifique")
-            phrase = $"Je voudrais {choixDropdown2} par {choixAile}{choixEtageDeAile}00";
+            phrase = $"Je voudrais {choixDropdown2} par l'aile {choixAile}{choixEtageDeAile}00";
         if (choixDropdown3 == "un étage spécifique")
             phrase = $"Je voudrais {choixDropdown2} par l'étage {choixEtage}";
         if (choixDropdown2 == "passer" && choixDropdown3 == " toilette/s")
@@ -442,6 +453,7 @@ public class Contraintes : MonoBehaviour
         textContraintes6.text = phrases[5];
         textContraintes7.text = phrases[6];
         textContraintes8.text = phrases[7];
+        textContraintes9.text = phrases[8];
     }
 
     private void AfficherMessage()
@@ -453,7 +465,7 @@ public class Contraintes : MonoBehaviour
     {
         bouttonSuivant.gameObject.SetActive(true);
         
-        if (phrases.Count == 8)
+        if (phrases.Count == 9)
         {
             MakeObjectsDisappear(); // sauf la liste et le bouton suivant
             SetSpecificObjects(false,false,false,false,false,false,false,false,false,false,false);
@@ -462,6 +474,7 @@ public class Contraintes : MonoBehaviour
         else
         {
             CreerPhrase();
+            CreateDropdown(CreerListeDropdown3(),dropdown3);
             ResetAllDropdowns();
             SetObjects(false, false, true, true, true, true, true, false);
             SetSpecificObjects(false, false, false, false, false, false, false, false, false, false, false);
@@ -494,9 +507,9 @@ public class Contraintes : MonoBehaviour
     {
         var indexChoisi = dropdown.value;
         choixDropdown3 = dropdown.options[indexChoisi].text;
-        if (indexChoisi == 1 || indexChoisi == 2 || indexChoisi == 7)
+        if (choixDropdown3 == " la cafétéria" || choixDropdown3=="le carrefour étudiant" || choixDropdown3=="la bibliothèque")
             SetObjects(false, false, true, true, true, true, true, true);
-        if (indexChoisi == 3 && choixDropdown2 == "passer")
+        if (choixDropdown3== " toilette/s" && choixDropdown2 == "passer")
         {
             MakeObjectsDisappear();
             SetSpecificObjects(false, false, false, false, false, false, false, false, false, true, true);
@@ -510,21 +523,21 @@ public class Contraintes : MonoBehaviour
             SetObjects(false, false, true, true, true, true, true, true);
         }
 
-        if (indexChoisi == 4)
+        if (choixDropdown3== "un local spécifique")
         {
             MakeObjectsDisappear();
             SetSpecificObjects(true, false, true, false, false, false, false, false, false, false, false);
             dropdownLocal1.onValueChanged.AddListener(delegate { DropdownLocal1ValueChangedHappened(dropdownLocal1); });
         }
 
-        if (indexChoisi == 5)
+        if (choixDropdown3 == "un étage spécifique")
         {
             MakeObjectsDisappear();
             SetSpecificObjects(false, false, false, false, false, false, false, true, true, false, false);
             dropdownEtages.onValueChanged.AddListener(delegate { DropdownEtageValueChangedHappened(dropdownEtages); });
         }
 
-        if (indexChoisi == 6)
+        if (choixDropdown3 == "une aile spécifique")
         {
             MakeObjectsDisappear();
             SetSpecificObjects(false, false, false, true, false, false, true, false, false, false, false);

@@ -51,7 +51,7 @@ public class CreateurCouloir : MonoBehaviour
         
         //longueur du couloir
         distance = Vector3.Distance(pointA, pointB);
-        
+
         //self explanatory...
         nombreBlocs = Mathf.CeilToInt(distance / longueurBloc);
         
@@ -193,6 +193,8 @@ public class CreateurCouloir : MonoBehaviour
     {
         Vector3[] ligneÀInterpoler = new Vector3[2];
 
+        points = points.OrderByDescending(p => p.x).ToList();
+        
         float sommeXY = 0;
         float sommeX = 0;
         float sommeY = 0;
@@ -220,8 +222,8 @@ public class CreateurCouloir : MonoBehaviour
         var y2 = points[n - 1].y;
         var z2 = a * x2 + b;
 
-        ligneÀInterpoler[0] = new Vector3(x1, y1, z1);
-        ligneÀInterpoler[1] = new Vector3(x2, y2, z2);
+        ligneÀInterpoler[1] = new Vector3(x1, y1, z1);
+        ligneÀInterpoler[0] = new Vector3(x2, y2, z2);
             
         return ligneÀInterpoler;
     }

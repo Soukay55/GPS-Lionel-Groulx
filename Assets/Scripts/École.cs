@@ -31,7 +31,7 @@ public class École
         }
         
         RemplirMatriceÉtages();
-        GetNodes(origine);
+        GetCoordonéesÉcole(origine);
         GetNodeData(fichierNom);
         
     }
@@ -56,7 +56,6 @@ public class École
         var dataTab = FileReadingTools.LireFichierTxt(fichierNodesName);
 
         var étageComparateur = Étage.A;
-        bool plusQueUnNom = false;
         
         
         //voisins conversion problem
@@ -64,7 +63,9 @@ public class École
         {
             var nombre = int.Parse(dataTab[i], CultureInfo.InvariantCulture);
 
-            var noms = FileReadingTools.ToNameList(dataTab[i + 1], ref plusQueUnNom);
+            var noms = FileReadingTools.ToNameList(dataTab[i + 1]);
+
+            noms = noms.Concat(CoordonéesÉcole[nombre - 1].Noms).ToList();
 
             var endroitPublic = FileReadingTools.ToBool(dataTab[i + 2]);
 
@@ -84,12 +85,6 @@ public class École
         
     }
     
-    public bool EstEndroitPublic(string nom)
-    {
-        List<string> endroitsPub
-            = new List<string>() { "Escaliers", "Carrefour", "Cafétéria", "Entre2","Bibliothèque","Toilettes" };
-        return endroitsPub.Contains(nom);
-    }
     
     //explain this in comments
     public void RemplirMatriceÉtages()
@@ -107,10 +102,11 @@ public class École
         {
             for (int j = 0; j < (int)Aile.NombreAiles; j++)
             {
-                //maybe simplify en ayant une var facteurMulti qui change si c F ou S
+                
                 if (étagesMax[j] >= i)
                 {
-                    //indexs de l'aile F et S
+               
+                    //exceptions Sauvé-Frenette
                     if(i>2&&j>6)
                     {
                         matriceÉtages[i, j] = matriceÉtages[i - 1, j] + HAUTEUR_ÉCOLE
@@ -118,6 +114,12 @@ public class École
                     }
                     else
                     {
+                        if(i==2&&j<6)
+                        {
+                            matriceÉtages[i, j] = matriceÉtages[i - 1, j] + 2*HAUTEUR_ÉCOLE
+                                / ((int)Étage.NombreÉtages);
+                            continue;
+                        }
                         matriceÉtages[i, j] = matriceÉtages[i - 1, j] + HAUTEUR_ÉCOLE
                             / ((int)Étage.NombreÉtages);
                     }
@@ -129,19 +131,19 @@ public class École
 
     }
     
-    public void GetNodes(Node origine)
+    public void GetCoordonéesÉcole(Node origine)
     {
-        int i = 1;
+        
         var points = new List<Node>();
         var coords=FileReadingTools.LireFichierTxt("InsideData.txt");
         
-        foreach (var coord in coords)
+        for(int i=0,j = 1;i<coords.Count-1;i+=2,j++)
         {
-            var c=new Node(i,FileReadingTools.ToGpsCoordinate(coord));
+            var c=new Node(j,FileReadingTools.ToGpsCoordinate(coords[i]),FileReadingTools.ToNameList(coords[i+1]));
             c.SetPosition(origine);
             c.Position = GPSCoordinate.RotateAroundOriginZero(c.Position, 46.3f);
             points.Add(c);
-            i++;
+          
         }
 
         CoordonéesÉcole = points;
@@ -164,6 +166,7 @@ public class École
                 {
                     node.Position +=                             
                         Vector3.up * Niveaux[i+1, (int)Aile.C]; 
+                    continue;
                 }  
                 
                 node.Position +=

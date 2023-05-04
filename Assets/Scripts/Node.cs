@@ -33,10 +33,11 @@ public class Node
         ConnectedNodes = connectedNodes;
     }
 
-    public Node(int nombre, GPSCoordinate coordonéesGps)
+    public Node(int nombre, GPSCoordinate coordonéesGps, List<string>noms)
     {
         Nombre = nombre;
         CoordonéesGPS = coordonéesGps;
+        Noms = noms;
 
     }
     public Node(int nombre, string nom, Étage étage, GPSCoordinate coordonéesGps)

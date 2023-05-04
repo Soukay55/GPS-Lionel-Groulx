@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using Mapbox.Unity;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
@@ -33,9 +36,10 @@ public class GénérerÉcole : MonoBehaviour
         GénérerMursExt(); 
         GénérerMursInt();
         GénérerSols();
+        CréerGrapheÉcole();
         GénérerCouloirs();
         OrganizeHierarchy();
-        CréerGrapheÉcole();
+        
         //TestPathfinder();
 
     }
@@ -113,7 +117,6 @@ public class GénérerÉcole : MonoBehaviour
             k++;
         }
         
-        GetNodes(listePoints[15]);
 
         return listePoints;
     }
@@ -242,68 +245,126 @@ public class GénérerÉcole : MonoBehaviour
 
     //constant for earth rotation (46,3deg)
     //this func should b in école
-    public void GetNodes(Node origine)
-    {
-        int i = 1;
-        var points = new List<Node>();
-        var coords=FileReadingTools.LireFichierTxt("InsideData.txt");
-        
-        foreach (var coord in coords)
-        {
-           var c=new Node(i,FileReadingTools.ToGpsCoordinate(coord));
-           c.SetPosition(origine);
-           c.Position = GPSCoordinate.RotateAroundOriginZero(c.Position, 46.3f);
-           points.Add(c);
-           i++;
-        }
-
-        Points = points;
-    }
+    // public void GetNodes(Node origine)
+    // {
+    //     int i = 1;
+    //     var points = new List<Node>();
+    //     var coords=FileReadingTools.LireFichierTxt("InsideData.txt");
+    //     
+    //     foreach (var coord in coords)
+    //     {
+    //        var c=new Node(i,FileReadingTools.ToGpsCoordinate(coord));
+    //        c.SetPosition(origine);
+    //        c.Position = GPSCoordinate.RotateAroundOriginZero(c.Position, 46.3f);
+    //        points.Add(c);
+    //        i++;
+    //     }
+    //
+    //     Points = points;
+    // }
     
     //maybe create delegate for this instead
-    
-    
+
     public void GénérerCouloirs()
     {
+        
         for (int i = 0; i < CollègeLio.Floors.Count; i++)
         {
+            
             var currentFloor = CollègeLio.Floors[i];
             
-            for(int j=0;j<currentFloor.Nodes.Count;j++)
+            List<PathfindingNode> nodesCouloir = new List<PathfindingNode>();
+            List<string> couloirsGénérés = new List<string>();
+            
+            foreach (var node in currentFloor.Nodes)
             {
-                var currentNode = currentFloor.Nodes[j];
-                print(currentNode.Nombre);
-                if (!EstCageDEscalier(currentNode))
+                if (EstUn("Couloir", node))
                 {
-                    foreach (var voisin in currentNode.Voisins)
-                    {
-                        CreateurCouloir.CréerCouloir(currentNode.Position
-                            , voisin.Position, couloir);
-                    }  
+                    nodesCouloir.Add(node);
                 }
+                
             }
+            
+            List<Vector3> currentCouloir = new List<Vector3>();
+            
+            while(nodesCouloir.Any())
+            {
+                string currentName = string.Empty;
+                
+                for (int j = 0; j < nodesCouloir.Count; j++)
+                {
+                    //look through all the names, and find ex.CouloirD, then set it as currentName,
+                    //and add it to couloirsGénérés
+                    foreach(var name in nodesCouloir[j].Noms)
+                    {
+                        if (!couloirsGénérés.Contains(name)&&name.Contains("Couloir"))
+                        {
+                            currentName = name;
+                            couloirsGénérés.Add(currentName);
+                            break;
+                        }
+                    }
+
+                    for (int k = 0; k < nodesCouloir.Count; k++)
+                    {
+                        if (EstUn(currentName, nodesCouloir[k]))
+                        {
+                            currentCouloir.Add(nodesCouloir[k].Position);
+                            //
+                            var r = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            r.transform.position = nodesCouloir[k].Position;
+                            
+                            print("node numéro"+nodesCouloir[k].Nombre+"de l'étage"+
+                                  (int)nodesCouloir[k].Niveau+"est un"+currentName);
+                            
+                            var couloirsIncluantsNode = nodesCouloir[k].Noms.FindAll(FindCouloirs);
+
+                            if (!couloirsIncluantsNode.Except(couloirsGénérés).Any())
+                            {
+                                nodesCouloir.Remove(nodesCouloir[k]);
+                            }
+                        }
+                    }
+                    
+                    var points = CreateurCouloir.RégressionLinéaire(currentCouloir);
+                    currentCouloir.Clear();
+                    
+                    //
+                    var coul=CreateurCouloir.CréerCouloir(points[0], points[1], couloir);
+                    coul.name = currentName;
+
+                }
+                
+                
+            }
+
         }
+    }
+
+    public bool FindCouloirs(string nom)
+    {
+        return nom.Contains("Couloir");
     }
 
     //both of these in the PathfindinNode class
-    public bool EstCageDEscalier(PathfindingNode node)
+    public bool EstUn(string ÀÊtre,PathfindingNode node)
     {
-        if (AUnEscalier(node))
+        if (ContientUn(ÀÊtre,node))
         {
             foreach (var voisin in node.Voisins)
             {
-                if (AUnEscalier(voisin)) return true;
+                if (ContientUn( ÀÊtre,voisin)) return true;
             }
         }
         
         return false;
     }
 
-    public bool AUnEscalier(PathfindingNode node)
+    public bool ContientUn(string àContenir,PathfindingNode node)
     {
         foreach (var nom in node.Noms)
         {
-            if (nom.Contains("Escalier"))
+            if (nom.Contains(àContenir))
             {
                 return true;
             }

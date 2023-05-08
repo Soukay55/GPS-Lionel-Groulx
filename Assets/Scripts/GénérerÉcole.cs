@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using Mapbox.Unity;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
@@ -10,7 +13,7 @@ public class GénérerÉcole : MonoBehaviour
     public GameObject murInt;
     public Material matérielSol;
     public Material matérielPath;
-    public GameObject couloir;
+    public GameObject couloirPrefab;
     
     private const int NB_INFOS_PAR_NODES = 4;
     public List<Node>Points { get; set; }
@@ -33,9 +36,10 @@ public class GénérerÉcole : MonoBehaviour
         GénérerMursExt(); 
         GénérerMursInt();
         GénérerSols();
+        CréerGrapheÉcole();
         GénérerCouloirs();
         OrganizeHierarchy();
-        CréerGrapheÉcole();
+        
         //TestPathfinder();
 
     }
@@ -113,7 +117,6 @@ public class GénérerÉcole : MonoBehaviour
             k++;
         }
         
-        GetNodes(listePoints[15]);
 
         return listePoints;
     }
@@ -242,77 +245,132 @@ public class GénérerÉcole : MonoBehaviour
 
     //constant for earth rotation (46,3deg)
     //this func should b in école
-    public void GetNodes(Node origine)
-    {
-        int i = 1;
-        var points = new List<Node>();
-        var coords=FileReadingTools.LireFichierTxt("InsideData.txt");
-        
-        foreach (var coord in coords)
-        {
-           var c=new Node(i,FileReadingTools.ToGpsCoordinate(coord));
-           c.SetPosition(origine);
-           c.Position = GPSCoordinate.RotateAroundOriginZero(c.Position, 46.3f);
-           points.Add(c);
-           i++;
-        }
-
-        Points = points;
-    }
+    // public void GetNodes(Node origine)
+    // {
+    //     int i = 1;
+    //     var points = new List<Node>();
+    //     var coords=FileReadingTools.LireFichierTxt("InsideData.txt");
+    //     
+    //     foreach (var coord in coords)
+    //     {
+    //        var c=new Node(i,FileReadingTools.ToGpsCoordinate(coord));
+    //        c.SetPosition(origine);
+    //        c.Position = GPSCoordinate.RotateAroundOriginZero(c.Position, 46.3f);
+    //        points.Add(c);
+    //        i++;
+    //     }
+    //
+    //     Points = points;
+    // }
     
     //maybe create delegate for this instead
-    
-    
+
     public void GénérerCouloirs()
     {
+        
         for (int i = 0; i < CollègeLio.Floors.Count; i++)
         {
+            
             var currentFloor = CollègeLio.Floors[i];
             
-            for(int j=0;j<currentFloor.Nodes.Count;j++)
+            List<PathfindingNode> nodesCouloir = new List<PathfindingNode>();
+            List<string> couloirsLeft = new List<string>();
+            
+            foreach (var node in currentFloor.Nodes)
             {
-                var currentNode = currentFloor.Nodes[j];
-                print(currentNode.Nombre);
-                if (!EstCageDEscalier(currentNode))
+                if (EstUn("Couloir", node))
                 {
-                    foreach (var voisin in currentNode.Voisins)
-                    {
-                        CreateurCouloir.CréerCouloir(currentNode.Position
-                            , voisin.Position, couloir);
-                    }  
+                    couloirsLeft=couloirsLeft.Concat(node.Noms.FindAll(FindCouloirs)).ToList();
                 }
+                
             }
+            couloirsLeft=couloirsLeft.Distinct().ToList();
+            
+            
+            foreach (var couloir in couloirsLeft)
+            {
+                List<Vector3> currentCouloir = new List<Vector3>();
+                
+                foreach (var node in currentFloor.Nodes)
+                {
+                    //print(node.Nombre+"de letage"+(int)node.Niveau+"est un"+couloir+"?"+(EstUn(couloir,node)&&!EstUneSalle(node)));
+                    
+                    if (EstUn(couloir, node) && !EstUneSalle(node))
+                    {
+                        currentCouloir.Add(node.Position);
+                    
+                        //print(node.Nombre+"detage"+(int)node.Niveau+"est dans le couloir"+couloir);
+                    }
+                   
+                }
+                
+                if(currentCouloir.Count<2)continue;
+
+                // foreach (var pt in currentCouloir)
+                // {
+                //     var r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                //     r.name = couloir;
+                //     r.transform.localScale = Vector3.one * 45;
+                //     r.transform.position = pt;
+                // }
+
+                var pts=CreateurCouloir.RégressionLinéaire(currentCouloir);
+                
+                //var c=CreateurCouloir.CréerCouloir(pts[0], pts[1], couloirPrefab);
+                
+                var j = new GameObject("jolt");
+                LineRenderer r = j.AddComponent<LineRenderer>();
+                r.positionCount = 2;
+                r.SetPositions(pts);
+
+            }
+            
+
+            
+
         }
+    }
+
+    //add all this to CréateurCouloir
+    public bool FindCouloirs(string nom)
+    {
+        return nom.Contains("Couloir");
     }
 
     //both of these in the PathfindinNode class
-    public bool EstCageDEscalier(PathfindingNode node)
+    public bool EstUn(string ÀÊtre,PathfindingNode node)
     {
-        if (AUnEscalier(node))
+        if (ContientUn(ÀÊtre,node))
         {
             foreach (var voisin in node.Voisins)
             {
-                if (AUnEscalier(voisin)) return true;
+                if (ContientUn( ÀÊtre,voisin)&&voisin.Niveau==node.Niveau) return true;
             }
         }
         
         return false;
     }
 
-    public bool AUnEscalier(PathfindingNode node)
+    public bool EstUneSalle(PathfindingNode node)
+    {
+        return (ContientUn("Salle", node) || ContientUn("Ca", node));
+    }
+
+    public bool ContientUn(string àContenir,PathfindingNode node)
     {
         foreach (var nom in node.Noms)
         {
-            if (nom.Contains("Escalier"))
+            if (nom.Contains(àContenir))
             {
                 return true;
             }
-            
         }
 
         return false;
     }
     //well see ://///
+    
+    
     public void CréerGrapheÉcole()
     {
         GameObject graphe = new GameObject("GrapheÉcole");
@@ -326,10 +384,13 @@ public class GénérerÉcole : MonoBehaviour
                 var node = floor.Nodes[j];
                 
                 var point = node.DrawNode();
+                
                 point.transform.SetParent(graphe.transform);
                 point.name = node.Nom + " étage: " + (int)node.Niveau + "numéro: " + node.Nombre;
+                
                 var l1 = point.AddComponent<LineRenderer>();
                 l1.positionCount = node.Voisins.Count * 2;
+                
                 var k = 0;
                 foreach(var voisin in node.Voisins)
                 {

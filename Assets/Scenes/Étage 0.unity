@@ -349,4 +349,4 @@ MonoBehaviour:
   murInt: {fileID: 7311290681508252227, guid: 54307ca56523f2d4cbbbd0f08b54fa18, type: 3}
   "mat\xE9rielSol": {fileID: 2100000, guid: 6f4826f88ac4f1c4a838c7d90757ba90, type: 2}
   "mat\xE9rielPath": {fileID: 2100000, guid: f76614fb341273b4d804390999d0c20a, type: 2}
-  couloir: {fileID: 3944435785803302332, guid: 1a88120bd6dd8ee498b3f6e181c8cea3, type: 3}
+  couloirPrefab: {fileID: 3944435785803302332, guid: 1a88120bd6dd8ee498b3f6e181c8cea3, type: 3}

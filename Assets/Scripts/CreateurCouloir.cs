@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Unity.VisualScripting;
@@ -50,7 +51,7 @@ public class CreateurCouloir : MonoBehaviour
         
         //longueur du couloir
         distance = Vector3.Distance(pointA, pointB);
-        
+
         //self explanatory...
         nombreBlocs = Mathf.CeilToInt(distance / longueurBloc);
         
@@ -184,6 +185,47 @@ public class CreateurCouloir : MonoBehaviour
                 constMultipl *= -1;
             }
         }
+    }
+    
+    //maybe not the best script to put this method but we"ll see
+    
+    public static Vector3[]RégressionLinéaire(List<Vector3>points)
+    {
+        Vector3[] ligneÀInterpoler = new Vector3[2];
+
+        points = points.OrderByDescending(p => p.x).ToList();
+        
+        float sommeXY = 0;
+        float sommeX = 0;
+        float sommeY = 0;
+        float sommeX2 = 0;
+        var n = points.Count;
+        
+        foreach (var point in points)
+        {
+            //y=z ici...
+            
+            sommeXY += point.x * point.z;
+            sommeX += point.z;
+            sommeY += point.z;
+            sommeX2 += Mathf.Pow(point.x, 2);
+        }
+
+        var a = (n * sommeXY - sommeX * sommeY) / (n * sommeX2 - Mathf.Pow(sommeX, 2));
+        var b = (sommeY - a * sommeX) / n;
+
+        var x1 = points[0].x;
+        var y1 = points[0].y;
+        var z1 = a * x1 + b;
+            
+        var x2 = points[n - 1].x;
+        var y2 = points[n - 1].y;
+        var z2 = a * x2 + b;
+
+        ligneÀInterpoler[1] = new Vector3(x1, y1, z1);
+        ligneÀInterpoler[0] = new Vector3(x2, y2, z2);
+            
+        return ligneÀInterpoler;
     }
 
     public static float GetCouloirLength(Transform couloir)

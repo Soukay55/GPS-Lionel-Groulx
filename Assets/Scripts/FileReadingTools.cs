@@ -41,11 +41,10 @@ public class FileReadingTools
         return valeurBool.Contains("t");
     }
 
-    public static List<string> ToNameList(string listeNoms, ref bool plusQueUnNom)
+    public static List<string> ToNameList(string listeNoms)
     {
         var noms = listeNoms.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
-        if (noms.Count > 1)
-            plusQueUnNom = true;
+        
         return noms;
     }
 

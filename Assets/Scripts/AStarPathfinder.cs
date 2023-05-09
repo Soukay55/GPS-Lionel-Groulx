@@ -160,17 +160,39 @@ public class AStarPathfinder : Pathfinder
         //before doing this:bool Repasser
         foreach (var node in path1.Skip(1))
         {
-            if((path1.Count-1)-path1.IndexOf(node)<3)
-            node.EstTraversable = false;
+            if (Arrivée.Voisins.Contains(node))
+            {
+                node.EstTraversable = true;
+            }
+            else
+            {
+                if((path1.Count-1)-path1.IndexOf(node)<3)
+                    node.EstTraversable = false; 
+            }
+           
+            
         }
         
+        //mettre un message pour les laisser savoir que le path retourné
+        //ne respectera pas les conditions initiales
         
         path2 = FindPathAStar();
         
-        //on enlève la nodeÀPasser, puisqu'elle apparaît dans les deux chemins
-        Debug.Log(Statut);
+        //si on ne trouve pas de path qui ne repasse pas par les mêmes points deux fois, 
+        //on permet de repasser sur les mêmes points tant et autant
+       
+        // while (Statut==StatutPathfinder.ÉCHEC)
+        // {
+        //     var nbNodesRepassable = 4;
+        //     foreach (var node in path1.Skip(1))
+        //     {
+        //         if(path1.Count-1-path1.IndexOf(node)>nbNodesRepassable)
+        //         node.EstTraversable = true;
+        //     }
+        // }
         path2.Remove(nodeÀPasser);
         
+        //on enlève la nodeÀPasser, puisqu'elle apparaît dans les deux chemins
         //on colle les deux chemins ensemble
         return path1.Concat(path2).ToList();
     }

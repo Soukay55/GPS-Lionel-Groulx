@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3660501807732079645}
   - component: {fileID: 790531614003896943}
   m_Layer: 0
-  m_Name: CHAIR_Folding (7)
+  m_Name: Tabl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 562534469937818244}
   - component: {fileID: 3223521723544626041}
   m_Layer: 0
-  m_Name: CHAIR_Folding (4)
+  m_Name: Tabl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 6725420229186022929}
   - component: {fileID: 6939129105900965511}
   m_Layer: 0
-  m_Name: CHAIR_Folding (5)
+  m_Name: Tabl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -261,7 +261,7 @@ GameObject:
   - component: {fileID: 1366908920751098182}
   - component: {fileID: 1576953110962652214}
   m_Layer: 0
-  m_Name: CHAIR_Folding (6)
+  m_Name: Tabl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -358,7 +358,7 @@ Transform:
   m_GameObject: {fileID: 8186648423099785340}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.26773882, y: 0, z: 1.4649655}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5051011, y: 0.5051011, z: 0.5051011}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2598075865622499661}
@@ -376,8 +376,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 28.82255, y: 10.000001, z: 27.476776}
+  m_Center: {x: -0.06359546, y: 12, z: -1.4538008}
 --- !u!1 &9027819455909823011
 GameObject:
   m_ObjectHideFlags: 0
@@ -390,7 +390,7 @@ GameObject:
   - component: {fileID: 4179454755687704077}
   - component: {fileID: 3895382347347392942}
   m_Layer: 0
-  m_Name: TableRondeEtChaises (1)
+  m_Name: TablRondeEtChaises (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -405,7 +405,7 @@ Transform:
   m_GameObject: {fileID: 9027819455909823011}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 25.222784, y: 25.222784, z: 25.222784}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 662718897702748498}

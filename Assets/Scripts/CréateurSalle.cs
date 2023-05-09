@@ -1,22 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-using Random = System.Random;
 //get the right assets automatically with no dragging
 public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet mod, et carrefour
 {
-    
-
-    public static GameObject salle = GameObject.Find("Salle");
-    public static GameObject tableEtChaises=GameObject.Find("TablesEtChaises");
-    public static GameObject tableRondeEtChaises=GameObject.Find("TableRondeetChaise");
-    // Start is called before the first frame update
-    private void Start()
-    {
-    }
-    
-   
-
     public static void CréerSalleRectangulaire(float width, float length, float heigth ,Vector3 centre, GameObject prefabSalle)
     {
         var salle=Instantiate(prefabSalle, centre, Quaternion.identity);
@@ -33,15 +21,17 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
     {
         Vector3 position;
         Quaternion rotation;
+        float variation = prefab.transform.localScale.x;
+        
         //float nbTables = 8;
         if (dimensionY==0)
         {
             float angle;
             var rayonMax = dimensionX / 2f;
             bool tableDevant=false;
-            var tableCentre = Instantiate(tableRondeEtChaises, pointDépart, Quaternion.identity);
+            var tableCentre = Instantiate(prefab, pointDépart, Quaternion.identity);
     
-            for (float j = 1; j < rayonMax + 1; j += 1)
+            for (float j = 1; j < rayonMax + 1; j+=25)
             {
                 var rangée = new GameObject("Rangée");
                 rangée.transform.SetParent(tableCentre.transform);
@@ -57,15 +47,6 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
                      if(Physics.Raycast(position, (position - pointDépart),1.0f))
                         rangée.transform.Rotate(Vector3.up,70);;
 
-                     var r = Physics.OverlapSphere(position, 0.15f);
-                     if (r.Length != 1)
-                     {
-                         for (int k = 0; k < r.Length - 1; k++)
-                         {
-                             Destroy(r[k].gameObject);
-                         }
-                         
-                     }
                 }
                 
                 //maintenant va rangée par rangée, et on supprime à chaque deux tables,
@@ -88,14 +69,27 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
     
         //comme dans la cafet, on veut des chaises et des tables en longueur
         //selon rangées et colonnes et faire des "blocs" de tables et chaises organisées
-        rotation = Quaternion.identity;
-        for (var i = 0; i < dimensionX; i++)
-        for (var j = 0; j < dimensionY; j++)
+
+        var largeurTable = prefab.transform.localScale.x;
+        var longueurTable = prefab.transform.localScale.z;
+        var nombreRangées = dimensionY / largeurTable;
+        
+        Vector3 posDébut = pointDépart-new Vector3(dimensionX/4,0,dimensionY/2);  
+        Vector3 currentPosition = posDébut;
+
+        GameObject tables = new GameObject("Tables");
+
+        for (int i = 0; i < nombreRangées; i++) 
         {
-            position = new Vector3(j, 0, i);
-            Instantiate(tableEtChaises, position, rotation);
+            for (int j = 0; j< nbTables;j++)
+            {
+                Instantiate(prefab, currentPosition, Quaternion.identity,tables.transform);
+                currentPosition += new Vector3(largeurTable, 0.0f, 0.0f);
+            }
+            
+            currentPosition = new Vector3(posDébut.x, 0, currentPosition.z);
+            currentPosition += new Vector3(0.0f, 0.0f, longueurTable);
         }
-    
-        return;
+        
     }
 }

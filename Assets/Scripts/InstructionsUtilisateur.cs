@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class InstructionsUtilisateur : MonoBehaviour
 {
-    private List<PathfindingNode> pathfindingNodes = new List<PathfindingNode>();
 
     public static string instructionsUtilisateur = String.Empty;
 

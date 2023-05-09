@@ -20,7 +20,7 @@ public class MenuNavigateur : MonoBehaviour
 
     private void Update()
     {
-        if (personneUn.gameObject.activeSelf == true)
+        if (personneUn.gameObject.activeSelf )
         {
             Camera.main.transform.position= joueur.transform.position + new Vector3(0, 5, 0);
         }

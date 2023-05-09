@@ -14,7 +14,7 @@ public class École
     public List<FloorGraph> Floors { get; set; }
     public List<Node>CoordonéesÉcole{ get; set; }
     
-    public const int HAUTEUR_ÉCOLE = 380;
+    public const int HAUTEUR_ÉCOLE = 500;
 
     private const int NB_DONNÉES_PAR_NODE = 5;
     public int[,]Niveaux { get; set; }

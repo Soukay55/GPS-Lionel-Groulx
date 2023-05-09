@@ -16,6 +16,8 @@ public class Polygone
 
     public GameObject Sol { get; set; }
     
+    public  GameObject Plafond { get; set; }
+    
     public Polygone(string nom, List<Vector3> points)
     {
         Points = new List<Vector3>();
@@ -49,6 +51,8 @@ public class Polygone
     }
 
     //name is innapropriate because this method is also used to create roof
+    
+    //create func that takes care of both plafonds and sols this is repetitive asf!!!!
     public void CréerSol(Material matérielSol)
     {
         Sol = new GameObject("Sol" + " de l'" + Nom);
@@ -60,7 +64,7 @@ public class Polygone
         
         mesh.vertices = Points.ToArray();
         mesh.triangles=Triangulate();
-        mesh.uv = GetUVs();
+        mesh.uv = GetUVs(30);
 
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
@@ -69,13 +73,42 @@ public class Polygone
         sol.mesh = mesh;
     }
 
-    public Vector2[] GetUVs()
+    public void CréerPlafonds(Material matérielPlafond)
+    {
+        Plafond= new GameObject("Plafond" + " de l'" + Nom);
+        var sol=Plafond.AddComponent<MeshFilter>();
+        Plafond.AddComponent<MeshCollider>();
+        Plafond.AddComponent<MeshRenderer>();
+
+        Mesh mesh = new Mesh();
+        mesh.vertices = Points.ToArray();
+        var triangles=Triangulate();
+        var nvxTriangles = new int[triangles.Length];
+        
+        for (int i = 0; i < triangles.Length; i+=3)
+        {
+            nvxTriangles[i] = triangles[i + 2];
+            nvxTriangles[i+1] = triangles[i + 1];
+            nvxTriangles[i+2] = triangles[i ];
+        }
+
+        mesh.triangles = nvxTriangles;
+        mesh.uv = GetUVs(80);
+
+        mesh.RecalculateBounds();
+        mesh.RecalculateNormals();
+
+        sol.GetComponent<MeshRenderer>().material = matérielPlafond;
+        sol.mesh = mesh;
+    }
+
+    public Vector2[] GetUVs(float facteur)
     {
         List<Vector2> uvs = new List<Vector2>();
         
         foreach (var point in Points)
         {
-            uvs.Add(new Vector2(point.x,point.z)/9);
+            uvs.Add(new Vector2(point.x,point.z)/facteur);
         }
 
         return uvs.ToArray();

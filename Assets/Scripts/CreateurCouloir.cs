@@ -11,10 +11,6 @@ using UnityEngine.UIElements;
 
 public class CreateurCouloir : MonoBehaviour
 {
-    private GameObject[]noeuds;
-    [SerializeField] 
-    public GameObject prefabCouloir,prefabObjet,parent;
-    private int nbEnfants;
 
     private static GameObject couloir;
 
@@ -136,10 +132,12 @@ public class CreateurCouloir : MonoBehaviour
     //si le "codeCouloir"=1, les objets sont sur le mur de droite
     //si le "codeCouloir"=0, les objets sont alternés sur les deux murs
     public static void GénérerObjetsMur(Vector3 pointA, Vector3 pointB, GameObject prefab,
-        int nbObjets, int codeCouloir, GameObject prefabCouloir)
+        int codeCouloir, GameObject prefabCouloir,int currentFloor)
     {
-        
+
         CalculerDirRotDistPosChemin(pointA,pointB, prefabCouloir);
+
+        var nbObjets = (int)distance/(prefab.transform.localScale.z*10);
 
         int j = -1+(int)MathF.Abs(codeCouloir);
 
@@ -155,18 +153,23 @@ public class CreateurCouloir : MonoBehaviour
         position += distance / (2 * nbObjets) * direction;
         
         var obj = Instantiate(prefab, position, rotation,couloir.transform);
-        obj.transform.Translate(codeCouloir * largeurCouloir / 2, 0, 0);
+        obj.transform.Translate(codeCouloir * largeurCouloir/2, 0, 0);
 
         position = obj.transform.position;
         
         for (int i = 1; i < nbObjets; i++)
         {
             position += direction * distance / (nbObjets);
-            position.x += j * largeurCouloir;
+            position.x += j * (largeurCouloir);
             
             Instantiate(prefab, position, rotation,obj.transform);
             j *= -1;
         }
+
+        obj.transform.parent = GameObject.Find("Étage" + currentFloor).transform;
+        Destroy(couloir);
+
+
     }
 
     public static void ScaleCouloir(Transform couloir)
@@ -192,12 +195,12 @@ public class CreateurCouloir : MonoBehaviour
     public static Vector3[]RégressionLinéaire(List<Vector3>points)
     {
         Vector3[] ligneÀInterpoler = new Vector3[2];
-
-        points = points.OrderByDescending(p => p.x).ToList();
+  
+        points = points.OrderBy(p => p.x).ToList();
         
-        float sommeXY = 0;
+        float sommeXZ = 0;
         float sommeX = 0;
-        float sommeY = 0;
+        float sommeZ = 0;
         float sommeX2 = 0;
         var n = points.Count;
         
@@ -205,29 +208,130 @@ public class CreateurCouloir : MonoBehaviour
         {
             //y=z ici...
             
-            sommeXY += point.x * point.z;
-            sommeX += point.z;
-            sommeY += point.z;
+            sommeXZ += point.x * point.z;
+            sommeX += point.x;
+            sommeZ += point.z;
             sommeX2 += Mathf.Pow(point.x, 2);
         }
 
-        var a = (n * sommeXY - sommeX * sommeY) / (n * sommeX2 - Mathf.Pow(sommeX, 2));
-        var b = (sommeY - a * sommeX) / n;
+        var a = (n * sommeXZ - sommeX * sommeZ) / (n * sommeX2 - Mathf.Pow(sommeX, 2));
+        
+        //si le a est très très grand, les pointsf forment une ligne verticale,
+        //faut les inverser avant de faire la régression:
+        if (Mathf.Abs(a)>1)
+        {
+            List<Vector3> pointsInverse = new List<Vector3>();
+            
+            foreach (var point in points)
+            {
+                pointsInverse.Add(new Vector3(point.z, point.y, point.x));
+                
+            }
 
-        var x1 = points[0].x;
+            var ligne=RégressionLinéaire(pointsInverse);
+            Vector3[] nvxPoints = new Vector3[2];
+
+            for (int i = 0; i < nvxPoints.Length; i++)
+            {
+                nvxPoints[i] = new Vector3(ligne[i].z, ligne[i].y, ligne[i].x);
+            }
+
+            return nvxPoints;
+        }
+        
+        var b = (sommeZ - a * sommeX) / n;
+
+        //on veut que le couloir soit un peu "reculé", alors faut décaler en x
+        var x1 = points[0].x-8;
         var y1 = points[0].y;
         var z1 = a * x1 + b;
+        
             
-        var x2 = points[n - 1].x;
+        var x2 = points[n - 1].x+8;
         var y2 = points[n - 1].y;
         var z2 = a * x2 + b;
 
-        ligneÀInterpoler[1] = new Vector3(x1, y1, z1);
-        ligneÀInterpoler[0] = new Vector3(x2, y2, z2);
+        ligneÀInterpoler[0] = new Vector3(x1, y1, z1);
+        ligneÀInterpoler[1] = new Vector3(x2, y2, z2);
             
         return ligneÀInterpoler;
     }
 
+    //to finish
+    public static void DétruireIntersections(GameObject couloir, Material matériel)
+    {    
+        var longeur = distance;
+        var centre = couloir.transform.position + direction * longeur / 2 +Vector3.up*30;
+        var étendue = new Vector3(largeurCouloir-45 , 1, longeur);
+        
+
+        // var s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        // s.transform.position = centre;
+        // s.transform.localScale = Vector3.one * 35;
+        // s.GetComponent<MeshRenderer>().material = matériel;
+
+        ChangeLayer(couloir,6);
+        int layerMask = ~(1 << 6);
+        
+        var r = Physics.OverlapBox(centre, étendue, Quaternion.LookRotation(direction));
+        
+        ChangeLayer(couloir,0);
+        
+
+         // var t= GameObject.CreatePrimitive(PrimitiveType.Cube);
+         //  t.transform.position = centre;
+         //  t.transform.localScale = étendue;
+         // t.transform.rotation=Quaternion.LookRotation(direction);
+        
+        foreach (var obj in r)
+        {
+            var objet = obj.gameObject;
+            
+            if (objet.name.Contains("Mur")) 
+            {
+                Destroy(objet);
+            }
+        }
+    }
+    
+    public static void DétruireObstacles(École école)
+    {
+        foreach (var floor in école.Floors)
+        {
+            foreach (var node in floor.Nodes)
+            {
+                foreach (var voisin in node.Voisins)
+                {
+                    int layerMask = 1 << 0;
+                    var direction = node.Position - voisin.Position;
+                    var distance = direction.magnitude;
+                    RaycastHit hit;
+                    
+                    if(Physics.Raycast(node.Position, direction,out hit, distance, layerMask))
+                        Destroy(hit.collider.gameObject);
+                }
+                
+            }
+            
+        }
+    }
+
+    static void ChangeLayer(GameObject objet, int layer)
+    {
+        objet.layer = layer;
+        foreach (Transform child in objet.transform)
+        {
+            child.gameObject.layer = layer;
+ 
+            Transform enfants = child.GetComponentInChildren<Transform>();
+            if (enfants != null)
+                ChangeLayer(child.gameObject, layer);
+             
+        }
+    }
+
+
+    
     public static float GetCouloirLength(Transform couloir)
     {
         //on veut la somme de longueur tous les blocs de couloirs d'un couloir

@@ -1,0 +1,16 @@
+MapleLibrary := module () export SplineCoeffs; SplineCoeffs := proc (L1, L2, 
+opt) local i, k, S1, S2, S3, eq, Sol, SolCoeff, P, n, B, C, MSol, MCoeffs, N, 
+vars; n := nops(L1); P := GenPoly(L1); S1 := [seq(eval(P[i,1],t = L1[i]) = L2[i
+],i = 1 .. n-1), seq(eval(P[i,1],t = L1[i+1]) = L2[i+1],i = 1 .. n-1)]; S2 := [
+seq(eval(diff(P[i,1],t),t = L1[i+1]) = eval(diff(P[i+1,1],t),t = L1[i+1]),i = 1
+.. n-2), eval(diff(P[1,1],t),t = L1[1]) = eval(diff(P[n-1,1],t),t = L1[n])]; S3
+:= [seq(eval(diff(P[i,1],t $ 2),t = L1[i+1]) = eval(diff(P[i+1,1],t $ 2),t = L1
+[i+1]),i = 1 .. n-2), eval(diff(P[1,1],t $ 2),t = L1[1]) = eval(diff(P[n-1,1],t
+$ 2),t = L1[n])]; eq := [S1[], S2[], S3[]]; vars := [indets(eq)]; Sol := solve(
+eq,convert(indets(eq),list)); MSol := matrix(n-1,4,[seq(evalf(rhs(Sol[1,k])),k
+= 1 .. 4*n-4)]); B := matrix(4,1,[1, t, t^2, t^3]); C := evalm(Typesetting:-
+delayDotProduct(MSol,B)); MCoeffs := evalm(MSol); N := Matrix(rowdim(Mx),coldim
+(Mx),(i, j) -> Mx[i,j]); if opt = 0 then ExportMatrix(
+"C:\\Users\\balde\\source\\repos\\CoefficientsSplineX. txt",evalf(Nx)); else 
+ExportMatrix("C:\\Users\\balde\\source\\repos\\CoefficientsSplineX. txt",evalf(
+Nx)); end if; end proc; end module;

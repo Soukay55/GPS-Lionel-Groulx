@@ -415,7 +415,7 @@ public class Contraintes : MonoBehaviour
     }
 
     
-    List<string> phrases = new List<string>();
+    List<string> phrases = new List<string>(9);
     public string phrase;
 
     public static PathfindingNode depart;
@@ -443,15 +443,21 @@ public class Contraintes : MonoBehaviour
 
     private void AfficherPhrase()
     {
-        textContraintes1.text = phrases[0];
-        textContraintes2.text = phrases[1];
-        textContraintes3.text = phrases[2];
-        textContraintes4.text = phrases[3];
-        textContraintes5.text = phrases[4];
-        textContraintes6.text = phrases[5];
-        textContraintes7.text = phrases[6];
-        textContraintes8.text = phrases[7];
-        textContraintes9.text = phrases[8];
+        List<TMP_Text> textes = new List<TMP_Text>();
+        textes.Add(textContraintes1);
+        textes.Add(textContraintes2);
+        textes.Add(textContraintes3);
+        textes.Add(textContraintes4);
+        textes.Add(textContraintes5);
+        textes.Add(textContraintes6);
+        textes.Add(textContraintes7);
+        textes.Add(textContraintes8);
+        textes.Add(textContraintes9);
+
+        for (int i = 0; i < phrases.Count; i++)
+        {
+            textes[i].text = phrases[i];
+        }
     }
 
     private void AfficherMessage()

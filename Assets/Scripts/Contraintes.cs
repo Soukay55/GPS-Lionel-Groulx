@@ -9,8 +9,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UI.Button;
-using Pathfinding;
-using Pathfinding.Locations.Types;
 
 public class Contraintes : MonoBehaviour
 {
@@ -240,6 +238,7 @@ public class Contraintes : MonoBehaviour
         textContraintes6,
         textContraintes7,
         textContraintes8,
+        textContraintes9,
         messageContraintes,
         textAileEtage;
 
@@ -322,9 +321,16 @@ public class Contraintes : MonoBehaviour
         items.Add("le carrefour étudiant");
         items.Add(" toilette/s");
         items.Add("un local spécifique");
-        items.Add("un étage spécifique");
         items.Add("une aile spécifique");
         items.Add("la bibliothèque");
+        var contraintes = phrases;
+        foreach (var phrase in contraintes)
+        {
+            if (phrase.Contains("par le local"))
+                items.Remove("un local spécifique");
+            if (phrase.Contains("par l'aile"))
+                items.Remove("une aile spécifique");
+        }
         return items;
     }
 
@@ -421,9 +427,7 @@ public class Contraintes : MonoBehaviour
         if (choixDropdown3 == "un local spécifique")
             phrase = $"Je voudrais {choixDropdown2} par le local {choixAileLocal}{choixNbLocal}";
         if (choixDropdown3 == "une aile spécifique")
-            phrase = $"Je voudrais {choixDropdown2} par {choixAile}{choixEtageDeAile}00";
-        if (choixDropdown3 == "un étage spécifique")
-            phrase = $"Je voudrais {choixDropdown2} par l'étage {choixEtage}";
+            phrase = $"Je voudrais {choixDropdown2} par l'aile {choixAile}{choixEtageDeAile}00";
         if (choixDropdown2 == "passer" && choixDropdown3 == " toilette/s")
             phrase = $"Je voudrais passer par {choixNbToilettes} {choixDropdown3}";
         if (choixDropdown2 == "ne pas passer" && choixDropdown3 == " toilette/s")
@@ -442,18 +446,19 @@ public class Contraintes : MonoBehaviour
         textContraintes6.text = phrases[5];
         textContraintes7.text = phrases[6];
         textContraintes8.text = phrases[7];
+        textContraintes9.text = phrases[8];
     }
 
     private void AfficherMessage()
     {
-        messageContraintes.text = "Vous avez atteint la limite de 8 contraintes";
+        messageContraintes.text = "Vous avez atteint la limite de 9 contraintes";
     }
 
     public void ComportementBoutton()
     {
         bouttonSuivant.gameObject.SetActive(true);
         
-        if (phrases.Count == 8)
+        if (phrases.Count == 9)
         {
             MakeObjectsDisappear(); // sauf la liste et le bouton suivant
             SetSpecificObjects(false,false,false,false,false,false,false,false,false,false,false);
@@ -462,6 +467,7 @@ public class Contraintes : MonoBehaviour
         else
         {
             CreerPhrase();
+            CreateDropdown(CreerListeDropdown3(),dropdown3);
             ResetAllDropdowns();
             SetObjects(false, false, true, true, true, true, true, false);
             SetSpecificObjects(false, false, false, false, false, false, false, false, false, false, false);
@@ -494,9 +500,9 @@ public class Contraintes : MonoBehaviour
     {
         var indexChoisi = dropdown.value;
         choixDropdown3 = dropdown.options[indexChoisi].text;
-        if (indexChoisi == 1 || indexChoisi == 2 || indexChoisi == 7)
+        if (choixDropdown3 == " la cafétéria" || choixDropdown3=="le carrefour étudiant" || choixDropdown3=="la bibliothèque")
             SetObjects(false, false, true, true, true, true, true, true);
-        if (indexChoisi == 3 && choixDropdown2 == "passer")
+        if (choixDropdown3== " toilette/s" && choixDropdown2 == "passer")
         {
             MakeObjectsDisappear();
             SetSpecificObjects(false, false, false, false, false, false, false, false, false, true, true);
@@ -510,21 +516,14 @@ public class Contraintes : MonoBehaviour
             SetObjects(false, false, true, true, true, true, true, true);
         }
 
-        if (indexChoisi == 4)
+        if (choixDropdown3== "un local spécifique")
         {
             MakeObjectsDisappear();
             SetSpecificObjects(true, false, true, false, false, false, false, false, false, false, false);
             dropdownLocal1.onValueChanged.AddListener(delegate { DropdownLocal1ValueChangedHappened(dropdownLocal1); });
         }
-
-        if (indexChoisi == 5)
-        {
-            MakeObjectsDisappear();
-            SetSpecificObjects(false, false, false, false, false, false, false, true, true, false, false);
-            dropdownEtages.onValueChanged.AddListener(delegate { DropdownEtageValueChangedHappened(dropdownEtages); });
-        }
-
-        if (indexChoisi == 6)
+        
+        if (choixDropdown3 == "une aile spécifique")
         {
             MakeObjectsDisappear();
             SetSpecificObjects(false, false, false, true, false, false, true, false, false, false, false);
@@ -539,13 +538,7 @@ public class Contraintes : MonoBehaviour
         choixNbToilettes = dropdown.options[newSelectedIndex].text;
         SetObjects(false, false, false, false, false, false, false, true);
     }
-
-    void DropdownEtageValueChangedHappened(TMP_Dropdown dropdown)
-    {
-        var newSelectedIndex = dropdown.value;
-        choixEtage = dropdown.options[newSelectedIndex].text;
-        SetObjects(false, false, false, false, false, false, false, true);
-    }
+    
 
     void DropdownAileValueChangedHappened(TMP_Dropdown dropdown)
     {
@@ -729,12 +722,11 @@ public class Contraintes : MonoBehaviour
         {
             if (listeContraintes[i].Contains("pas passer"))
             {
-                if (listeContraintes[i].Contains("étage spécifique"))
-                {
-                    FloorGraph floor = école.Floors[int.Parse(choixEtage)];
-                    NodesÀÉviter.AddRange(floor.Nodes);
-                }
-
+                //if (listeContraintes[i].Contains("étage spécifique"))
+                //{
+                   // FloorGraph floor = école.Floors[int.Parse(choixEtage)];
+                    //NodesÀÉviter.AddRange(floor.Nodes);
+                //}
                 if (listeContraintes[i].Contains("aile spécifique"))
                 {
                     FloorGraph floor = école.Floors[int.Parse(choixEtageDeAile)];
@@ -815,4 +807,38 @@ public class Contraintes : MonoBehaviour
             return MenuChoixDestination.AILES.Contains(destination[0]);
         return false;
     }
+
+    public static bool PasseParEtage(List<PathfindingNode> path, Étage étage)
+    {
+        bool passeParEtage = false;
+        foreach (var node in path)
+        {
+            if (node.Niveau == étage)
+                passeParEtage = true;
+        }
+
+        return passeParEtage;
+    }
+    public static bool PasseParAile(List<PathfindingNode> path, Aile aile)
+    {
+        bool passeParAile = false;
+        foreach (var node in path)
+        {
+            if (node.Aile == aile)
+                passeParAile = true;
+        }
+
+        return passeParAile;
+    }
+    
+    public static bool PasseParToilette(List<PathfindingNode> path, int nbToilettes)
+    {
+        bool passeParToilette = false;
+        if (path.Where(x => (x.Nom.Contains("Toilettes"))).Count() == nbToilettes)
+        {
+            passeParToilette = true;
+        }
+        return passeParToilette;
+    }
+    
 }

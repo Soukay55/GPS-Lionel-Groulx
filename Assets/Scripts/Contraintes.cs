@@ -245,7 +245,6 @@ public class Contraintes : MonoBehaviour
     public static string choixDropdown2,
         choixDropdown3,
         choixNbToilettes,
-        choixEtage,
         choixAile,
         choixEtageDeAile,
         choixAileLocal,

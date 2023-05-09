@@ -203,6 +203,25 @@ public class MenuChoixDestination : MonoBehaviour
 
         return locauxS;
     }
+    
+    public List<string> CreerListeAile()
+    {
+        var ailes = new List<string>();
+        ailes.Add(" ");
+        ailes.Add("D");
+        ailes.Add("L");
+        ailes.Add("F");
+        ailes.Add("N");
+        ailes.Add("K");
+        ailes.Add("C");
+        ailes.Add("S");
+        ailes.Add("M");
+        ailes.Add("E");
+        ailes.Add("Bibliothèque");
+        ailes.Add("Cafétéria");
+        ailes.Add("Carrefour étudiant");
+        return ailes;
+    }
 
     [SerializeField] public TMP_Dropdown dropdown1,
         dropdown2;
@@ -220,9 +239,10 @@ public class MenuChoixDestination : MonoBehaviour
         dropdown2.gameObject.SetActive(false);
         button.gameObject.SetActive(false);
         dropdown1.options.Clear();
+        CreateDropdown(CreerListeAile(),dropdown1);
 
-        foreach (var i in AILES)
-            dropdown1.options.Add(new TMP_Dropdown.OptionData() { text = i.ToString() });
+        //foreach (var i in AILES)
+            //dropdown1.options.Add(new TMP_Dropdown.OptionData() { text = i.ToString() });
 
         dropdown1.onValueChanged.AddListener(delegate { Dropdown1ValueChangedHappened(dropdown1); });
     }
@@ -249,6 +269,8 @@ public class MenuChoixDestination : MonoBehaviour
             CreateDropdown(CreerListeLocauxAileM(), dropdown2);
         if (selectedIndex == 9)
             CreateDropdown(CreerListeLocauxAileE(), dropdown2);
+        if(selectedIndex==10||selectedIndex==11||selectedIndex == 12)
+            SetObjects(true,false,true);
 
         userInput1 = dropdown.options[selectedIndex].text;
         dropdown2.onValueChanged.AddListener(delegate { Dropdown2ValueChangedHappened(dropdown2); });

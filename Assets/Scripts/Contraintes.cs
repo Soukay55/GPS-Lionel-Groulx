@@ -325,10 +325,10 @@ public class Contraintes : MonoBehaviour
         var contraintes = phrases;
         foreach (var phrase in contraintes)
         {
-            if (phrase.Contains("par le local"))
-                items.Remove("un local spécifique");
             if (phrase.Contains("par l'aile"))
                 items.Remove("une aile spécifique");
+            if (phrase.Contains("Je voudrais passer par") && phrase.Contains("toilette/s"))
+                items.Remove("toilette/s");
         }
         return items;
     }

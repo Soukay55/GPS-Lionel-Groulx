@@ -327,8 +327,14 @@ public class Contraintes : MonoBehaviour
         {
             if (phrase.Contains("par l'aile"))
                 items.Remove("une aile spécifique");
-            if (phrase.Contains("Je voudrais passer par") && phrase.Contains("toilette/s"))
-                items.Remove("toilette/s");
+            if (phrase.Contains(" toilette/s"))
+                items.Remove(" toilette/s");
+            if (phrase.Contains("la bibliothèque"))
+                items.Remove("la bibliothèque");
+            if (phrase.Contains("le carrefour étudiant"))
+                items.Remove("le carrefour étudiant");
+            if (phrase.Contains(" la cafétéria"))
+                items.Remove(" la cafétéria");
         }
         return items;
     }

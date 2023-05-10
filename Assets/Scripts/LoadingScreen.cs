@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class LoadingScreen : MonoBehaviour
 {
-    List<Vector3> Points { get; set; }
+    public List<Vector3> Points { get; set; }
     private float t;
     private int ptIndex;
 
@@ -19,8 +19,14 @@ public class LoadingScreen : MonoBehaviour
         Points = GetSplineData(FileReadingTools.LireFichierTxt("DataSpline.txt"));
         ptIndex = 0;
         pointDéplacement = Instantiate(pointDéplacement);
+        var pts = new List<Vector3>();
         
+        foreach (var pt in Points)
+        {
+            pts.Add(new Vector3 (pt.x,pt.y-0.5F,pt.z - 2));
+        }
         CréérLigne();
+        Points = pts;
 
     }
 
@@ -69,6 +75,7 @@ public class LoadingScreen : MonoBehaviour
                 
                 Destroy(pointDéplacement);
                 Wait();
+                
                 pointDéplacement = Instantiate(pointDéplacement);
             }
             else

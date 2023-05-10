@@ -217,7 +217,7 @@ public class Polygone
         return indexList;
     }
     
-    public bool IsConvex(Vector3 pointA, Vector3 pointB, Vector3 pointC)
+    public static bool IsConvex(Vector3 pointA, Vector3 pointB, Vector3 pointC)
     {
         Vector3 vecteurBA = pointA-pointB;
         Vector3 vecteurBC= pointC-pointB;

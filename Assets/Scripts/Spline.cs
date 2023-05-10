@@ -5,13 +5,25 @@ using System.Drawing;
 using System.Linq;
 using UnityEngine;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 
 public class SplineCubique
 {
     private float[,] Coeffs { get; set; }
     
-    public static Vector3[] InterpolerPts(float[] xs, float[] ys, float level,int count)
+    public static Vector3[] InterpolerPts(List<Vector3>points,int count)
     {
+
+        float[] xs = new float[points.Count];
+        float[] ys = new float[points.Count];
+        float[] zs = new float[points.Count];
+
+        for (int i = 0; i < points.Count; i++)
+        {
+            xs[i]=points[i].x;
+            ys[i]=points[i].z;
+            zs[i] = points[i].y;
+        }
 
         int inputPointCount = xs.Length;
         float[] inputDistances = new float[inputPointCount];
@@ -27,12 +39,13 @@ public class SplineCubique
         float[] evenDistances = Enumerable.Range(0, count).Select(x => x * meanDistance).ToArray();
         float[] xsOut = Interpoler(inputDistances, xs, evenDistances);
         float[] ysOut = Interpoler(inputDistances, ys, evenDistances);
+        float[] zsOut = Interpoler(inputDistances, zs, evenDistances);
 
         Vector3[] pts = new Vector3[xsOut.Length];
 
         for (int i = 0; i <xsOut.Length; i++)
         {
-            pts[i] = new Vector3(xsOut[i], level, ysOut[i]);
+            pts[i] = new Vector3(xsOut[i], zsOut[i], ysOut[i]);
             Debug.Log(pts[i]);
         }
         

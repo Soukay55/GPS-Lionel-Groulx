@@ -38,4 +38,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Trajet2D.unity
     guid: e24194983a22bae4684cb8ccb729e795
+  - enabled: 1
+    path: "Assets/Scenes/\xC9tage 2.unity"
+    guid: 81d230e84bc192041ba25a2a1a2bf9ca
+  - enabled: 1
+    path: "Assets/Scenes/\xC9tage 3.unity"
+    guid: 9b17663f76553a4479f97734f4221fc8
+  - enabled: 1
+    path: Assets/Scenes/MainScene.unity
+    guid: e2b3439fd00994c4383766b50e2c8c2c
+  - enabled: 1
+    path: "Assets/Scenes/Menu D\xE9part.unity"
+    guid: d8523477d3d482f4498cda7a0a09c045
   m_configObjects: {}

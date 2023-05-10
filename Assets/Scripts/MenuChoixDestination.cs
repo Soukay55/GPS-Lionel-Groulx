@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class MenuChoixDestination : MonoBehaviour
 {
-    public List<string> CreerListeLocauxAileD()
+    public static List<string> CreerListeLocauxAileD()
     {
         var tabLocauxetage1 = new int[27];
         for (var i = 0; i < tabLocauxetage1.Length; i++)
@@ -37,7 +37,7 @@ public class MenuChoixDestination : MonoBehaviour
         return locauxD;
     }
 
-    public List<string> CreerListeLocauxAileL()
+    public static List<string> CreerListeLocauxAileL()
     {
         var tabLocauxetage0 = new int[16];
         for (var i = 0; i < tabLocauxetage0.Length; i++)
@@ -56,7 +56,7 @@ public class MenuChoixDestination : MonoBehaviour
         return locauxL;
     }
 
-    public List<string> CreerListeLocauxAileF()
+    public static List<string> CreerListeLocauxAileF()
     {
         var tabLocauxetage1 = new int[22];
         for (var i = 0; i < tabLocauxetage1.Length; i++)
@@ -86,7 +86,7 @@ public class MenuChoixDestination : MonoBehaviour
         return locauxF;
     }
 
-    public List<string> CreerListeLocauxAileN()
+    public static List<string> CreerListeLocauxAileN()
     {
         var tabLocauxetage1 = new int[11];
         for (var i = 0; i < tabLocauxetage1.Length; i++)
@@ -105,7 +105,7 @@ public class MenuChoixDestination : MonoBehaviour
         return locauxN;
     }
 
-    public List<string> CreerListeLocauxAileE()
+    public static List<string> CreerListeLocauxAileE()
     {
         var tabLocauxetage0 = new int[19];
         for (var i = 0; i < tabLocauxetage0.Length; i++)
@@ -118,7 +118,7 @@ public class MenuChoixDestination : MonoBehaviour
         return locauxE;
     }
 
-    public List<string> CreerListeLocauxAileK()
+    public static List<string> CreerListeLocauxAileK()
     {
         var tabLocauxetage0 = new int[11];
         for (var i = 0; i < tabLocauxetage0.Length; i++)
@@ -131,7 +131,7 @@ public class MenuChoixDestination : MonoBehaviour
         return locauxK;
     }
 
-    public List<string> CreerListeLocauxAileC()
+    public static List<string> CreerListeLocauxAileC()
     {
         var tabLocauxetage0 = new int[44];
         for (var i = 0; i < tabLocauxetage0.Length; i++)
@@ -150,7 +150,7 @@ public class MenuChoixDestination : MonoBehaviour
         return locauxC;
     }
 
-    public List<string> CreerListeLocauxAileM()
+    public static List<string> CreerListeLocauxAileM()
     {
         var tabLocauxetage1 = new int[37];
         for (var i = 0; i < tabLocauxetage1.Length; i++)
@@ -169,7 +169,7 @@ public class MenuChoixDestination : MonoBehaviour
         return locauxM;
     }
 
-    public List<string> CreerListeLocauxAileS()
+    public static List<string> CreerListeLocauxAileS()
     {
         var tabLocauxetage1 = new int[38];
         for (var i = 0; i < tabLocauxetage1.Length; i++)
@@ -204,7 +204,7 @@ public class MenuChoixDestination : MonoBehaviour
         return locauxS;
     }
     
-    public List<string> CreerListeAile()
+    public static List<string> CreerListeAile()
     {
         var ailes = new List<string>();
         ailes.Add(" ");
@@ -231,7 +231,7 @@ public class MenuChoixDestination : MonoBehaviour
     public string userInput2;
 
     public const string AILES = " DLFNKCSME";
-    public string Destination { get; set; }
+    public static string Destination { get; set; }
     
 
     public void Start()
@@ -292,7 +292,7 @@ public class MenuChoixDestination : MonoBehaviour
         button.gameObject.SetActive(etat3);
     }
 
-    public void CreateDropdown(List<string> items, TMP_Dropdown dropdown)
+    public static void CreateDropdown(List<string> items, TMP_Dropdown dropdown)
     {
         dropdown.ClearOptions();
 

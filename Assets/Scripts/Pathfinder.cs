@@ -84,6 +84,10 @@ public class Pathfinder
         return length;
     }
 
+    public void RenderPath()
+    {
+        
+    }
 
     public virtual int GetNodePlusPetitCout(List<PathfindingNode> nodeList)
     {

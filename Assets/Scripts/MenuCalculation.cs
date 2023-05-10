@@ -10,60 +10,48 @@ using UnityEngine.UI;
 public class MenuCalculation : MonoBehaviour
 {
     public TMP_Text texteAffiché;
-    public TMP_Text message;
-    public  Button naviguer;
     public  Button voirTrajet;
+    public Button retour;
     private PathfindingNode node;
 
-    public  void GenererLoadingScreen(PathfindingNode node, Pathfinder.StatutPathfinder statut)
+    public  void GenererLoadingScreen()
     {
-        if (statut== Pathfinder.StatutPathfinder.EN_MARCHE)
-        {
-            if(node.Instructions.Contains("Escaliers"))
-            {
-                texteAffiché.text = "Téléportation";
-            }
-            else
-            {
-                texteAffiché.text = "Calculation du trajet";
-            }
-        }
+        GénererMessage();
     }
 
     //?????????????????????
-    public void GenererMessage()
+    public void GénererMessage()
     {
         if (Contraintes.pathfinder.Statut == Pathfinder.StatutPathfinder.SUCCES)
         {
-            naviguer.gameObject.SetActive(true);
-            naviguer.gameObject.SetActive(true);
+            texteAffiché.text = "Votre trajet optimal a été généré";
+            voirTrajet.gameObject.SetActive(true);
         }
         if (Contraintes.pathfinder.Statut == Pathfinder.StatutPathfinder.ÉCHEC)
         {
-            message.text =
+            texteAffiché.text =
                 "Il est impossible de générer un chemin qui respecte toutes les contraintes que vous avez imposées";
+            voirTrajet.gameObject.SetActive(false);
+            retour.gameObject.SetActive(true);
         }
     }
 
     public void Start()
     {
-        naviguer.gameObject.SetActive(false);
         voirTrajet.gameObject.SetActive(false);
-        GenererLoadingScreen(node,Contraintes.pathfinder.Statut);
-        naviguer.onClick.AddListener(ComportementBouttonNaviguer);
+        retour.gameObject.SetActive(false);
+        GenererLoadingScreen();
         voirTrajet.onClick.AddListener(ComportementBouttonTrajet);
+        retour.onClick.AddListener(ComportementBouttonRetour);
 
     }
 
-    public void Update()
-    {
-        GenererLoadingScreen(node,Contraintes.pathfinder.Statut);
-    }
+   
 
     //à la place, fonction statique
-    private static void ComportementBouttonNaviguer()
+    private static void ComportementBouttonRetour()
     {
-        SceneManager.LoadScene(7);
+        SceneManager.LoadScene(2);
     }
     
     private static void ComportementBouttonTrajet()

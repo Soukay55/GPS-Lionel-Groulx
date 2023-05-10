@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -21,8 +22,10 @@ public class GénérerÉcole : MonoBehaviour
     public Material testCollider;
     public GameObject portes;
     public GameObject casiers;
+    public Material splineMat;
     
     private const int NB_INFOS_PAR_NODES = 4;
+    
     public École CollègeLio { get; set; }
     
     //organize this it's ugly
@@ -43,7 +46,7 @@ public class GénérerÉcole : MonoBehaviour
         CréerGrapheÉcole();
         OrganizeHierarchy();
         
-        //TestPathfinder();
+        TestPathfinder();
 
     }
     
@@ -67,9 +70,11 @@ public class GénérerÉcole : MonoBehaviour
         }
 
         PathfindingNode nodeÀPasser = CollègeLio.Floors[3].Nodes[25];
-        AStarPathfinder pathfinder = new AStarPathfinder(CollègeLio.Floors[0].Nodes[18], CollègeLio.Floors[2].Nodes[28],nodesToPass[0]);
         
+        AStarPathfinder pathfinder = new AStarPathfinder(CollègeLio.Floors[0].Nodes[18], CollègeLio.Floors[2].Nodes[28]);
         
+        InstructionsUtilisateur.GénérerInstructions(pathfinder.Path);
+        print(pathfinder.Path[pathfinder.Path.Count-1].Instructions);
         int i = 0;
         
         if (pathfinder.Statut == Pathfinder.StatutPathfinder.SUCCES)
@@ -78,7 +83,7 @@ public class GénérerÉcole : MonoBehaviour
             {
                 var n = node.DrawNode();
                 n.GetComponent<MeshRenderer>().material = matérielPath;
-                print("Le node numéro"+i+"du path est le node"+node.Nombre+"de l'étage"+(int)node.Niveau);
+                print(node.Instructions);
                 i++;
             }
         }
@@ -86,9 +91,25 @@ public class GénérerÉcole : MonoBehaviour
         {
             Debug.Log("Impossible");
         }
+
+        var pts = new List<Vector3>();
+        foreach (var node in pathfinder.Path)
+        {
+            pts.Add(node.Position);
+            //print("("+node.Position.x+"f,"+node.Position.y+"f,"+node.Position.z+"f)");
+        }
+
+        var ptLigne= SplineCubique.InterpolerPts(pts,200);
+        //
+        // var spline = new GameObject("Path");
+        // var lr=spline.AddComponent<LineRenderer>();
+        // lr.SetPositions(ptLigne);
+        // lr.AddComponent<MeshRenderer>().material = splineMat;
+        // lr.SetWidth(8,8);
+
     }
     
-    public List<Node> GetListePoints(List<string>dataTab)
+    public static List<Node> GetListePoints(List<string>dataTab)
     {
         List<Node> listePoints = new List<Node>();
         
@@ -634,7 +655,7 @@ public class GénérerÉcole : MonoBehaviour
         return (ContientUn("Salle", node) || ContientUn("Ca", node));
     }
 
-    public bool ContientUn(string àContenir,PathfindingNode node)
+    public static bool ContientUn(string àContenir,PathfindingNode node)
     {
         foreach (var nom in node.Noms)
         {

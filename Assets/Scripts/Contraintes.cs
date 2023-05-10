@@ -389,10 +389,15 @@ public class Contraintes : MonoBehaviour
         items.Add("4");
         return items;
     }
+    
+    public École CollègeLio { get; set; }
 
 
     private void Start()
     {
+        List<Node> points = GénérerÉcole.GetListePoints(FileReadingTools.LireFichierTxt("OutsideData.txt"));
+        CollègeLio = new École("Nodes.txt",points[15]);
+        
         SetObjects(true, true, false, false, false, false, false, false);
         SetSpecificObjects(false, false, false, false, false, false, false, false, false, false, false);
         bouttonSuivant.gameObject.SetActive(false);
@@ -411,11 +416,13 @@ public class Contraintes : MonoBehaviour
         dropdown3.onValueChanged.AddListener(delegate { Dropdown3ValueChangedHappened(dropdown3); });
         button.onClick.AddListener(ComportementBoutton);
         bouttonSuivant.onClick.AddListener(ComportementBouttonSuivant);
+        
+        AnalyserContraintes();
 
     }
 
     
-    List<string> phrases = new List<string>(9);
+    public static List<string> phrases = new List<string>(9);
     public string phrase;
 
     public static PathfindingNode depart;
@@ -684,41 +691,42 @@ public class Contraintes : MonoBehaviour
         }
     }
 
-    public static AStarPathfinder pathfinder = new AStarPathfinder();
+    public static Pathfinder pathfinder { get; set; }
 
-    public static void AnalyseurContraintes(List<string> listeContraintes,École école)
+
+    public void AnalyserContraintes()
     {
-        MenuChoixDestination destination = new MenuChoixDestination();
-        if (contraintes.Count == 0)
+        if (phrases.Count == 0)
         {
-            pathfinder = new AStarPathfinder(depart, GetNode(destination.Destination,école));
+            pathfinder = new AStarPathfinder(depart, GetNode(MenuChoixDestination.Destination,CollègeLio));
         }
-        for (int i = 0; i < listeContraintes.Count; i++)
+        
+        for (int i = 0; i < phrases.Count; i++)
         {
-            if (listeContraintes[i].Contains("pas passer"))
+            if (phrases[i].Contains("pas passer"))
             { 
-                CreerListeNodesAeviter(listeContraintes,école);
+                CreerListeNodesAeviter(phrases,CollègeLio);
                 // si il ya juste des pas passer
-                if (listeContraintes.TrueForAll(ContientPasPasser))
+                if (phrases.TrueForAll(ContientPasPasser))
                 {
                     pathfinder = new AStarPathfinder(depart, arrivee, NodesÀÉviter);
                     NodesÀÉviter.Clear();
                 }
             }
 
-            if (!(listeContraintes.Contains("pas ")))
+            if (!(phrases[i].Contains("pas ")))
             {
-                if (listeContraintes.Count == 1 && listeContraintes[0].Contains("local spécifique"))
+                if (phrases.Count == 1 && phrases[0].Contains("local spécifique"))
                 {
                     string localACroiser = $"{choixAileLocal}{choixNbLocal}";
-                    ChosenNode = GetNode(localACroiser, école);
+                    ChosenNode = GetNode(localACroiser, CollègeLio);
                     pathfinder = new AStarPathfinder(depart, arrivee, ChosenNode);
                 }
 
-                if (listeContraintes.Count > 1 && listeContraintes[i].Contains("pas passer") &&
-                    listeContraintes.Where(x => !(x.Contains("pas "))).Count() == 1)
+                if (phrases.Count > 1 && phrases[i].Contains("pas passer") &&
+                    phrases.Where(x => !(x.Contains("pas "))).Count() == 1)
                 {
-                    CreerListeNodesAeviter(listeContraintes, école);
+                    CreerListeNodesAeviter(phrases, CollègeLio);
                     pathfinder =  new AStarPathfinder(depart, arrivee, NodesÀÉviter, ChosenNode);
                 }
             }
@@ -726,19 +734,19 @@ public class Contraintes : MonoBehaviour
     }
     
 
-    public static void CreerListeNodesAeviter(List<string> listeContraintes, École école)
+    public static void CreerListeNodesAeviter(List<string> phrases, École école)
     {
 
-        for (int i = 0; i < listeContraintes.Count; i++)
+        for (int i = 0; i < phrases.Count; i++)
         {
-            if (listeContraintes[i].Contains("pas passer"))
+            if (phrases[i].Contains("pas passer"))
             {
-                //if (listeContraintes[i].Contains("étage spécifique"))
+                //if (phrases[i].Contains("étage spécifique"))
                 //{
                    // FloorGraph floor = école.Floors[int.Parse(choixEtage)];
                     //NodesÀÉviter.AddRange(floor.Nodes);
                 //}
-                if (listeContraintes[i].Contains("aile spécifique"))
+                if (phrases[i].Contains("aile spécifique"))
                 {
                     FloorGraph floor = école.Floors[int.Parse(choixEtageDeAile)];
                     foreach (var nodes in floor.Nodes)
@@ -748,7 +756,7 @@ public class Contraintes : MonoBehaviour
                     }
                 }
 
-                if (listeContraintes[i].Contains("toilette/s"))
+                if (phrases[i].Contains("toilette/s"))
                 {
                     foreach (var floors in école.Floors)
                     {
@@ -760,7 +768,7 @@ public class Contraintes : MonoBehaviour
                     }
                 }
 
-                if (listeContraintes[i].Contains("local spécifique"))
+                if (phrases[i].Contains("local spécifique"))
                 {
                     string localAEviter = $"{choixAileLocal}{choixNbLocal}";
                     NodesÀÉviter.Add(GetNode(localAEviter, école));
@@ -777,17 +785,28 @@ public class Contraintes : MonoBehaviour
         {
             if (!EstLocal(destination))
             {
-                if (node.Nom == destination)
+                if (GénérerÉcole.ContientUn(destination,node))
                     noeud = node;
             }
             else
             {
-                if (destination[0] == node.Nom[0])
+                if (GénérerÉcole.ContientUn(destination[0].ToString(),node))
                 {
-                    string[] nombres = node.Nom.Split('À');
-                    if (int.Parse(destination.Remove(0)) >= int.Parse(nombres[0]) ||
-                        int.Parse(destination.Remove(0)) >= int.Parse(nombres[1]))
-                        noeud = node;
+                    if (destination.Contains("À"))
+                    {
+                        string[] nombres = node.Nom.Split('À');
+                        if (int.Parse(destination.Remove(0)) >= int.Parse(nombres[0]) ||
+                            int.Parse(destination.Remove(0)) >= int.Parse(nombres[1]))
+                        {
+                            noeud = node;
+                        }
+                        else
+                        {
+                            if (GénérerÉcole.ContientUn(destination, node)) ;
+                            noeud = node;
+                        }
+                    }
+                   
                 }
             }
         }
@@ -841,7 +860,7 @@ public class Contraintes : MonoBehaviour
 
         return passeParAile;
     }
-    
+
     public static bool PasseParToilette(List<PathfindingNode> path, int nbToilettes)
     {
         bool passeParToilette = false;
@@ -849,7 +868,8 @@ public class Contraintes : MonoBehaviour
         {
             passeParToilette = true;
         }
+
         return passeParToilette;
+
     }
-    
 }

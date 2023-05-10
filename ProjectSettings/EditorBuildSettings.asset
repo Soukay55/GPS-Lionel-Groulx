@@ -18,7 +18,7 @@ EditorBuildSettings:
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Scenes/Choix local 1.unity
+    path: Assets/Scenes/ChoixDestination.unity
     guid: 62400e84ec248c249b021ebcf57e7d5c
   - enabled: 1
     path: Assets/Scenes/Menu Contraintes.unity

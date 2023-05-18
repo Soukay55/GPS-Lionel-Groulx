@@ -10,7 +10,7 @@ using UnityEngine;
 
 //plusieurs nodes à passer
 //plusieurs à passer ET une à éviter
-//plusieurs à passer ETplusieurs à éviter
+//plusieurs à passer ET plusieurs à éviter
 //au moins une aile/étage/toilette à passer
 //au moins une aile/étage/toilette à passer ET une/plusieurs à éviter
 //au moins une aile/étage/toilette à passer

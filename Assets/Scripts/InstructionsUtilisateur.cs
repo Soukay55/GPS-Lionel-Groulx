@@ -11,57 +11,7 @@ public class InstructionsUtilisateur
     //
     // public static TMP_Text instructions;
 
-    public static void GénérerInstructions(List<PathfindingNode> trajetUtilisateur)
-    {
-        // for (int i = 0; i < trajetUtilisateur.Count - 2; i += 2)
-        //     CalculerAngle(trajetUtilisateur[i], trajetUtilisateur[i + 1],
-        //     trajetUtilisateur[i + 2]);
-
-        for (int i = 0; i < trajetUtilisateur.Count-1; i++)
-        {
-            var lieu = string.Empty;
-
-            if (GénérerÉcole.ContientUn("Escalier",trajetUtilisateur[i])
-                &&trajetUtilisateur[i+1].Niveau!=trajetUtilisateur[i].Niveau)
-            {
-                trajetUtilisateur[i].Instructions ="Point#"+i+":" +"Monter au prochain étage";
-                continue;
-            }
-            
-            foreach (var nom in trajetUtilisateur[i].Noms)
-            {
-                
-                string àAfficher;
-                if(nom.Contains("Couloir"))continue;
-                if (nom.Contains("À"))
-                {
-                    àAfficher = "PrèsDe" + nom.Substring(0, 4);
-                }
-                else
-                {
-                    àAfficher = nom;
-                }
-                
-                lieu += àAfficher+ "/";
-            }
-            
-            if(trajetUtilisateur[i].Instructions==null)
-            trajetUtilisateur[i].Instructions="Point #"+i+": Près de "+lieu;
-        }
-
-        trajetUtilisateur[trajetUtilisateur.Count - 1].Instructions = "Vous êtes arrivés";
-
-
-        // instructionsUtilisateur += "Continuer tout droit";
-        //
-        // trajetUtilisateur[trajetUtilisateur.Count - 2].Instructions = instructionsUtilisateur;
-        //
-        // trajetUtilisateur[trajetUtilisateur.Count - 1].Instructions = "Vous êtes arrivés.";
-        //
-        //
-        //
-        // instructionsUtilisateur = String.Empty;
-    }
+    
     
     
 

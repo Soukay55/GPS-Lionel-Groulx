@@ -14,9 +14,6 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/ChoixDestination.unity
     guid: 62400e84ec248c249b021ebcf57e7d5c
@@ -42,7 +39,7 @@ EditorBuildSettings:
     path: "Assets/Scenes/\xC9tage 2.unity"
     guid: 81d230e84bc192041ba25a2a1a2bf9ca
   - enabled: 1
-    path: "Assets/Scenes/\xC9tage 3.unity"
+    path: Assets/Scenes/TestSpline.unity
     guid: 9b17663f76553a4479f97734f4221fc8
   - enabled: 1
     path: Assets/Scenes/MainScene.unity
@@ -50,4 +47,7 @@ EditorBuildSettings:
   - enabled: 1
     path: "Assets/Scenes/Menu D\xE9part.unity"
     guid: d8523477d3d482f4498cda7a0a09c045
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects: {}

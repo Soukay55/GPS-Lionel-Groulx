@@ -1,17 +1,97 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using TMPro;
+using Unity.VisualScripting;
+using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
+using UnityEngine.PlayerLoop;
+using UnityEngine.UIElements;
+using Button = UnityEngine.UI.Button;
+
 
 public class SplineCubique
 {
-    private float[,] Coeffs { get; set; }
+    public List<Vector3> Points { get; set; }
+    public Vector3[] Interpolation { get; set; }
     
-    public static Vector3[] InterpolerPts(List<Vector3>points,int count)
+    public int[]Stops { get; set; }
+
+    private int Count { get; set; }
+
+    public SplineCubique(List<Vector3> points, int count)
+    {
+        Points = points;
+        Count = count;
+    }
+
+    public SplineCubique(List<PathfindingNode> path, int count)
+    {
+        Points = new List<Vector3>();
+
+        foreach (var node in path)
+        {
+            Points.Add(node.Position);
+        }
+        
+        Stops = new int[Points.Count];
+
+        Count = count;
+    }
+
+    public void Interpoler()
+    {
+        Interpolation = InterpolerPts(Points, Count);
+        
+        
+        for (int i = 0; i < Points.Count; i++)
+        {
+            for (int j = 0; j < Interpolation.Length; j++)
+            {
+                if (SontMême(Points[i], Interpolation[j]))
+                {
+                    Stops[i] = j;
+                    break;
+                }
+            }
+        }
+    }
+
+    public static bool SontMême(Vector3 a, Vector3 b)
+    {
+        var limite = 1.3f;
+        return Mathf.Abs(a.x - b.x) <limite && Mathf.Abs(a.z - b.z )< limite &&Mathf.Abs( a.y - b.y)< limite;
+    }
+    
+
+    public void RenderSpline(bool montrerPoints,Material matériel)
+    {
+        GameObject spline = new GameObject("Spline");
+        var pts = Interpolation;
+
+        var ligne = spline.AddComponent<LineRenderer>();
+        
+        ligne.positionCount = pts.Length;
+        ligne.SetPositions(pts);
+        ligne.material = matériel;
+        ligne.SetWidth(7,7);
+        
+        if (montrerPoints)
+        {
+            foreach (var point in Points)
+            {
+                var pt = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                GameObject.Destroy(pt.GetComponent<SphereCollider>());
+                pt.transform.position = point;
+                pt.transform.SetParent(spline.transform);
+                pt.transform.localScale = Vector3.one * 20;
+            }
+        }
+    }
+
+    public static Vector3[] InterpolerPts(List<Vector3> points, int count)
     {
 
         float[] xs = new float[points.Count];
@@ -20,37 +100,40 @@ public class SplineCubique
 
         for (int i = 0; i < points.Count; i++)
         {
-            xs[i]=points[i].x;
-            ys[i]=points[i].z;
+            xs[i] = points[i].x;
+            ys[i] = points[i].z;
             zs[i] = points[i].y;
         }
 
         int inputPointCount = xs.Length;
         float[] inputDistances = new float[inputPointCount];
+        
         for (int i = 1; i < inputPointCount; i++)
         {
-            float dx = xs[i] - xs[i - 1];
-            float dy = ys[i] - ys[i - 1];
-            float distance = (float)Math.Sqrt(dx * dx + dy * dy);
+            Vector3 prevPoint = points[i - 1];
+            Vector3 currPoint = points[i];
+            float distance = Vector3.Distance(prevPoint, currPoint);
+            
             inputDistances[i] = inputDistances[i - 1] + distance;
         }
 
         float meanDistance = inputDistances.Last() / (count - 1);
         float[] evenDistances = Enumerable.Range(0, count).Select(x => x * meanDistance).ToArray();
+        
         float[] xsOut = Interpoler(inputDistances, xs, evenDistances);
         float[] ysOut = Interpoler(inputDistances, ys, evenDistances);
         float[] zsOut = Interpoler(inputDistances, zs, evenDistances);
 
         Vector3[] pts = new Vector3[xsOut.Length];
 
-        for (int i = 0; i <xsOut.Length; i++)
+        for (int i = 0; i < xsOut.Length; i++)
         {
             pts[i] = new Vector3(xsOut[i], zsOut[i], ysOut[i]);
-            Debug.Log(pts[i]);
         }
-        
+
         return pts;
     }
+    
 
     private static float[] Interpoler(float[] xOrig, float[] yOrig, float[] xInterp)
     {
@@ -135,10 +218,4 @@ public class SplineCubique
         return (a, b);
     }
     
-    
-
-
-
-
-
 }

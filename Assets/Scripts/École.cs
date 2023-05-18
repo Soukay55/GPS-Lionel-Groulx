@@ -12,16 +12,23 @@ public class École
 {
     //take care of commented part of GetNodeData
     public List<FloorGraph> Floors { get; set; }
+    
+    public List<Node>PointsAiles { get; set; }
     public List<Node>CoordonéesÉcole{ get; set; }
     
     public const int HAUTEUR_ÉCOLE = 500;
 
     private const int NB_DONNÉES_PAR_NODE = 5;
-    public int[,]Niveaux { get; set; }
+    public static int[,]Niveaux { get; set; }
     public List<Polygone>Ailes { get; set; }
     
-    public École(string fichierNom,Node origine)
+        
+    private const int NB_INFOS_PAR_NODES = 4;
+    
+    public École(string fichierNom)
     {
+        PointsAiles=GetListePoints(FileReadingTools.LireFichierTxt("OutsideData.txt"));
+        var origine = PointsAiles[15];
         Floors = new List<FloorGraph>();
         Niveaux = new int[(int)Étage.NombreÉtages, (int)Aile.NombreAiles];
         
@@ -33,8 +40,50 @@ public class École
         RemplirMatriceÉtages();
         GetCoordonéesÉcole(origine);
         GetNodeData(fichierNom);
+        GetPolygons(PointsAiles);
+        SetPositionsAndGetAiles();
         
     }
+    
+        
+    public static List<Node> GetListePoints(List<string>dataTab)
+    {
+        List<Node> listePoints = new List<Node>();
+        
+        GPSCoordinate coords;
+        int nombre;
+        string nom;
+        
+        
+        List<float> connectedNodes = new List<float>();
+        
+        for (int i = 0; i < dataTab.Count; i+=NB_INFOS_PAR_NODES)
+        {
+            nombre = int.Parse(dataTab[i], CultureInfo.InvariantCulture);
+            coords = FileReadingTools.ToGpsCoordinate(dataTab[i+1].Replace(" ", ""));
+            nom = dataTab[i+2];
+            connectedNodes = dataTab[i + 3] == "n" ?  new List<float> { 0 } :
+                FileReadingTools.ToList(dataTab[i + 3]);
+            
+            listePoints.Add(new Node(nombre,nom,coords, connectedNodes));
+        }
+
+        //mettre un point arbitraire de l'école à l'origine
+        listePoints[15].Position = new Vector3(0, 0, 0);
+        
+        int k = 1;
+        
+        foreach (var NODE in listePoints)
+        {
+            NODE.SetPosition(listePoints[15]);
+            NODE.Position = GPSCoordinate.RotateAroundOriginZero(NODE.Position, 46.3f);
+            k++;
+        }
+        
+
+        return listePoints;
+    }
+
     
     public void GetPolygons(List<Node>pointList)
     {

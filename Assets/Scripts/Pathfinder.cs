@@ -35,7 +35,7 @@ public class Pathfinder
     //node que le pathfinder visite à l'instant présent
     public PathfindingNode NodeActuel { get; set; }
 
-    public StatutPathfinder Statut { get; set; }
+    public StatutPathfinder Statut { get; set; } = StatutPathfinder.PAS_INITIALISÉ;
 
 
     //les nodes pour lesquelles l'utilisateur a imposé comme
@@ -83,11 +83,7 @@ public class Pathfinder
 
         return length;
     }
-
-    public void RenderPath()
-    {
-        
-    }
+    
 
     public virtual int GetNodePlusPetitCout(List<PathfindingNode> nodeList)
     {

@@ -23,7 +23,7 @@ public class LoadingScreen : MonoBehaviour
         
         foreach (var pt in Points)
         {
-            pts.Add(new Vector3 (pt.x,pt.y-0.5F,pt.z - 2));
+            pts.Add(new Vector3 (pt.x,pt.y-0.5F,pt.z - 2)*10);
         }
         CréérLigne();
         Points = pts;

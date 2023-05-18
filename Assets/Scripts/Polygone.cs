@@ -141,9 +141,9 @@ public class Polygone
         return s;
     }
 
-    public bool IsClockwise(List<Vector3>points)
+    public static bool IsClockwise(List<Vector3>points)
     {
-        Vector3 A = CalculerCentroide();
+        Vector3 A = CalculerCentroide(points);
         Vector3 AB = points[0] - A;
         Vector3 AC = points[1] - A;
 
@@ -156,7 +156,7 @@ public class Polygone
         return new Polygone("Copie" + polygone.Nom, polygone.Points);
     }
 
-    public Vector3 CalculerCentroide()
+    public static Vector3 CalculerCentroide(List<Vector3>Points)
     {
         var sommePoints = Vector3.zero;
         foreach (var point in Points)

@@ -9,7 +9,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine.Animations;
 
-public class Node 
+public class Node:IEquatable<Node>
 {
     public GPSCoordinate CoordonéesGPS { get; set; }
     public int Nombre { get; set; }
@@ -97,6 +97,14 @@ public class Node
             i++;
         }
     }
-    
-     
+
+    public override string ToString()
+    {
+        return (Nombre + "d'étage" + (int)Niveau);
+    }
+
+    public bool Equals(Node node)
+    {
+        return Nombre == node.Nombre && Niveau == node.Niveau;
+    }
 }

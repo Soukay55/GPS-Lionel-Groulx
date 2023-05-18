@@ -16,12 +16,12 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
     {
         
     }
-    public static void GénérerTablesEtChaises( Vector3 pointDépart, int dimensionX, int dimensionY,
+    public static GameObject GénérerTablesEtChaises( Vector3 pointDépart, int dimensionX, int dimensionY,
         float nbTables,GameObject prefab)
     {
         Vector3 position;
         Quaternion rotation;
-        float variation = prefab.transform.localScale.x;
+        GameObject tables = new GameObject("Tables");
         
         //float nbTables = 8;
         if (dimensionY==0)
@@ -29,13 +29,14 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
             float angle;
             var rayonMax = dimensionX / 2f;
             bool tableDevant=false;
-            var tableCentre = Instantiate(prefab, pointDépart, Quaternion.identity);
+            var tableCentre = Instantiate(prefab, pointDépart, Quaternion.identity,tables.transform);
     
             for (float j = 1; j < rayonMax + 1; j+=25)
             {
                 var rangée = new GameObject("Rangée");
                 rangée.transform.SetParent(tableCentre.transform);
                 rangée.transform.position = pointDépart;
+                
                 for (float i = 1; i < nbTables + 1; i++)
                 {
                     angle = i / nbTables * (2 * Mathf.PI);
@@ -60,15 +61,13 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
                 }
                 
                 
-                nbTables = nbTables * 1.66f;
+                nbTables *= 1.66f;
             }
     
     
-            return;
+            return tables;
         }
     
-        //comme dans la cafet, on veut des chaises et des tables en longueur
-        //selon rangées et colonnes et faire des "blocs" de tables et chaises organisées
 
         var largeurTable = prefab.transform.localScale.x;
         var longueurTable = prefab.transform.localScale.z;
@@ -77,7 +76,6 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
         Vector3 posDébut = pointDépart-new Vector3(dimensionX/4,0,dimensionY/2);  
         Vector3 currentPosition = posDébut;
 
-        GameObject tables = new GameObject("Tables");
 
         for (int i = 0; i < nombreRangées; i++) 
         {
@@ -89,7 +87,10 @@ public class CréateurSalle : MonoBehaviour //pr le carrefour étudiant, cafet m
             
             currentPosition = new Vector3(posDébut.x, 0, currentPosition.z);
             currentPosition += new Vector3(0.0f, 0.0f, longueurTable);
+            
         }
-        
+
+        return tables;
+
     }
 }

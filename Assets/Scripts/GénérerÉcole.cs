@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using TMPro;
 using Unity.VisualScripting;
+using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using UnityEngine.UIElements;
+using Button = UnityEngine.UI.Button;
 
 public class GénérerÉcole : MonoBehaviour
 {
@@ -23,34 +27,41 @@ public class GénérerÉcole : MonoBehaviour
     public GameObject portes;
     public GameObject casiers;
     public Material splineMat;
-    
-    private const int NB_INFOS_PAR_NODES = 4;
+
     
     public École CollègeLio { get; set; }
+    
     
     //organize this it's ugly
     void Start()
     {
-        List<Node> points = GetListePoints(FileReadingTools.LireFichierTxt("OutsideData.txt"));
-        CollègeLio = new École("Nodes.txt",points[15]);
-
-        CollègeLio.GetPolygons(points);
-        CollègeLio.SetPositionsAndGetAiles();
+        CollègeLio = new École("Nodes.txt");
         
-        GénérerMursExt();
-        GénérerMursInt();
+        //GénérerMursExt();
+        //GénérerMursInt();
         GénérerSols();
         GénérerPlafonds();
         GénérerCouloirs();
         GénérerSallesPubliques();
-        CréerGrapheÉcole();
-        OrganizeHierarchy();
-        
+        //CréerGrapheÉcole();
         TestPathfinder();
 
     }
-    
 
+    public void TestSpline()
+    {
+        PathfindingNode nodeÀPasser = CollègeLio.Floors[3].Nodes[25];
+        
+        AStarPathfinder pathfinder = new AStarPathfinder(CollègeLio.Floors[0].Nodes[16], CollègeLio.Floors[0].Nodes[46]);
+        
+        //InstructionsUtilisateur.GénérerInstructions(pathfinder.Path);
+
+        var spline = new SplineCubique(pathfinder.Path, 600);
+        
+        spline.RenderSpline(true,splineMat);
+
+    }
+    
     public void TestPathfinder()
     {
         List<PathfindingNode> nodesToAvoid = new List<PathfindingNode>();
@@ -61,91 +72,60 @@ public class GénérerÉcole : MonoBehaviour
         nodesToPass.Add(CollègeLio.Floors[0].Nodes[44]);
         nodesToAvoid.Add(CollègeLio.Floors[2].Nodes[4]);
 
-       // DjikstraPathfinder pathfinder =
-         //   new DjikstraPathfinder(CollègeLio.Floors[0].Nodes[2], CollègeLio.Floors[0].Nodes[20], nodesToPass);
-        
+       // DjikstraPathfinder pathfindr =
+       //    new DjikstraPathfinder(CollègeLio.Floors[0].Nodes[2], CollègeLio.Floors[0].Nodes[20], nodesToPass);
+       //  
         foreach (var node in CollègeLio.Floors[2].Nodes)
         {
             //nodesToAvoid.Add(node);
         }
 
         PathfindingNode nodeÀPasser = CollègeLio.Floors[3].Nodes[25];
-        
         AStarPathfinder pathfinder = new AStarPathfinder(CollègeLio.Floors[0].Nodes[18], CollègeLio.Floors[2].Nodes[28]);
+       // InstructionsUtilisateur.GénérerInstructions(pathfinder.Path);
         
-        InstructionsUtilisateur.GénérerInstructions(pathfinder.Path);
-        print(pathfinder.Path[pathfinder.Path.Count-1].Instructions);
-        int i = 0;
-        
-        if (pathfinder.Statut == Pathfinder.StatutPathfinder.SUCCES)
-        {
-            foreach (var node in pathfinder.Path)
-            {
-                var n = node.DrawNode();
-                n.GetComponent<MeshRenderer>().material = matérielPath;
-                print(node.Instructions);
-                i++;
-            }
-        }
-        else
-        {
-            Debug.Log("Impossible");
-        }
+        //
+        // int i = 0;
+        //
+        // if (pathfinder.Statut == Pathfinder.StatutPathfinder.SUCCES)
+        // {
+        //     foreach (var node in pathfinder.Path)
+        //     {
+        //         var n = node.DrawNode();
+        //         n.GetComponent<MeshRenderer>().material = matérielPath;
+        //         print(node.Instructions);
+        //         i++;
+        //     }
+        // }
+        // else
+        // {
+        //     Debug.Log("Impossible");
+        // }
 
         var pts = new List<Vector3>();
+        
         foreach (var node in pathfinder.Path)
         {
             pts.Add(node.Position);
-            //print("("+node.Position.x+"f,"+node.Position.y+"f,"+node.Position.z+"f)");
         }
 
-        var ptLigne= SplineCubique.InterpolerPts(pts,200);
+        // var ptLigne= SplineCubique.InterpolerPts(pts,2000);
         //
         // var spline = new GameObject("Path");
-        // var lr=spline.AddComponent<LineRenderer>();
-        // lr.SetPositions(ptLigne);
-        // lr.AddComponent<MeshRenderer>().material = splineMat;
-        // lr.SetWidth(8,8);
+        //
+        // for (int j = 0; j < ptLigne.Length; j++)
+        // {
+        //     var r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        //     r.transform.localScale = Vector3.one * 8;
+        //     r.transform.position = ptLigne[j];
+        //     r.transform.SetParent(spline.transform);
+        //     r.GetComponent<MeshRenderer>().material = splineMat;
+        //     
+        // }
+        
 
     }
-    
-    public static List<Node> GetListePoints(List<string>dataTab)
-    {
-        List<Node> listePoints = new List<Node>();
-        
-        GPSCoordinate coords;
-        int nombre;
-        string nom;
-        
-        List<float> connectedNodes = new List<float>();
-        
-        for (int i = 0; i < dataTab.Count; i+=NB_INFOS_PAR_NODES)
-        {
-            nombre = int.Parse(dataTab[i], CultureInfo.InvariantCulture);
-            coords = FileReadingTools.ToGpsCoordinate(dataTab[i+1].Replace(" ", ""));
-            nom = dataTab[i+2];
-            connectedNodes = dataTab[i + 3] == "n" ?  new List<float> { 0 } :
-                FileReadingTools.ToList(dataTab[i + 3]);
-            
-            listePoints.Add(new Node(nombre,nom,coords, connectedNodes));
-        }
 
-        //mettre un point arbitraire de l'école à l'origine
-        listePoints[15].Position = new Vector3(0, 0, 0);
-        
-        int k = 1;
-        
-        foreach (var NODE in listePoints)
-        {
-            NODE.SetPosition(listePoints[15]);
-            NODE.Position = GPSCoordinate.RotateAroundOriginZero(NODE.Position, 46.3f);
-            k++;
-        }
-        
-
-        return listePoints;
-    }
-    
     public void GénérerMursExt()
     {
         //si deux points appartiennent à deux polygones en même temps,
@@ -177,7 +157,6 @@ public class GénérerÉcole : MonoBehaviour
     
     public void GénérerMursInt()
     {
-
         GameObject insideWalls = new GameObject("MursInt");
         insideWalls.transform.position=Vector3.zero;
         insideWalls.transform.SetParent(transform);
@@ -188,7 +167,6 @@ public class GénérerÉcole : MonoBehaviour
             GameObject poly = new GameObject(polygone.Nom);
             poly.transform.SetParent(insideWalls.transform);
             polygone.DessinerPolygone(murInt,poly);
-            
         }
         
     }
@@ -196,7 +174,7 @@ public class GénérerÉcole : MonoBehaviour
     public void DevancerMurs(Polygone polygone)
     {
         float largeurMurExt = murExt.transform.GetChild(0).transform.localScale.x;
-        Vector3 centroide =polygone.CalculerCentroide();
+        Vector3 centroide =Polygone.CalculerCentroide(polygone.Points);
         List<Vector3> nvPoints = new List<Vector3>();
 
         foreach (var point in polygone.Points)
@@ -242,7 +220,7 @@ public class GénérerÉcole : MonoBehaviour
             var currentAile = CollègeLio.Ailes[j];
             List<Vector3> pointsDépart = currentAile.Points;
             
-            for (int i=1;i<(int)Étage.NombreÉtages&&CollègeLio.Niveaux[i, j] != 0; i++)
+            for (int i=1;i<(int)Étage.NombreÉtages&&École.Niveaux[i, j] != 0; i++)
             {
                 List<Vector3> pointsÀÉtage = new List<Vector3>();
                
@@ -250,7 +228,7 @@ public class GénérerÉcole : MonoBehaviour
                 {
                     pointsÀÉtage.Add
                         (pointsDépart[z] +
-                         Vector3.up*CollègeLio.Niveaux[i, j]);
+                         Vector3.up*École.Niveaux[i, j]);
                 }
                 currentAile.SetPoints(pointsÀÉtage);
                 currentAile.CréerSol(matérielSol);
@@ -270,7 +248,7 @@ public class GénérerÉcole : MonoBehaviour
         {
             var currentAile = CollègeLio.Ailes[j];
             List<Vector3> pointsDépart = currentAile.Points;
-            for (int i=1;i<(int)Étage.NombreÉtages&&CollègeLio.Niveaux[i, j] != 0; i++)
+            for (int i=1;i<(int)Étage.NombreÉtages&&École.Niveaux[i, j] != 0; i++)
             {
                 
                 List<Vector3> pointsÀÉtage = new List<Vector3>();
@@ -279,7 +257,7 @@ public class GénérerÉcole : MonoBehaviour
                 {
                     pointsÀÉtage.Add
                     (pointsDépart[z] +
-                     Vector3.up*CollègeLio.Niveaux[i, j]);
+                     Vector3.up*École.Niveaux[i, j]);
                 }
                 
                 currentAile.SetPoints(pointsÀÉtage);
@@ -295,19 +273,11 @@ public class GénérerÉcole : MonoBehaviour
     //s'assurer d'un chemin clair entre chaque node et son voisin
 
 
-    public void OrganizeHierarchy()
-    {
-        // for (int i = 0; i <(int) Étage.NombreÉtages; i++)
-        // {
-        //     var cuurentFloot=GameObject.Find
-        // }
-        //
-    }
+
     
 
     public void GénérerCouloirs()
     {
-        
         for (int i = 0; i < CollègeLio.Floors.Count; i++)
         {
 
@@ -365,7 +335,6 @@ public class GénérerÉcole : MonoBehaviour
                             
                         }
                         currentCouloir.Add(node.Position);
-                        
                     }
                    
                 }
@@ -385,7 +354,6 @@ public class GénérerÉcole : MonoBehaviour
                     r.name = couloir;
                     
                     CreateurCouloir.DétruireIntersections(r,testCollider);
-
                     continue;
                 
                 }
@@ -460,7 +428,7 @@ public class GénérerÉcole : MonoBehaviour
 
         }
         EnleverDerniersBlocs(37,0,"CouloirF");
-        EnleverDerniersBlocs(10, 0, "CouloirS", 127);
+        EnleverDerniersBlocs(18, 0, "CouloirS", 140);
         DestroyAll("CouloirIndAileN"); 
         EnleverCouloir("CouloirsInd/CouloirIndAileL",4);
 
@@ -478,7 +446,6 @@ public class GénérerÉcole : MonoBehaviour
                     EnleverPremiersBlocs(8,coulD[i+3]);
                     break;
                }
-                
                 Destroy(coulD[i]);
                 EnleverDerniersBlocs(11,coulD[i+1]);
                 EnleverPremiersBlocs(11,coulD[i+2]); 
@@ -601,20 +568,38 @@ public class GénérerÉcole : MonoBehaviour
     //maybe have "Find" methods where you can obtain nodes by their names or their numbers
     public void GénérerSallesPubliques()
     {
+        var étage=GameObject.Find("Étage0");
         //carrefour étudiant
         //CréateurSalle.CréerSalleRectangulaire(250,250,100,CollègeLio.Floors[0].Nodes[65].Position,salle);
-        CréateurSalle.GénérerTablesEtChaises(CollègeLio.Floors[0].Nodes[65].Position,250,0,4,tablesRondesEtChaises);
+        var carrefour=CréateurSalle.GénérerTablesEtChaises(CollègeLio.Floors[0].Nodes[65].Position,250,0,4,tablesRondesEtChaises);
+        carrefour.gameObject.name = "Carrefour";
+        carrefour.transform.SetParent(étage.transform);
         
         //cafétéria
-        var caf1 = CollègeLio.Floors[0].Nodes[18].Position;
-        var caf2 = CollègeLio.Floors[0].Nodes[16].Position;
+        var caf1 = CollègeLio.Floors[0].Nodes[18].Position+Vector3.left*6;
+        var caf2 = CollègeLio.Floors[0].Nodes[16].Position+Vector3.left*6;
         
         //CréateurSalle.CréerSalleRectangulaire(100,225,100,(caf1-caf2)/2+caf2,salle);
-        CréateurSalle.GénérerTablesEtChaises((caf1-caf2)/2+caf2,150,200,8,tablesEtChaises);
+        var cafétéria=CréateurSalle.GénérerTablesEtChaises((caf1-caf2)/2+caf2,150,250,8,tablesEtChaises);
+        cafétéria.gameObject.name = "Cafétéria";
+        cafétéria.transform.SetParent(étage.transform);
+
+        var cafVect = CollègeLio.Floors[0].Nodes[10].Position - CollègeLio.Floors[0].Nodes[10].Position;
         
+        var rayCafétéria = new Ray(CollègeLio.Floors[0].Nodes[10].Position,
+            cafVect.normalized);
+        var hits = Physics.RaycastAll(rayCafétéria, cafVect.magnitude);
+        
+        for (int i = 0; i < hits.Length; i++)
+        {
+            if (hits[0].transform.gameObject.name.Contains("Table"))
+            {
+                Destroy(hits[0].transform.gameObject);
+            }
+        }
+
     }
     
-
     public PathfindingNode FindLowerNode(List<PathfindingNode>nodes,Node nodeToFindLowerOf)
     {
         foreach (var node in nodes)

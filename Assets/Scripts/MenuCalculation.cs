@@ -22,16 +22,17 @@ public class MenuCalculation : MonoBehaviour
     //?????????????????????
     public void GénererMessage()
     {
-        if (Contraintes.pathfinder.Statut == Pathfinder.StatutPathfinder.SUCCES)
+        if (Contraintes.Pathfinder.Statut == Pathfinder.StatutPathfinder.SUCCES)
         {
             texteAffiché.text = "Votre trajet optimal a été généré";
             voirTrajet.gameObject.SetActive(true);
         }
-        if (Contraintes.pathfinder.Statut == Pathfinder.StatutPathfinder.ÉCHEC)
+        if (Contraintes.Pathfinder.Statut == Pathfinder.StatutPathfinder.ÉCHEC)
         {
             texteAffiché.text =
-                "Il est impossible de générer un chemin qui respecte toutes les contraintes que vous avez imposées";
-            voirTrajet.gameObject.SetActive(false);
+                "Il n'existe aucun chemin qui respecte" +
+                " toutes les contraintes que vous avez imposées";
+            
             retour.gameObject.SetActive(true);
         }
     }
@@ -40,23 +41,20 @@ public class MenuCalculation : MonoBehaviour
     {
         voirTrajet.gameObject.SetActive(false);
         retour.gameObject.SetActive(false);
-        GenererLoadingScreen();
         voirTrajet.onClick.AddListener(ComportementBouttonTrajet);
         retour.onClick.AddListener(ComportementBouttonRetour);
-
+        GenererLoadingScreen();
     }
-
-   
 
     //à la place, fonction statique
     private static void ComportementBouttonRetour()
     {
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene(3);
     }
     
     private static void ComportementBouttonTrajet()
     {
-        SceneManager.LoadScene(8);
+        SceneManager.LoadScene(11);
     }
     
 }

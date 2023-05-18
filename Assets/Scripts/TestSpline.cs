@@ -1,61 +1,57 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TestSpline : MonoBehaviour
 {
     [SerializeField] private Material _material;
-    
+
     void Start()
     {
-        var spline = new GameObject("Spline");
         List<Vector3> Points = new List<Vector3>();
-        // Points.Add(new Vector3(1257.34f, 0.00f, 653.16f));
-        // Points.Add(new Vector3(-12,4,14));
-        // Points.Add(new Vector3(-13,5,12));
-        Points.Add(new Vector3(1257.341f,0f,653.1613f));
-        Points.Add(new Vector3(1252.11f, 0.00f, 494.28f));
-        Points.Add(new Vector3(1252.246f,0f,393.4313f));
-        Points.Add(new Vector3(1257.355f,249f,315.4543f));
-        Points.Add(new Vector3(1805.081f,249f,336.9844f));
-        Points.Add(new Vector3(2015.905f,249f,406.5918f));
-        // Points.Add(new Vector3(-7,1,4));
-        // Points.Add(new Vector3(-6,-4,6));
-        // Points.Add(new Vector3(-6,-4,7));
-        // Points.Add(new Vector3(-7,-4,8));
-        // Points.Add(new Vector3(-9,-4,8));
-        // Points.Add(new Vector3(-8,10,6));
-        // Points.Add(new Vector3(-5,10,7));
-        // Points.Add(new Vector3(-4,10,9));
-        // Points.Add(new Vector3(-4,0,11));
-        // Points.Add(new Vector3(-4,0,13));
-        // Points.Add(new Vector3(-3,0,15));
-        // Points.Add(new Vector3(1,0,15));
-        // Points.Add(new Vector3(3,0,13));
-        // Points.Add(new Vector3(2,0,11));
+
+        Points.Add(new Vector3(1257f, 0f, 653f));
+        Points.Add(new Vector3(1252f, 0f, 494f));
+        Points.Add(new Vector3(1252f, 0f, 393f));
+        Points.Add(new Vector3(1251f, 83f, 393f));
+        Points.Add(new Vector3(1250f, 249f, 393f));
+        Points.Add(new Vector3(1257f, 249f, 315f));
+        Points.Add(new Vector3(1411f, 249f, 314f));
+        Points.Add(new Vector3(1553f, 249f, 331f));
+        Points.Add(new Vector3(1689f, 249f, 333f));
+        Points.Add(new Vector3(1805f, 249f, 336f));
+        Points.Add(new Vector3(1873f, 249f, 337f));
+        Points.Add(new Vector3(1973f, 249f, 361f));
+
         var xs = new float[Points.Count];
         var ys = new float[Points.Count];
         var zs = new float[Points.Count];
+
+        // for (int i = 0; i < Points.Count; i++)
+        // {
+        //     var p = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        //     p.transform.localScale = Vector3.one * 20;
+        //     p.transform.position = Points[i];
+        //
+        //     xs[i] = Points[i].x;
+        //     ys[i] = Points[i].z;
+        //     zs[i] = Points[i].y;
+        // }
+        var splineCubique = new SplineCubique(Points, 300);
         
-        for (int i = 0; i < Points.Count; i++)
-        {
-            xs[i] = Points[i].x;
-            ys[i] = Points[i].z;
-            zs[i] = Points[i].y;
-        }
+        splineCubique.RenderSpline(true,_material);
 
-      var pts=  SplineCubique.InterpolerPts(Points, 200);
 
-      for (int i = 0; i < pts.Length; i++)
-      {
-          var r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-          r.transform.position = pts[i];
-      }
-      
+        // var pts = SplineCubique.InterpolerPts(Points, 200);
+        //
+        //
+        //
+        // var r = spline.AddComponent<LineRenderer>();
+        // r.positionCount = pts.Length;
+        // r.SetPositions(pts);
+        // r.SetWidth(6, 6);
+
+
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
 }

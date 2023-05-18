@@ -72,16 +72,11 @@ public class AStarPathfinder : Pathfinder
     {
         List<PathfindingNode> path = new List<PathfindingNode>();
         OpenList.Add(Départ);
+        
         while (NodeActuel!=Arrivée)
         {
-            if (OpenList.Count == 0)
-            {
-                Statut = StatutPathfinder.ÉCHEC;
-                return null;
-            }
 
             Statut = StatutPathfinder.EN_MARCHE;
-            
             NodeActuel = OpenList[GetNodePlusPetitCout(OpenList)];
             OpenList.Remove(NodeActuel);
             ClosedList.Add(NodeActuel);
@@ -106,6 +101,12 @@ public class AStarPathfinder : Pathfinder
                     }
                     
                 }
+            }
+            
+            if (OpenList.Count == 0)
+            {
+                Statut = StatutPathfinder.ÉCHEC;
+                return null;
             }
         }
 

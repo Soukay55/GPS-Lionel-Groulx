@@ -9200,7 +9200,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Il y a un maximum de 3 contraintes
+  m_text: Il y a un maximum de 9 contraintes
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a20d4fe4bc8d3f745aeab9d4cecb525b, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: a20d4fe4bc8d3f745aeab9d4cecb525b, type: 2}

@@ -15,6 +15,7 @@ public class MenuNavigateur : MonoBehaviour
     public Button cacher;
     public Button montrer;
     public Button quitter;
+    public Button prendreEscaliers;
     public Camera camera2d;
     public Button startNav;
     public TMP_Text instructions;
@@ -54,10 +55,12 @@ public class MenuNavigateur : MonoBehaviour
         montrer.gameObject.SetActive(false);
         cacher.gameObject.SetActive(true);
         quitter.gameObject.SetActive(false);
+        prendreEscaliers.gameObject.SetActive(false);
         panel.SetActive(false);
         cacher.onClick.AddListener(ComportementBouttonCacher);
         montrer.onClick.AddListener(ComportementBouttonMontrer);
         quitter.onClick.AddListener(ComportementBouttonQuitter);
+        prendreEscaliers.onClick.AddListener(ComportementBouttonEscalier);
         
         Chemin = Contraintes.Pathfinder.Path;
         Path = new SplineCubique(Chemin, 1500);
@@ -81,7 +84,7 @@ public class MenuNavigateur : MonoBehaviour
         //position.text="Vous êtes dans l'aile"+
 
         camera2d.transform.rotation = Quaternion.Euler(90,0,0);
-        
+        instructions.text = Chemin[positionPath].Instructions;
         if (moveToNext)
         {
             if (positionInterpol!=Path.Interpolation.Length-1)
@@ -89,8 +92,7 @@ public class MenuNavigateur : MonoBehaviour
                 transform.rotation=Quaternion.LookRotation(Path.Interpolation[positionInterpol+1]-
                                                            Path.Interpolation[positionInterpol]);
                 positionInterpol++;
-                transform.position = Path.Interpolation[positionInterpol]+Vector3.up*8;
-                print(transform.position);
+                transform.position = Path.Interpolation[positionInterpol]+Vector3.up*30;
             }
             
             SetCurrentÉtage(GetÉtage(transform.position));
@@ -102,15 +104,18 @@ public class MenuNavigateur : MonoBehaviour
                 {
                     panel.gameObject.SetActive(true);
                     quitter.gameObject.SetActive(true);
-                    
                 }
                 else
                 {
-                    next.gameObject.SetActive(true);
-                    //stairs menu
-                    if (Chemin[positionPath].Nombre == Chemin[positionPath + 1].Nombre)
+                    if (Chemin[positionPath].Instructions.Contains("Monter")||
+                        Chemin[positionPath].Instructions.Contains("Descendre"))
                     {
-                        
+                       // instructions.text=Chemin[positionPath+1].Instructions;
+                        prendreEscaliers.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        next.gameObject.SetActive(true);
                     }
                 }
             }
@@ -126,10 +131,17 @@ public class MenuNavigateur : MonoBehaviour
 
     private void ComportementBouttonNext()
     {
-        instructions.text = Chemin[positionPath].Instructions;
         next.gameObject.SetActive(false);
         moveToNext = true;
         positionPath++;
+    }
+
+    private void ComportementBouttonEscalier()
+    {
+        transform.position = Chemin[positionPath].Position;
+        prendreEscaliers.gameObject.SetActive(false);
+        positionPath++;
+        next.gameObject.SetActive(true);
     }
     
     private void ComportementBouttonCacher()
@@ -188,9 +200,9 @@ public class MenuNavigateur : MonoBehaviour
     public static void GénérerInstructions(List<PathfindingNode> trajetUtilisateur)
     {
         
-        trajetUtilisateur[0].Instructions = "Étape#0-Aller vers" + trajetUtilisateur[1].Noms[0];
+        //trajetUtilisateur[0].Instructions = "Étape#0-Aller vers " + trajetUtilisateur[1].Noms[0];
         
-        for (int i = 1; i < trajetUtilisateur.Count-1; i++)
+        for (int i = 0; i < trajetUtilisateur.Count-1; i++)
         {
             var niveau1 = trajetUtilisateur[i].Niveau;
             var niveau2 = trajetUtilisateur[i+1].Niveau;
@@ -210,7 +222,7 @@ public class MenuNavigateur : MonoBehaviour
             var direction = string.Empty;
             trajetUtilisateur[i].Instructions = "Étape #" + (i + 1);
 
-            var tournerÀGauche = DoitTourner(trajetUtilisateur[i - 1].Position
+            var tournerÀGauche = i==0?-1 : DoitTourner(trajetUtilisateur[i - 1].Position
                 , trajetUtilisateur[i].Position,
                 trajetUtilisateur[i + 1].Position);
             
@@ -223,7 +235,7 @@ public class MenuNavigateur : MonoBehaviour
                 direction = tournerÀGauche == 0 ? "Tourner à droite " : "Tourner à gauche";
             }
 
-            trajetUtilisateur[i].Instructions += direction + "pour aller à" + nom;
+            trajetUtilisateur[i].Instructions += direction + "pour aller vers" + nom;
         }
         
 

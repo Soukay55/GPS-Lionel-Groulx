@@ -69,7 +69,7 @@ public class SplineCubique
     public void RenderSpline(bool montrerPoints,Material matériel)
     {
         GameObject spline = new GameObject("Spline");
-        var pts = Interpolation;
+        var pts = Interpolation.Select(point => point + Vector3.up * 20).ToArray();
 
         var ligne = spline.AddComponent<LineRenderer>();
         

@@ -13,7 +13,6 @@ public class Contraintes : MonoBehaviour
     public static  PathfindingNode Départ { get; set; }
     public  static PathfindingNode  Arrivée{ get; set; }
     private  static List<PathfindingNode> NodesÀÉviter { get; set; }
-    
     private  static List<PathfindingNode>  NodesInévitables { get; set; }
     private static  PathfindingNode ChosenNode { get; set; }
     

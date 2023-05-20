@@ -26,14 +26,6 @@ public class FloorGraph
     
 
 
-    // public void SetPositions()
-    // {
-    //     foreach (var VARIABLE in COLLECTION)
-    //     {
-    //         
-    //     }
-    // }
-
 
 
 }
